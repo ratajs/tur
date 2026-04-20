@@ -247,7 +247,7 @@ output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions ca
 [a, b] = f(a, b)...; # Any expression which can yield more numbers is possible as the right side. The ellipsis is optional here as well.
 ```
 
-<img src="https://fit.cvut.cz/static/images/fit-cvut-logo-cs.svg" alt="logo FIT ČVUT" height="200">
+<img src="https://fit.cvut.cz/static/images/fit-cvut-logo-en.svg" alt="FIT CTU logo" height="200">
 
-Tento software vznikl za podpory **Fakulty informačních technologií ČVUT v Praze**.
-Více informací naleznete na [fit.cvut.cz](https://fit.cvut.cz).
+This software was developed with the support of the **Faculty of Information Technology, Czech Technical University in Prague**.
+For more information, visit [fit.cvut.cz](https://fit.cvut.cz).
