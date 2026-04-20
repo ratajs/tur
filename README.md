@@ -69,6 +69,8 @@ endwhile;
 output = a;
 ```
 
+Only single-line comments are supported. They start with `#` anywhere on line.
+
 Every variable represents one tape of the machine on which numbers can be written. The special names `input` and `output` are reserved for the input tape and the output tape.
 
 ### Expressions
