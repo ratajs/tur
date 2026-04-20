@@ -4,6 +4,11 @@ tur compiles a description of a Turing machine given in the source file (convent
 
 The source language is described below. It is expressive enough to describe compositions of complex machines from simpler machines.
 
+## Building and Installation
+
+The project can be built by calling `make` and installed by calling `make install`. Plain `make install` installs it to `~/.local/bin/`, make sure that this directory is in your `$PATH`. You can install it elsewhere; for a normal, system-wide install to `/usr/bin/`, run `make PREFIX=/usr/ install`.
+To uninstall, run `make uninstall` (with the same `PREFIX` you used for installing).
+
 ## Options
 
 The `-c` and `-r` options determine what to do. If neither on them is present, `-c` is assumed.
