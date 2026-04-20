@@ -1,0 +1,385 @@
+output = [];
+
+if input[0]==input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]!=input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] > input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≥ input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (ρ input)==3:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (ρ input)≠3:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (ρ input) < 3:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (ρ input) ≤ 3:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (ρ input) > 3:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (ρ input) ≥ 3:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ input[1] and input[0] ≥ input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < input[1] or input[0] > input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < input[1] xor input[0] > input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ input[1] xor input[0] ≥ input[1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≠ 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] > 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≥ 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 0==input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 0 ≠ input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 0 < input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 0 ≤ input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 0 > input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 0 ≥ input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==1:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≠ 1:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < 1:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ 1:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] > 1:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≥ 1:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 1==input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 1 ≠ input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 1 < input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 1 ≤ input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 1 > input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if 1 ≥ input[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 ∧ input[1] > 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 ∨ input[1] > 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 xor input[1] > 0:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 ∧ input[1] > 0 ∧ count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 ∨ input[1] > 0 ∨ count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 xor input[1] > 0 xor count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 ∧ input[1] > 0 ∨ count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 ∨ input[1] > 0 ∧ count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 and input[1] > 0 xor count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 xor input[1] > 0 and count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 or input[1] > 0 xor count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==0 xor input[1] > 0 or count input > 2:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (input[0] + 1)==(ρ input):
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (input[0] + 1)!=(ρ input):
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] + 1 < ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] + 1 ≤ ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] + 1 > ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] + 1 ≥ ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (input[1] + 2)==(ρ input):
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if (input[1] + 2)!=(ρ input):
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[1] + 2 < (ρ input):
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[1] + 2 ≤ ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[1] + 2 > ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[1] + 2 ≥ ρ input:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;

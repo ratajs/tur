@@ -1,0 +1,6 @@
+input[3:] = 20;
+input[2:] = input...;
+output = input...;
+output[] = input[1:];
+output[] = input;
+# output = [input[0], input[1], input[0], input[1], input[2], 20, input[1], input[0], input[1], input[2], 20, input[0]];

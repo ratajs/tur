@@ -1,0 +1,5 @@
+a = input;
+b = a;
+c = b;
+c = c;
+output = c;

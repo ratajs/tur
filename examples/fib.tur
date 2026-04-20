@@ -1,0 +1,26 @@
+addFirstTwo = { A10RB B10RC B00R_ C11RC C01LD D11LD D00R_ };
+
+bound = input;
+
+if bound==0:
+	output = [];
+	exit;
+endif;
+
+if bound==1:
+	output = 1;
+	exit;
+endif;
+
+output = [1, 1];
+last = [1, 1];
+
+bound−−;
+bound−−;
+
+while bound > 0:
+	last[] = last[0];
+	addFirstTwo(last...);
+	output[] = last[0];
+	bound−−;
+endwhile;

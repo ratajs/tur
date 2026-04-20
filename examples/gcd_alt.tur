@@ -1,0 +1,16 @@
+include primeDecomposition;
+
+[a, b] = input...;
+
+primesA = primeDecomposition(a)...;
+primesB = primeDecomposition(b)...;
+
+output = 1;
+
+while (ρ primesA) > 0 ∧ (ρ primesB) > 0:
+	if primesA[0]==primesB[0]:
+		output = output ⋅ primesA[0];
+	endif;
+	primesA = primesA[1:];
+	primesB = primesB[1:];
+endwhile;

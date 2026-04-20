@@ -1,0 +1,47 @@
+decLast = {
+	A11RA
+	A00RB
+	B11RA
+	B00LC
+	C00LC
+	C10LD
+	D11LD
+	D00LE
+	E11LD
+	E00RF
+	F00RF
+};
+
+numbers = input...;
+
+loop:
+	status = [ρ numbers, 0]; # remaining length and swap indicator
+	newNumbers = [];
+	while status[0] > 1:
+		if numbers[0] ≤ numbers[1]:
+			newNumbers[] = numbers[0];
+			numbers = numbers[1:];
+		else:
+			newNumbers[] = numbers[1];
+			status[1:] = 1;
+			status[] = numbers[0] - numbers[1];
+			numbers = numbers[1:];
+			while status[2] > 0:
+				numbers++;
+				decLast(status...);
+			endwhile;
+			status = status[0:2];
+		endif;
+
+		status--;
+	endwhile;
+	newNumbers[] = numbers...;
+
+	if status[1]==0:
+		break;
+	endif;
+
+	numbers = newNumbers...;
+endloop;
+
+output = newNumbers...;

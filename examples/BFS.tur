@@ -1,0 +1,62 @@
+# Input: Edges of a directed graph.
+# The initial vertex is 0.
+# Output: Pairs of vertex and its distance from the initial vertex for each vertices.
+
+visited = [0];
+queue = [0, 0]; # Vertex 0 and a mark for end of layer
+edgesCount = (ρ input) ∶ 2;
+visitedCount = 1;
+distances = [0, 0]; # Vertex 0 with distance 0
+distance = 1;
+
+loop:
+	x = 0;
+	while x < edgesCount:
+		if input[0]!=queue[0]: # Irrelevant edge
+			input = [input[2:], input[0:2]];
+			x++;
+			continue;
+		endif;
+
+		# input[1] is a successor.
+		y = 0;
+		while y < visitedCount:
+			if visited[0]==input[1]:
+				break;
+			endif;
+
+			visited = [visited[1:], visited[0]];
+			y++;
+		endwhile;
+
+		if visited[0]==input[1]:
+			input = [input[2:], input[0:2]];
+			x++;
+			continue;
+		endif;
+
+		# input[1] is an unvisited successor.
+		visited[] = input[1];
+		visitedCount++;
+		queue[] = input[1];
+		distances[] = input[1];
+		distances[] = distance;
+
+		input = [input[2:], input[0:2]];
+		x++;
+	endwhile;
+	queue = queue[1:];
+
+	if queue[0]==0: # End of layer
+		distance++;
+		queue = queue[1:];
+
+		if (ρ queue)==0:
+			break;
+		endif;
+
+		queue[] = 0; # New end of layer
+	endif;
+endloop;
+
+output = distances...;

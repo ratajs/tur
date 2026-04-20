@@ -1,0 +1,7 @@
+[a, b] = input;
+while b > 0:
+	B = a mod b;
+	a = b;
+	b = B;
+endwhile;
+output = a;

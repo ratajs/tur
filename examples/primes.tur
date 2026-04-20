@@ -1,0 +1,45 @@
+bound = input;
+
+states = [];
+
+x = 2;
+while x < bound:
+	states[] = 1;
+	x++;
+endwhile;
+
+primes = [];
+
+x = 2;
+while x < bound:
+	if states[0]==1:
+		primes[] = x;
+
+		states = states[1:];
+
+		if x ⋅ x < bound:
+			newStates = [];
+
+			y = x;
+			y++;
+			while y < bound:
+				if states[0]==0 ∨ (y mod x)==0:
+					newStates[] = 0;
+				else:
+					newStates[] = 1;
+				endif;
+				states = states[1:];
+
+				y++;
+			endwhile;
+
+			states = newStates…;
+		endif;
+	else:
+		states = states[1:];
+	endif;
+
+	x++;
+endwhile;
+
+output = primes…;

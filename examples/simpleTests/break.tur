@@ -1,0 +1,22 @@
+output = [];
+
+while ρ input > 1:
+	output[] = input[0];
+	input = input[1:];
+	if input[0] > output[0]:
+		output[] = input[0] − output[0];
+	else:
+		break;
+	endif;
+endwhile;
+output[] = input[0];
+
+while 0==0:
+	while 0==0:
+		output[] = 42;
+		break;
+		output[] = 22;
+	endwhile;
+	output[] = 8;
+	break;
+endwhile;

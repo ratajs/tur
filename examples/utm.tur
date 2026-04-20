@@ -1,0 +1,95 @@
+pop = {
+	A 1 1 R A
+	A 0 0 R B
+	B 1 1 R A
+	B 0 0 L C
+	C 0 0 L C
+	C 1 0 L D
+	D 1 0 L D
+	D 0 0 L E
+	E 0 0 R F
+	F 0 0 R _
+	E 1 1 L G
+	G 1 1 L G
+	G 0 0 L E
+};
+
+getLast = {
+	A 1 1 R A
+	A 0 0 R B
+	B 1 1 R A
+	B 0 0 L C
+	C 0 0 L C
+	C 1 1 L D
+	D 1 1 L D
+	D 0 0 L E
+	E 0 0 R F
+	F 0 0 R _
+	E 1 0 L G
+	G 1 0 L G
+	G 0 0 L E
+};
+
+[transitionsCount, input...] = input...;
+
+machine = [];
+while transitionsCount > 0:
+	machine[] = input[0:5];
+	input = input[5:];
+	transitionsCount−−;
+endwhile;
+
+leftTape = [];
+rightTape = input...;
+
+if (ρ rightTape)==0:
+	rightTape = 0;
+endif;
+
+state = 0;
+
+loop:
+	searchedTransitions = machine...;
+	while (ρ searchedTransitions) > 0:
+		if searchedTransitions[0]==state ∧ searchedTransitions[1]==rightTape[0]:
+			break;
+		endif;
+		searchedTransitions = searchedTransitions[5:];
+	endwhile;
+	if (ρ searchedTransitions)==0:
+		break;
+	endif;
+
+	if searchedTransitions[3]==0: # N
+		rightTape = [searchedTransitions[2], rightTape[1:]];
+	else: if searchedTransitions[3]==1: # L
+		if (ρ leftTape)==0:
+			rightTape = [0, searchedTransitions[2], rightTape[1:]];
+		else:
+			rightTape = [leftTape[0], searchedTransitions[2], rightTape[1:]];
+			leftTape = leftTape[1:];
+		endif;
+	else: # R
+		leftTape = [searchedTransitions[2], leftTape...];
+		rightTape = rightTape[1:];
+		if (ρ rightTape)==0:
+			rightTape = 0;
+		endif;
+	endif; endif;
+
+	state = searchedTransitions[4];
+endloop;
+
+# To display the whole used part of the tape:
+# output = [];
+# while (ρ leftTape) > 0:
+#		output[] = getLast(leftTape...);
+#		pop(leftTape...);
+#	endwhile;
+# output[] = rightTape...;
+
+# To only display the part of the tape starting from the current position and without trailing zeros:
+output = rightTape...;
+while (ρ output) > 1 ∧ getLast(output...)==0:
+	pop(output...);
+endwhile;

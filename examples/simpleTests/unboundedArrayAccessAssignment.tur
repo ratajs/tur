@@ -1,0 +1,6 @@
+input = input...;
+a = input[:];
+b = a[0:];
+c = b...;
+b = c[2:];
+output = b[1:];

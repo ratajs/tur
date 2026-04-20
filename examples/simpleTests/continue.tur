@@ -1,0 +1,23 @@
+output = [];
+
+while ρ input > 0:
+	if input[0] < 3:
+		input++;
+		input[] = 3;
+		continue;
+	endif;
+	output[] = input[0];
+	input = input[1:];
+endwhile;
+
+foo = 0;
+while foo!=42:
+	while foo!=22:
+		foo = 22;
+		continue;
+		foo = 0;
+	endwhile;
+	foo = 42;
+	continue;
+	foo = 0;
+endwhile;

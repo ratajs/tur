@@ -1,0 +1,17 @@
+output = [];
+
+x = 0;
+while x < 5:
+	output[] = x;
+	x++;
+endwhile;
+
+while x > 0 ∧ ρ input > 0:
+	output[] = input[0];
+	input = input[1:];
+	x−−;
+endwhile;
+
+while 2 < 1:
+	output[] = 22;
+endwhile;

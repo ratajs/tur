@@ -1,0 +1,28 @@
+# Output is 1 if the input is in the form w ⋅ w, where w is a list of numbers, otherwise 0.
+
+c = ρ input;
+
+if c mod 2==1:
+	output = 0;
+	exit;
+endif;
+
+partB = input…;
+partA = [];
+x = (c ∶ 2);
+while x > 0:
+	partA[] = partB[0];
+	partB = partB[1:];
+	x−−;
+endwhile;
+x = (c ∶ 2);
+output = 1;
+while x > 0:
+	if partA[0]≠partB[0]:
+		output = 0;
+		break;
+	endif;
+	partA = partA[1:];
+	partB = partB[1:];
+	x−−;
+endwhile;

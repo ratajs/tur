@@ -1,0 +1,12 @@
+PROJECT_NAME = tur
+INPUT = ./ ./AST/ ./AST/expressions/ ./AST/statements/ ./building/ ./instructions/ ./IO/ ./machine/ ./parsing/
+OUTPUT_DIRECTORY = ./doc/
+QT_AUTOBRIEF = YES
+HTML_OUTPUT = ./
+GENERATE_LATEX = NO
+
+GENERATE_TREEVIEW = YES
+DISABLE_INDEX = NO
+FULL_SIDEBAR = NO
+HTML_EXTRA_STYLESHEET = https://cdn.jsdelivr.net/gh/jothepro/doxygen-awesome-css@main/doxygen-awesome.css
+HTML_COLORSTYLE = LIGHT

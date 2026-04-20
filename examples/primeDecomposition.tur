@@ -1,0 +1,15 @@
+inc = { A11LA A01N_ };
+include primes;
+
+number = input;
+primeNumbers = primes(inc(number))...;
+
+output = [];
+while number!=1:
+	if number % primeNumbers[0]==0:
+		output[] = primeNumbers[0];
+		number = number / primeNumbers[0];
+	else:
+		primeNumbers = primeNumbers[1:];
+	endif;
+endwhile;
