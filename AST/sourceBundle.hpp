@@ -2,6 +2,10 @@
 #include "../common.hpp"
 #include "./expressions/expression.hpp"
 
+/*!
+ * This class represents in AST the right side of ImplodeStatement.
+ * It countains all the expressions to join.
+ */
 class SourceBundle {
 	private:
 		std::vector<std::unique_ptr<Expression>> expressions;
