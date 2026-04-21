@@ -15,7 +15,7 @@ The following ways to run the program are possible:
 
 - `tur [-c] [-iIO] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] [source.tur] [machine.tm]` – compile
 - `tur -r [-denskC] machine.tm` – run
-- `tur -cr [-iOenskC] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] source.tur` – compilation and run
+- `tur -cr [-iOenskC] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] source.tur` – compile and run
 
 ## Options
 
