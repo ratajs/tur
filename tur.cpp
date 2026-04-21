@@ -15,15 +15,6 @@
 #include "./building/instructionCollection.hpp"
 #include "./building/machineBuilder.hpp"
 
-/*!
- * \mainpage
- *
- * \section Description
- *
- * This program compiles a description of a Turing machine given in the source file into an actual Turing machine and stores it in the output file.
- * The source language is expressive enough to describe compositions of complex machines from simpler machines. See the manual page for the language documentation and usage.
- */
-
 static Machine compile(Input &input) {
 	std::wstring source;
 	std::vector<Token> tokens;
