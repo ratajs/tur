@@ -4,6 +4,9 @@
 #include "../machine/tape.hpp"
 #include "../machine/machine.hpp"
 
+/*!
+ * This class handles reading machine or source from stdin or a file, as well as processing command-line options.
+ */
 class Input {
 	private:
 		static std::wstring readFile(std::filesystem::path fileName);

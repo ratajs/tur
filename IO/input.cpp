@@ -3,6 +3,12 @@
 #include "../IO/generalError.hpp"
 #include "../IO/unexpectedError.hpp"
 
+/*!
+ * Read the content of a given file.
+ * \param fileName The name of the file
+ * \return The content of the file.
+ * \throw GeneralError If the file does not exist, is not a regular file or cannot be read.
+ */
 std::wstring Input::readFile(std::filesystem::path fileName) {
 	std::wstring text;
 	std::wifstream ifs;
@@ -39,6 +45,13 @@ std::wstring Input::readFile(std::filesystem::path fileName) {
 	return text;
 };
 
+/*!
+ * Read a list of whitespace-separated numbers from a given stream.
+ * Only a single line is read.
+ * \param stream The input stream.
+ * \return Vector of numbers.
+ * \throw GeneralError If the input is invalid.
+ */
 std::vector<size_t> Input::readNumbers(std::wistream &stream) {
 	std::wstring line;
 	std::wistringstream iss;
@@ -54,10 +67,21 @@ std::vector<size_t> Input::readNumbers(std::wistream &stream) {
 	return numbers;
 };
 
+/*!
+ * The constructor of Input.
+ * \param arguments List of command-line arguments.
+ * \param defaultInputStream Stream where to read input not coming from a file. Default is std::wcin.
+ * \param defaultOutputStream Stream for output (for getOutputStream() which returns a file stream or what is given here). Default is std::wcout.
+ */
 Input::Input(const std::vector<std::wstring> &arguments, std::wistream &defaultInputStream, std::wostream &defaultOutputStream): defaultInputStream(defaultInputStream), defaultOutputStream(defaultOutputStream) {
 	this->parseOptions(arguments);
 };
 
+/*!
+ * A helper function for determining the base path.
+ * \param fileName The path to the source file (should be ./ if the source is read from no file).
+ * \return The base path for includes (determined by this->baseIncludePath and fileName).
+ */
 std::filesystem::path Input::getBasePath(const std::filesystem::path &fileName) const {
 	std::filesystem::path path;
 
@@ -70,6 +94,12 @@ std::filesystem::path Input::getBasePath(const std::filesystem::path &fileName) 
 	return path;
 };
 
+/*!
+ * Process command-line arguments.
+ * This saves all flags and input/output files.
+ * \param arguments List of command-line arguments.
+ * \throw GeneralError If an error occurred when parsing (invalid options, unknown option, value missing etc.).
+ */
 void Input::parseOptions(const std::vector<std::wstring> &arguments) {
 	bool areOptionsAllowed = true;
 	std::vector<std::wstring> plainArguments;
@@ -119,6 +149,11 @@ void Input::parseOptions(const std::vector<std::wstring> &arguments) {
 		this->handlePlainArgumentsForRun(std::move(plainArguments));
 };
 
+/*!
+ * Process command-line arguments which are not options.
+ * This version is for compilation (-c).
+ * \param arguments The plain arguments.
+ */
 void Input::handlePlainArgumentsForCompilation(std::vector<std::wstring> arguments) {
 	switch(arguments.size()) {
 		case 0:
@@ -140,6 +175,11 @@ void Input::handlePlainArgumentsForCompilation(std::vector<std::wstring> argumen
 	};
 };
 
+/*!
+ * Process command-line arguments which are not options.
+ * This version is for machine run (-r).
+ * \param arguments The plain arguments.
+ */
 void Input::handlePlainArgumentsForRun(std::vector<std::wstring> arguments) {
 	switch(arguments.size()) {
 		case 0:
@@ -155,6 +195,11 @@ void Input::handlePlainArgumentsForRun(std::vector<std::wstring> arguments) {
 	};
 };
 
+/*!
+ * Process command-line arguments which are not options.
+ * This version is for compilation and machine run (-cr).
+ * \param arguments The plain arguments.
+ */
 void Input::handlePlainArgumentsForCompilationAndRun(std::vector<std::wstring> arguments) {
 	if(this->getFlags().isFlagPresent(Flags::Flag::ONLY_INSTRUCTIONS))
 		throw GeneralError(L"--only-instructions and --run cannot be used at the same time.");
@@ -173,6 +218,12 @@ void Input::handlePlainArgumentsForCompilationAndRun(std::vector<std::wstring> a
 	};
 };
 
+/*!
+ * Process a short option.
+ * \param option The name of the option.
+ * \return If the option requires a value, then a function processing the value, otherwise {} (std::nullopt).
+ * \throw GeneralError If the option is unknown.
+ */
 std::optional<std::function<void (const std::wstring&)>> Input::processShortOption(wchar_t option) {
 	switch(option) {
 		case 'c': // compile
@@ -245,6 +296,12 @@ std::optional<std::function<void (const std::wstring&)>> Input::processShortOpti
 	};
 };
 
+/*!
+ * Process a long option.
+ * \param option The name of the option.
+ * \return If the option requires a value, then a function processing the value, otherwise {} (std::nullopt).
+ * \throw GeneralError If the option is unknown.
+ */
 std::optional<std::function<void (const std::wstring&)>> Input::processLongOption(const std::wstring_view &option) {
 	if(option==L"compile") {
 		this->flags.addFlag(Flags::Flag::COMPILE);
@@ -312,6 +369,11 @@ std::optional<std::function<void (const std::wstring&)>> Input::processLongOptio
 	throw GeneralError(L"Unknown long option: "+Format::red(L"--"+std::wstring(option)));
 };
 
+/*!
+ * Open a std::wofstream for a given file and store it in this->outputFileStream.
+ * \param fileName The name of the output file.
+ * \throw GeneralError If the file exists and is not a regular file or if the file cannot be open for writing.
+ */
 void Input::openOutputFileStream(const std::filesystem::path &fileName) {
 	std::wstring text;
 	std::wofstream ofs;
@@ -328,26 +390,44 @@ void Input::openOutputFileStream(const std::filesystem::path &fileName) {
 };
 
 
+/*!
+ * \return All flags retrieved from the command-line arguments.
+ */
 Flags Input::getFlags() const {
 	return this->flags;
 };
 
+/*!
+ * \return The base path for includes.
+ */
 std::filesystem::path Input::getBasePath() const {
 	return this->getBasePath(this->inputFilePath ? (*this->inputFilePath) : "./");
 };
 
+/*!
+ * \return The suffix of included machine files.
+ */
 std::wstring Input::getMachineFileSuffix() const {
 	return this->includeMachineFileSuffix.value_or(L".tm");
 };
 
+/*!
+ * \return The list of paths to machines provided with -m.
+ */
 const std::vector<std::filesystem::path> &Input::getProvidedMachines() const {
 	return this->providedMachines;
 };
 
+/*!
+ * \return The argument 0 (typically program name).
+ */
 const std::wstring &Input::getArgument0() const {
 	return this->argument0;
 };
 
+/*!
+ * \return The output stream to use.
+ */
 std::wostream &Input::getOutputStream() {
 	if(this->outputFilePath && !this->outputFileStream)
 		this->openOutputFileStream(*this->outputFilePath);
@@ -355,6 +435,12 @@ std::wostream &Input::getOutputStream() {
 	return (this->outputFileStream ? (*this->outputFileStream) : this->defaultOutputStream);
 };
 
+/*!
+ * Read the input as source, either the default input stream or a provided input file.
+ * \return The source.
+ * \throw UnexpectedError If the COMPILE flag is not set.
+ * \throw GeneralError If the file does not exist, is not a regular file or cannot be read.
+ */
 std::wstring Input::readSource() {
 	std::wstring source;
 
@@ -369,6 +455,12 @@ std::wstring Input::readSource() {
 	return source;
 };
 
+/*!
+ * Read the input as source, use the default input stream.
+ * \return The read tape.
+ * \throw UnexpectedError If the RUN flag is not set.
+ * \throw GeneralError If the tape content is invalid.
+ */
 Tape Input::readTape() {
 	Tape tape;
 
@@ -385,6 +477,12 @@ Tape Input::readTape() {
 	return tape;
 };
 
+/*!
+ * Read the input as source, use the provided input file.
+ * \return The read machine.
+ * \throw UnexpectedError If the RUN flag is not set, if the COMPILE flag is set or if the input file is not provided.
+ * \throw GeneralError If the file does not exist, is not a regular file, cannot be read or if the machine is invalid.
+ */
 Machine Input::readMachine() {
 	std::wstring machineDefinition;
 	Machine machine;
