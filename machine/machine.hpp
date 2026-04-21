@@ -2,6 +2,12 @@
 #include "../common.hpp"
 #include "./tape.hpp"
 
+/*!
+ * This class represents a Turing machine.
+ * Each state is represented by its name (a string).
+ * Symbols 0/1 are represented as boolean values.
+ * The old state of the first added transition is the initial state.
+ */
 class Machine {
 	public:
 		enum class Direction { L, N, R };
