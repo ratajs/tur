@@ -4,6 +4,10 @@
 #include "./stateGenerator.hpp"
 #include "./machine.hpp"
 
+/*!
+ * This class generates machines without virtual tapes.
+ * It implements several algorithms which can be called subsequently to generate machines doing complex programs.
+ */
 class SingleTapeMachineFactory: public MachineFactory {
 	private:
 		std::wstring goHome(std::optional<std::wstring> returningState, std::optional<std::wstring> endState);

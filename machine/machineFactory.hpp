@@ -3,6 +3,10 @@
 #include "./stateGenerator.hpp"
 #include "./machine.hpp"
 
+/*!
+ * From this class inherit SingleTapeMachineFactory and MultiTapeMachineFactory.
+ * Public methods of this class are only for working with extra states (which are used as labels).
+ */
 class MachineFactory {
 	public:
 		static Machine compose(const std::vector<Machine> &machines);
@@ -31,5 +35,9 @@ class MachineFactory {
 class SingleTapeMachineFactory;
 class MultiTapeMachineFactory;
 
+/*!
+ * This concept is used for methods for generating machines either with or without virtual tapes.
+ * The type can either be a SingleTapeMachineFactory or MultiTapeMachineFactory.
+ */
 template<class T>
 	concept MachineFactory_MachineFactory = (std::same_as<T, SingleTapeMachineFactory> || std::same_as<T, MultiTapeMachineFactory>);

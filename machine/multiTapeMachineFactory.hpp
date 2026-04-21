@@ -4,6 +4,10 @@
 #include "./stateGenerator.hpp"
 #include "./machine.hpp"
 
+/*!
+ * This class generates machines with virtual tapes.
+ * It implements several algorithms which can be called subsequently to generate machines doing complex programs.
+ */
 class MultiTapeMachineFactory: public MachineFactory {
 	private:
 		size_t tapesCount;

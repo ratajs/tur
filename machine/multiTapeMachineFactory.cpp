@@ -2,6 +2,10 @@
 #include "./singleTapeMachineFactory.hpp"
 #include "../IO/unexpectedError.hpp"
 
+/*!
+ * The constructor of MultiTapeMachineFactory.
+ * \param tapesCount Number of virtual tapes (excluding the special zeroth tape).
+ */
 MultiTapeMachineFactory::MultiTapeMachineFactory(size_t tapesCount): tapesCount(tapesCount) {};
 
 /*!
