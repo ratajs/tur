@@ -86,7 +86,7 @@ class Expression {
 		virtual std::optional<Expression::TapeRange> getArrayAccesRange() const = 0;
 
 		/*!
-		 * If this virtual method is implemented and returns true, the tape it returns can be freely reused, it is not used anywhere else (unlike a variable band, which can be used anytime later).
+		 * If this virtual method is implemented and returns true, the tape it returns can be freely reused, it is not used anywhere else (unlike a variable tape, which can be used anytime later).
 		 * Returning true only makes sense if the expresion is of type TAPE_RANGE.
 		 * The default implementation returns false.
 		 * \return Whether the tape is temporary.

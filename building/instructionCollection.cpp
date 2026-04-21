@@ -131,7 +131,7 @@ size_t InstructionCollection::getTapesCount() const {
 
 /*!
  * Convert the tape index stored in the instruction to the final tape index for the machine generation.
- * 0 is now reserved for the special zeroth band, it starts with 1.
+ * 0 is now reserved for the special zeroth tape, it starts with 1.
  * \param The tape index stored in the instruction.
  * \return The ‘real’ tape index.
  */

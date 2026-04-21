@@ -997,7 +997,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compress(size_t outputTape) {
 	this->addTransition<false, false, Machine::Direction::R>({}, {});
 	this->addTransition<true, false, Machine::Direction::R>({}, {}); // Remove the end mark, stop on the symbol to the right, which is the first symbol of the tape
 
-	this->addTransition<false, false, Machine::Direction::N>(startState, this->generator.getCurrentState()); // Empty output, passed the end of the zeroth band
+	this->addTransition<false, false, Machine::Direction::N>(startState, this->generator.getCurrentState()); // Empty output, passed the end of the zeroth tape
 
 	return (*this);
 };
