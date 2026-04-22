@@ -64,7 +64,7 @@ Expression::Result CallExpression::build(InstructionBuilder &builder) const {
 
 	builder.addInstruction(std::make_unique<CallInstruction>(tape, this->machine));
 
-	return Expression::Result::create<Expression::Type::TAPE_RANGE>(tape, Expression::TapeRange(0, 1));
+	return Expression::Result::createTapeRange(tape, Expression::TapeRange(0, 1));
 };
 
 std::optional<Expression::TapeRange> CallExpression::getArrayAccesRange() const {

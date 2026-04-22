@@ -32,19 +32,9 @@ class Expression {
 		 * This union holds the result of an expresion.
 		 */
 		union Result {
-			template<Expression::Type type> requires (type==Expression::Type::CONSTANT)
-				static Expression::Result create(size_t);
-			template<Expression::Type type> requires (type==Expression::Type::TAPE_RANGE)
-				static Expression::Result create(size_t, Expression::TapeRange);
-			template<Expression::Type type> requires (type==Expression::Type::CONDITION)
-				static Expression::Result create(size_t, size_t);
-
-			template<>
-				Expression::Result create<Expression::Type::CONSTANT>(size_t value);
-			template<>
-				Expression::Result create<Expression::Type::TAPE_RANGE>(size_t tape, Expression::TapeRange range);
-			template<>
-				Expression::Result create<Expression::Type::CONDITION>(size_t trueLabel, size_t falseLabel);
+			static Expression::Result createConstant(size_t);
+			static Expression::Result createTapeRange(size_t, Expression::TapeRange);
+			static Expression::Result createCondition(size_t, size_t);
 
 			size_t value = 0, measuredTape;
 			std::pair<size_t, Expression::TapeRange> tapeAndRange;

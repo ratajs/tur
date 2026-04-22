@@ -5,42 +5,39 @@
  * Initialize the result of type CONSTANT.
  * \param value The value of the constant.
  */
-template<>
-	Expression::Result Expression::Result::create<Expression::Type::CONSTANT>(size_t value) {
-		Expression::Result result;
+Expression::Result Expression::Result::createConstant(size_t value) {
+	Expression::Result result;
 
-		result.value = value;
+	result.value = value;
 
-		return result;
-	};
+	return result;
+};
 
 /*!
 	* Initialize the result of type TAPE_RANGE.
  * \param tape The index of the returned tape.
  * \param range The range of the tape, this should be { 0, 1 } if unspecified explicitly.
  */
-template<>
-	Expression::Result Expression::Result::create<Expression::Type::TAPE_RANGE>(size_t tape, Expression::TapeRange range) {
-		Expression::Result result;
+Expression::Result Expression::Result::createTapeRange(size_t tape, Expression::TapeRange range) {
+	Expression::Result result;
 
-		result.tapeAndRange = { tape, range };
+	result.tapeAndRange = { tape, range };
 
-		return result;
-	};
+	return result;
+};
 
 /*!
  * Initialize the result of type CONDITION.
  * \param trueLabel The label whither the program will jump if the condition is evaluated as true.
  * \param falseLabel The label whither the program will jump if the condition is evaluated as false.
  */
-template<>
-	Expression::Result Expression::Result::create<Expression::Type::CONDITION>(size_t trueLabel, size_t falseLabel) {
-		Expression::Result result;
+Expression::Result Expression::Result::createCondition(size_t trueLabel, size_t falseLabel) {
+	Expression::Result result;
 
-		result.labels = { trueLabel, falseLabel };
+	result.labels = { trueLabel, falseLabel };
 
-		return result;
-	};
+	return result;
+};
 
 /*!
  * The default constructor constructs a range which only includes the first number.

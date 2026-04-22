@@ -254,7 +254,7 @@ Expression::Result BinaryExpression::buildCondition(InstructionBuilder &builder)
 				this->buildComparison(builder, trueLabel, falseLabel);
 	};
 
-	return Expression::Result::create<Expression::Type::CONDITION>(trueLabel, falseLabel);
+	return Expression::Result::createCondition(trueLabel, falseLabel);
 };
 
 /*!
@@ -434,7 +434,7 @@ Expression::Result BinaryExpression::build(InstructionBuilder &builder) const {
 	Expression::TapeRange range;
 
 	if(this->isConstant())
-		return Expression::Result::create<Expression::Type::CONSTANT>(this->computeConstant(this->expressionA->buildConstant(builder), this->expressionB->buildConstant(builder)));
+		return Expression::Result::createConstant(this->computeConstant(this->expressionA->buildConstant(builder), this->expressionB->buildConstant(builder)));
 
 	if(this->isCondition())
 		return this->buildCondition(builder);
@@ -464,7 +464,7 @@ Expression::Result BinaryExpression::build(InstructionBuilder &builder) const {
 
 	builder.addInstruction(std::make_unique<CallInstruction>(newTape, this->getMachine()));
 
-	return Expression::Result::create<Expression::Type::TAPE_RANGE>(newTape, Expression::TapeRange(0, 1));
+	return Expression::Result::createTapeRange(newTape, Expression::TapeRange(0, 1));
 };
 
 std::optional<Expression::TapeRange> BinaryExpression::getArrayAccesRange() const {

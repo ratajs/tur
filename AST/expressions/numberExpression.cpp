@@ -12,7 +12,7 @@ Expression::Type NumberExpression::getType() const {
 };
 
 Expression::Result NumberExpression::build(InstructionBuilder &builder) const {
-	return Expression::Result::create<Expression::Type::CONSTANT>(this->number);
+	return Expression::Result::createConstant(this->number);
 };
 
 std::optional<Expression::TapeRange> NumberExpression::getArrayAccesRange() const {

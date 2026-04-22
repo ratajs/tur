@@ -52,7 +52,7 @@ Expression::Type ArrayAccessExpression::getType() const {
 };
 
 Expression::Result ArrayAccessExpression::build(InstructionBuilder &builder) const {
-	return Expression::Result::create<Expression::Type::TAPE_RANGE>(this->expression->buildTape(builder).first, Expression::TapeRange(this->index0, this->index1));
+	return Expression::Result::createTapeRange(this->expression->buildTape(builder).first, Expression::TapeRange(this->index0, this->index1));
 };
 
 std::optional<std::reference_wrapper<const Variable>> ArrayAccessExpression::getVariable() const {

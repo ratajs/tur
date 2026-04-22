@@ -42,7 +42,7 @@ Expression::Result UnaryExpression::build(InstructionBuilder &builder) const {
 		case UnaryExpression::Type::NEG:
 			std::tie(trueLabel, falseLabel) = this->expression->buildCondition(builder);
 
-			return Expression::Result::create<Expression::Type::CONDITION>(falseLabel, trueLabel);
+			return Expression::Result::createCondition(falseLabel, trueLabel);
 
 		default:
 			std::unreachable();

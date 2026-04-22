@@ -12,7 +12,7 @@ Expression::Type VariableExpression::getType() const {
 };
 
 Expression::Result VariableExpression::build(InstructionBuilder &builder) const {
-	return Expression::Result::create<Expression::Type::TAPE_RANGE>(*this->variable.tape, Expression::TapeRange(0, 1));
+	return Expression::Result::createTapeRange(*this->variable.tape, Expression::TapeRange(0, 1));
 };
 
 std::optional<std::reference_wrapper<const Variable>> VariableExpression::getVariable() const {
