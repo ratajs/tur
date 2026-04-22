@@ -24,6 +24,9 @@ std::wstring SymbolError::getSimpleMessage() const {
 		case SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE:
 		case SymbolError::Type::INCLUDED_MACHINE_ERROR_READING:
 			return L"Unresolved include";
+
+		default:
+			std::unreachable();
 	};
 };
 
@@ -41,6 +44,9 @@ std::wstring SymbolError::getDetailedMessage() const {
 
 		case SymbolError::Type::INCLUDED_MACHINE_ERROR_READING:
 			return (L" (file "+Format::blue(this->searchedFileName)+L" could not be read)");
+
+		default:
+			std::unreachable();
 	};
 };
 
