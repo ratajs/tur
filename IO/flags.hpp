@@ -1,8 +1,14 @@
 #pragma once
 #include "../common.hpp"
 
+/*!
+ * This holds a collection of on/off command line options.
+ */
 class Flags {
 	public:
+		/*!
+		 * These are all on/off command line options.
+		 */
 		enum class Flag: int {
 			COMPILE = 1,
 			INSTRUCTIONS = 2,

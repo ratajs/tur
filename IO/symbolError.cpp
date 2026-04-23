@@ -3,15 +3,32 @@
 #include "./format.hpp"
 #include "./unexpectedError.hpp"
 
-SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocation): ErrorWithLocation(identifierLocation), type(type) {};
-
-SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocation, std::wstring searchedFileName): SymbolError(type, identifierLocation) {
-	if(type!=SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND && type!=SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE && type!=SymbolError::Type::INCLUDED_MACHINE_ERROR_READING)
-		throw UnexpectedError(L"Gotten searchedFileName argument for an error which is not file-related.");
-
-	this->searchedFileName = std::move(searchedFileName);
+/*!
+ * The constructor of SymbolError.
+ * \param type The type of the error.
+ * \param identifierLocation The location to print.
+ * \throw UnexpectedError If the type of the error needs a file path to print.
+ */
+SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocation): ErrorWithLocation(identifierLocation), type(type) {
+	if(type==SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND || type==SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE || type==SymbolError::Type::INCLUDED_MACHINE_ERROR_READING)
+		throw UnexpectedError(L"Not gotten searchedFileName argument for an error which is file-related.");
 };
 
+/*!
+ * The constructor of SymbolError, a variant which specifies a problematic file.
+ * \param type The type of the error.
+ * \param identifierLocation The location to print.
+ * \param searchedFileName The file which caused the error.
+ * \throw UnexpectedError If the type has nothing to do with a file.
+ */
+SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocation, std::wstring searchedFileName): ErrorWithLocation(identifierLocation), type(type), searchedFileName(std::move(searchedFileName)) {
+	if(type!=SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND && type!=SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE && type!=SymbolError::Type::INCLUDED_MACHINE_ERROR_READING)
+		throw UnexpectedError(L"Gotten searchedFileName argument for an error which is not file-related.");
+};
+
+/*!
+ * \return The beginning of the error message, only from the type.
+ */
 std::wstring SymbolError::getSimpleMessage() const {
 	switch(this->type) {
 		case SymbolError::Type::UNKNOWN_MACHINE:
@@ -30,6 +47,9 @@ std::wstring SymbolError::getSimpleMessage() const {
 	};
 };
 
+/*!
+ * \return The end of the error message, just before the location.
+ */
 std::wstring SymbolError::getDetailedMessage() const {
 	switch(this->type) {
 		case SymbolError::Type::UNKNOWN_MACHINE:

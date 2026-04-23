@@ -2,8 +2,16 @@
 #include "../parsing/location.hpp"
 #include "./format.hpp"
 
+/*!
+ * The constructor of TypeError.
+ * \param type The type of the error.
+ * \param expressionLocation The location to print.
+ */
 TypeError::TypeError(TypeError::Type type, const Location &expressionLocation): ErrorWithLocation(expressionLocation), type(type) {};
 
+/*!
+ * \return The beginning of the error message, only from the type.
+ */
 std::wstring TypeError::getSimpleMessage() const {
 	switch(this->type) {
 		case TypeError::Type::MULTIPLE_VARIABLES_WITH_ELLIPSIS_IN_A_DESTINATION_BUNDLE:

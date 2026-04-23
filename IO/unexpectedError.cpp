@@ -1,5 +1,9 @@
 #include "./unexpectedError.hpp"
 
+/*!
+ * The constructor of UnexpectedError.
+ * \param message The message.
+ */
 UnexpectedError::UnexpectedError(std::wstring message): message(std::move(message)) {};
 
 std::optional<std::wstring> UnexpectedError::getTitle() const {

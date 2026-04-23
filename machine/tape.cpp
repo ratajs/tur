@@ -229,6 +229,7 @@ std::wistream &operator >> (std::wistream &stream, Tape &tape) {
  * Characters for 0 and 1 are used.
  * Formatting sequences are used to highlight the current position.
  * \param stream The output stream.
+ * \return The same output stream.
  */
 std::wostream &operator << (std::wostream &stream, const Tape &tape) {
 	tape.print(stream, true);

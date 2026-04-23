@@ -2,6 +2,9 @@
 #include "../common.hpp"
 #include "./error.hpp"
 
+/*!
+ * This type of error represents something that should never happen, like a failed internal constraint.
+ */
 class UnexpectedError: public Error {
 	private:
 		std::wstring message;

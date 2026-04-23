@@ -3,8 +3,14 @@
 #include "./errorWithLocation.hpp"
 #include "../parsing/token.hpp"
 
+/*!
+ * This type of error represents a problem during the lexical analysis.
+ */
 class LexerError: public ErrorWithLocation {
 	public:
+		/*!
+		 * These are all types of LexerError.
+		 */
 		enum class Type {
 			UNEXPECTED_END, UNEXPECTED_CHARACTER, INVALID_MACHINE
 		};

@@ -3,8 +3,14 @@
 #include "./errorWithLocation.hpp"
 #include "../parsing/token.hpp"
 
+/*!
+ * This type of error represents a problem during the syntactic analysis.
+ */
 class ParseError: public ErrorWithLocation {
 	public:
+		/*!
+		 * These are all types of ParseError.
+		 */
 		enum class Type {
 			UNEXPECTED_TOKEN, STRAY_BREAK, STRAY_CONTINUE
 		};

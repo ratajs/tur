@@ -2,11 +2,24 @@
 #include "./unexpectedError.hpp"
 #include "./format.hpp"
 
+/*!
+ * The constructor of LexerError.
+ * \param type The type of the error.
+ * \param location The location to print.
+ * \throw UnexpectedError If the type of the error needs a character to print.
+ */
 LexerError::LexerError(LexerError::Type type, const Location &location): ErrorWithLocation(location), type(type) {
 	if(type==LexerError::Type::UNEXPECTED_CHARACTER)
 		throw UnexpectedError(L"Unexpected character lexer error constructed without the character argument.");
 };
 
+/*!
+ * The constructor of LexerError, a variant with character.
+ * \param type The type of the error.
+ * \param character A character which caused the problem.
+ * \param location The location to print.
+ * \throw UnexpectedError If the type of the error has nothing to do with a character.
+ */
 LexerError::LexerError(LexerError::Type type, wchar_t character, const Location &location): ErrorWithLocation(location), type(type), character(character) {
 	if(type!=LexerError::Type::UNEXPECTED_CHARACTER)
 		throw UnexpectedError(L"Character argument provided for a different error that unexpected character.");

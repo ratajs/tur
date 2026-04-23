@@ -1,6 +1,11 @@
 #include "./parseError.hpp"
 #include "./format.hpp"
 
+/*!
+ * The constructor of ParseError.
+ * \param type The type of the error.
+ * \param token The token where the error occurred, used for printing location (and saying what type of token was unexpected).
+ */
 ParseError::ParseError(ParseError::Type type, std::vector<Token>::const_iterator token): ErrorWithLocation(token->getLocation()), type(type), tokenType(token->getType()) {};
 
 std::optional<std::wstring> ParseError::getTitle() const {

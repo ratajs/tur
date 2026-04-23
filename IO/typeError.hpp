@@ -3,8 +3,15 @@
 #include "./errorWithLocation.hpp"
 #include "../parsing/location.hpp"
 
+/*!
+ * This type of error means that the AST could not be constructed even though no parse error has been found.
+ * All types are connected with expressions.
+ */
 class TypeError: public ErrorWithLocation {
 	public:
+		/*!
+		 * These are all types of TypeError.
+		 */
 		enum class Type {
 			MULTIPLE_VARIABLES_WITH_ELLIPSIS_IN_A_DESTINATION_BUNDLE,
 			CONDITION_IN_A_SOURCE_BUNDLE,

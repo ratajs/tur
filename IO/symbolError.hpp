@@ -3,8 +3,14 @@
 #include "./errorWithLocation.hpp"
 #include "../parsing/location.hpp"
 
+/*!
+ * This type of error represents a problem with adding a machine to the symbol table.
+ */
 class SymbolError: public ErrorWithLocation {
 	public:
+		/*!
+		 * These are all types of SymbolError.
+		 */
 		enum class Type {
 			UNKNOWN_MACHINE,
 			DUPLICATE_MACHINE,
