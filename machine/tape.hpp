@@ -1,6 +1,10 @@
 #pragma once
 #include "../common.hpp"
 
+/*!
+ * This class represents the tape of a Turing machine.
+ * Apart from the content (0/1 symbols), it also stores the current position.
+ */
 class Tape {
 	private:
 		size_t position = 0;
