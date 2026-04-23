@@ -1,6 +1,0 @@
-require g;
-
-output = 0;
-while g(input..., output)!=0:
-	output++;
-endwhile;

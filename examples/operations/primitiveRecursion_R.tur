@@ -1,0 +1,46 @@
+# Requires: function g, function h
+# Input: any preceding input, number y
+# f(input.., 0) = g(input...)
+# f(input..., y) = h(input..., y − 1, f(input..., y − 1)) for y > 0
+# Output: f(input..., y)
+
+require g;
+require h;
+
+rotateRight = {
+	A11LA
+	A00LB
+	B01RC
+	C00RD
+	D11RD
+	D00RE
+	E11RD
+	E00LF
+	F00LF
+	F10LG
+	G00LH
+	H11LH
+	H00LI
+	I11LH
+	I00RJ
+	J00R_
+	G11LK
+	K11LK
+	K00LL
+	L11LK
+	L00RM
+	M01RD
+};
+
+if (ρ input) > 1:
+	rotateRight(input...); # Just for the order of parameters to match the definition.
+endif;
+
+[limit, input...] = input;
+
+output = g(input...);
+y = 0;
+while y < limit:
+	output = h(input..., y, output);
+	y++;
+endwhile;

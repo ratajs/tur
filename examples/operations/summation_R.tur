@@ -1,5 +1,8 @@
+# Requires: function g
+# Input: any preceding input, number x
+# Output: sum of g(input..., x)[0] for all y < x
+
 require g;
-require h;
 
 rotateRight = {
 	A11LA
@@ -30,11 +33,10 @@ if (ρ input) > 1:
 	rotateRight(input...); # Just for the order of parameters to match the definition.
 endif;
 
-[limit, input...] = input;
+[y, input...] = input;
 
-output = g(input...);
-y = 0;
-while y < limit:
-	output = h(input..., output);
-	y++;
+output = 0;
+while y > 0:
+	y−−;
+	output = output + g(input..., y);
 endwhile;

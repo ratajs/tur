@@ -1,0 +1,10 @@
+# Requires: function g
+# Input: any input
+# Output: miminum y such that g(input..., y)[0] is 0 and for all z < y the machine returns a valid number; does not halt if there is no such y
+
+require g;
+
+output = 0;
+while g(input..., output)!=0:
+	output++;
+endwhile;

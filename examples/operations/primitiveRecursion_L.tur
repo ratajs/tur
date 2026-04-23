@@ -1,0 +1,17 @@
+# Requires: function g, function h
+# Input: number y, any following input
+# f(0, input...) = g(input...)
+# f(y, input...) = h(y − 1, f(y − 1, input...), input...) for y > 0
+# Output: f(y, input...)
+
+require g;
+require h;
+
+[limit, input...] = input;
+
+output = g(input...);
+y = 0;
+while y < limit:
+	output = h(y, output, input...);
+	y++;
+endwhile;
