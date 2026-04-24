@@ -1,3 +1,6 @@
+# Input: two numbers
+# Output: their greatest common divisor; 0 if both numbers are 0
+
 [a, b] = input;
 while b > 0:
 	B = a mod b;

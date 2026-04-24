@@ -1,6 +1,6 @@
-# Input: Edges of a directed graph.
+# Input: edges of a directed graph
 # The initial vertex is 0.
-# Output: Pairs of vertex and its distance from the initial vertex for each vertices.
+# Output: pairs of ‘vertex and its distance from the initial vertex’ for each vertices
 
 visited = [0];
 queue = [0, 0]; # Vertex 0 and a mark for end of layer

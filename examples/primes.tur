@@ -1,3 +1,6 @@
+# Input: one number n
+# Output: all prime numbers less than n
+
 bound = input;
 
 states = [];

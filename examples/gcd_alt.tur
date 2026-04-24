@@ -1,3 +1,8 @@
+# Input: two numbers
+# Output: their greatest common divisor; 0 if both numbers are 0
+
+# The machine will be huge because of two-layered inclusion of tur-compiled machines.
+
 include primeDecomposition;
 
 [a, b] = input...;

@@ -1,4 +1,5 @@
-# Output is 1 if the input is in the form w ⋅ w, where w is a list of numbers, otherwise 0.
+# Input: any valid input
+# Output: 1 if the input are two concatenated identical lists of numbers (e.g. 1 2 3 1 2 3), otherwise 0
 
 c = ρ input;
 

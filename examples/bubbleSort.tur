@@ -1,3 +1,6 @@
+# Input: any valid list of numbers
+# Output: the sorted input list
+
 decLast = {
 	A11RA
 	A00RB

@@ -1,1 +1,4 @@
+# Input: any valid input
+# Output: exactly the input
+
 output = input...;

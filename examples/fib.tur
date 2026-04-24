@@ -1,3 +1,6 @@
+# Input: one number n
+# Output: n first Fibonacci numbers (starting with 1 1)
+
 addFirstTwo = { A10RB B10RC B00R_ C11RC C01LD D11LD D00R_ };
 
 bound = input;
