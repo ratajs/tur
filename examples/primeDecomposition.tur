@@ -1,4 +1,4 @@
-# Input: one number n
+# Input: one positive integer n
 # Output: prime decomposition of n
 
 # The machine will be quite big because of inclusion of a tur-compiled machine.
