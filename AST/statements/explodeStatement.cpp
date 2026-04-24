@@ -36,7 +36,7 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 	this->destination.forEachVariable(
 		[this, &builder, sourceTape, &sourceRange, &index, &sourceVariablePosition](const Variable &variable, bool hasEllipsis) -> void {
 			if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) // Source variable, no copying
-				sourceVariablePosition = std::pair(index, hasEllipsis ? std::nullopt : std::optional(index + 1));
+				sourceVariablePosition = std::pair(sourceRange.index0 + index, hasEllipsis ? std::nullopt : std::optional(sourceRange.index0 + index + 1));
 			else {
 				if(hasEllipsis)
 					builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *variable.tape, sourceRange.index0 + index, std::nullopt, 0));
