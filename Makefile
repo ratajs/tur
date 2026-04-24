@@ -104,6 +104,7 @@ EXAMPLES = \
 	examples/simpleTests/arithmeticOperations.tm \
 	examples/simpleTests/implosion.tm \
 	examples/simpleTests/explosion.tm \
+	examples/simpleTests/explosionWithSourceVariable.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/while.tm \

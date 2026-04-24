@@ -1,0 +1,7 @@
+[input...] = input;
+[a, input...] = input;
+[output, input, b...] = input[1:];
+b[] = 0;
+[b] = b;
+
+output[] = [a..., b..., input...];
