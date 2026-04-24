@@ -14,6 +14,7 @@
 ExplodeStatement::ExplodeStatement(std::unique_ptr<Expression> source, DestinationBundle destination, Location bundleLocation): source(std::move(source)), destination(std::move(destination)) {
 	if(this->source->isConstant())
 		throw TypeError(TypeError::Type::CONSTANT_IN_AN_EXPLOSION_STATEMENT, this->source->location);
+
 	if(this->source->isCondition())
 		throw TypeError(TypeError::Type::CONDITION_IN_AN_EXPLOSION_STATEMENT, this->source->location);
 

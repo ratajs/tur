@@ -92,11 +92,11 @@ void Program::build(InstructionBuilder &builder) {
 			variable->tape = builder.createTape();
 		}
 	);
-	builder.addInstruction(std::make_unique<DecompressInstruction>(*(this->variables.at(L"input")->tape)));
+	builder.addInstruction(std::make_unique<DecompressInstruction>(*this->variables.at(L"input")->tape));
 	std::ranges::for_each(this->statements, [&builder](std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::COME_FROM));
-	builder.addInstruction(std::make_unique<CompressInstruction>(*(this->variables.at(L"output")->tape)));
+	builder.addInstruction(std::make_unique<CompressInstruction>(*this->variables.at(L"output")->tape));
 };
 
 /*!
