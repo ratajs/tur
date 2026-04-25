@@ -2,20 +2,40 @@
 #include "../IO/lexerError.hpp"
 #include "../IO/generalWarning.hpp"
 
+/*!
+ * The constructor of Lexer.
+ * \param text The source code as string.
+ * \param warningIt The destination where to append warnings, if necessary.
+ */
 Lexer::Lexer(const std::wstring &text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): it(text.begin()), endIt(text.end()), warningIt(warningIt) {};
 
+/*!
+ * \return Whether the whole input has already been analyzed.
+ */
 bool Lexer::isAtEnd() const {
 	return (this->it==this->endIt);
 };
 
+/*!
+ * Read the character, do not change the current position.
+ * \return The character at the current position.
+ */
 wchar_t Lexer::getCharacter() const {
 	return (*this->it);
 };
 
+/*!
+ * Read the character and move one character further.
+ * \return The current character.
+ */
 wchar_t Lexer::readCharacter() {
 	return (*(this->it++));
 };
 
+/*!
+ * Read digits and interpret them as a decimal number.
+ * \return The read number.
+ */
 size_t Lexer::readNumber() {
 	size_t value = 0;
 
@@ -25,6 +45,10 @@ size_t Lexer::readNumber() {
 	return value;
 };
 
+/*!
+ * Skip all characters until the end of a line.
+ * The current position will change to the first character of the next line (or the end if there is no next line).
+ */
 void Lexer::skipLine() {
 	while(!this->isAtEnd()) {
 		if(this->readCharacter()=='\n') {
@@ -35,6 +59,9 @@ void Lexer::skipLine() {
 	};
 };
 
+/*!
+ * \return Whether the character is considered a special character (those are characters that cannot be part of an identifier).
+ */
 bool Lexer::isCharacterSpecial() const {
 	switch(this->getCharacter()) {
 		case ' ':
@@ -80,6 +107,11 @@ bool Lexer::isCharacterSpecial() const {
 	};
 };
 
+/*!
+ * Read until a special character or the end of the input is detected.
+ * Interpret the string either as an identifier or a keyword.
+ * \return The identifier as string or a keyword as Token::Type.
+ */
 std::variant<std::wstring, Token::Type> Lexer::readIdentifierOrKeyword() {
 	std::wstring value;
 
@@ -149,6 +181,13 @@ std::variant<std::wstring, Token::Type> Lexer::readIdentifierOrKeyword() {
 	return value;
 };
 
+/*!
+ * Read a Turing machine definition.
+ * The opening brace should be at the current position.
+ * The current position will be just after the closing brace.
+ * \return The machine.
+ * \throw LexerError If the machine is invalid or is not properly closed by a closing brace.
+ */
 Machine Lexer::readMachine() {
 	size_t lineNumber;
 	std::wstring machineString;
@@ -180,6 +219,13 @@ Machine Lexer::readMachine() {
 	return machine;
 };
 
+/*!
+ * Detect which token type starts at the current position (after possible whitespaces/comments).
+ * The token is then read and added to this->tokens.
+ * \retval true A token is read.
+ * \retfal false The end of input is reached (no END is added here).
+ * \throw LexerError If the input is invalid and cannot be analyzed at this position.
+ */
 bool Lexer::readToken() {
 	size_t number, beginningLineNumber;
 	std::wstring::const_iterator tokenStart;
@@ -473,6 +519,13 @@ bool Lexer::readToken() {
 	};
 };
 
+/*!
+ * Analyze the whole input into tokens.
+ * This should not be called twice, the iterator is not reset.
+ * The vector of tokens starts with BEGINNING and ends with END.
+ * \return The vector of tokens.
+ * \throw LexerError If the input is invalid and cannot be analyzed.
+ */
 std::vector<Token> Lexer::analyze() {
 	if(this->isAtEnd()) {
 		this->warningIt = std::make_unique<GeneralWarning>(L"The source is empty.");

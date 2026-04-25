@@ -3,6 +3,10 @@
 #include "./token.hpp"
 #include "../IO/warning.hpp"
 
+/*!
+ * This is the lexical analyzer.
+ * It receives the source text and analyzes it into a vector of tokens.
+ */
 class Lexer {
 	private:
 		size_t lineNumber = 1;
