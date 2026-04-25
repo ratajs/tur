@@ -2,7 +2,7 @@
 #include "../IO/unexpectedError.hpp"
 
 /*!
- * The constructor for CompareInstruction.
+ * The constructor of CompareInstruction.
  * \param argumentA The first argument for the comparison. A pair means the tape number and index. A single numbers means the constant of this value.
  * \param argumentB The second argument for the comparison. A pair means the tape number and index. A single numbers means the constant of this value.
  * \param trueLabel The label for the positive outcome.

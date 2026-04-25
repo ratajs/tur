@@ -2,7 +2,7 @@
 #include "../IO/unexpectedError.hpp"
 
 /*!
- * The constructor for CallInstruction.
+ * The constructor of CallInstruction.
  * \param tape The tape on which the machine shall be simulated.
  * \param machine The Turing machine to simulate.
  */

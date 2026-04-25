@@ -3,7 +3,7 @@
 #include "../IO/unexpectedError.hpp"
 
 /*!
- * The constructor for CopyInstruction.
+ * The constructor of CopyInstruction.
  * \param source The source tape.
  * \param destination The destination tape. It must be a different tape from the source tape.
  * \param sourceIndex0 The index where the source start (inclusive).

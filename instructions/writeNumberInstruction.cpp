@@ -2,7 +2,7 @@
 #include "../IO/unexpectedError.hpp"
 
 /*!
- * The constructor for WriteNumberInstruction.
+ * The constructor of WriteNumberInstruction.
  * \param tape The destination tape.
  * \param index The destination index, {} (std::nullopt) if the number should be appended to the tape.
  * \param number The constant to write on the tape.
