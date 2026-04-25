@@ -1,8 +1,12 @@
 # tur
 
-tur compiles a description of a Turing machine given in the source file (conventionaly named with a ‘tur’ suffix) into an actual Turing machine, i.e. the tuples describing the machine’s transfer function and stores it in the machine output file (conventionaly named with a ‘tm’ suffix).
+tur compiles a description of a Turing machine given in the source file (conventionaly named with a ‘tur’ suffix) into an actual Turing machine,
+i.e. the tuples describing the machine’s transfer function and stores it in the machine output file (conventionaly named with a ‘tm’ suffix).
 
 The source language is described below. It is expressive enough to describe compositions of complex machines from simpler machines.
+The input and output is encoded on the tape with unary notation (sometimes called Tally Notation). Number 0 is encoded as 1, number 1 as 11, number 2 as 111 etc. Multiple numbers are separated with a single symbol 0. The blank symbol is also 0.
+An empty tape is valid, it can be interpreted as an empty list. The machine should start at the beginning of the tape content (the first symbol 1 if the tape is not empty) and when it halts, the position should also be at the beginning;
+otherwise the output is considered invalid. Included machines must also use this convention.
 
 ## Building and Installation
 
