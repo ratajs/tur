@@ -11,6 +11,10 @@
 #include "../IO/includeResolver.hpp"
 #include "../IO/warning.hpp"
 
+/*!
+ * This is the syntactic (and semantic) analyzer.
+ * It receives a vector of tokens, performs LL(1) analyses and constructs the AST (abstract syntax tree).
+ */
 class Parser {
 	private:
 		bool isInBranch = false, isInLoop = false;

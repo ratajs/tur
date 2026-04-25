@@ -22,16 +22,34 @@
 #include "../IO/generalWarning.hpp"
 #include "../IO/format.hpp"
 
+/*!
+ * The constructor of Parser.
+ * \param token The vector of tokens from the lexical analysis of the input.
+ * \param includeResolver An instance of IncludeResolver to use for resolving include and require statements.
+ * \param warningIt The destination where to append warnings, if necessary.
+ */
 Parser::Parser(std::vector<Token> tokens, IncludeResolver includeResolver, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): it(tokens.begin()), warningIt(warningIt), includeResolver(std::move(includeResolver)) {};
 
+/*!
+ * \return The type of the next (current) token.
+ */
 Token::Type Parser::getNextTokenType() const {
 	return this->it->getType();
 };
 
+/*!
+ * Read the current token and increment the token iterator.
+ * \return The current token.
+ */
 const Token &Parser::readToken() {
 	return (*(this->it++));
 };
 
+/*!
+ * Expect a number, throw UNEXPECTED_TOKEN if it is not a number, increment the token iterator.
+ * \return A value of the current token, if it is a NUMBER.
+ * \throw ParseError If it is not a NUMBER.
+ */
 size_t Parser::readNumberToken() {
 	if(this->getNextTokenType()!=Token::Type::NUMBER)
 		throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
@@ -39,6 +57,11 @@ size_t Parser::readNumberToken() {
 	return this->readToken().getNumberValue();
 };
 
+/*!
+ * Expect an identifier, throw UNEXPECTED_TOKEN if it is not an identifier, increment the token iterator.
+ * \return A value of the current token, if it is an IDENTIFIER.
+ * \throw ParseError If it is not an IDENTIFIER.
+ */
 const std::wstring &Parser::readIdentifierToken() {
 	if(this->getNextTokenType()!=Token::Type::IDENTIFIER)
 		throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
@@ -46,6 +69,11 @@ const std::wstring &Parser::readIdentifierToken() {
 	return this->readToken().getIdentifierValue();
 };
 
+/*!
+ * Expect a machine, throw UNEXPECTED_TOKEN if it is not a machine, increment the token iterator.
+ * \return A value of the current token, if it is an MACHINE.
+ * \throw ParseError If it is not an MACHINE.
+ */
 const Machine &Parser::readMachineToken() {
 	if(this->getNextTokenType()!=Token::Type::MACHINE)
 		throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
@@ -53,6 +81,15 @@ const Machine &Parser::readMachineToken() {
 	return this->readToken().getMachineValue();
 };
 
+/*!
+ * Expect some number of token types, starting from the current position.
+ * If one of the tokens is not what is expected, throw UNEXPECTED_TOKEN.
+ * The arguments can be either references to capture a token values (see T) or a Token::Type to assert a specific type without capturing (used for valueless types).
+ * This is the variant without capturing with the first argument.
+ * \tparam T size_t& for NUMBER, std::wstring& for IDENTIFIER, Machine& for MACHINE, Token::Type for any type (especially valueless).
+ * \param type The first expected token.
+ * \param rest The remaining expected tokens.
+ */
 template<Token_TypeOrValue... T>
 	void Parser::expect(Token::Type type, T &&... rest) {
 		if(this->getNextTokenType()!=type)
@@ -62,26 +99,59 @@ template<Token_TypeOrValue... T>
 		this->expect(std::forward<T>(rest)...);
 	};
 
+/*!
+ * Expect some number of token types, starting from the current position.
+ * If one of the tokens is not what is expected, throw UNEXPECTED_TOKEN.
+ * The arguments can be either references to capture a token values (see T) or a Token::Type to assert a specific type without capturing (used for valueless types).
+ * This is the variant for capturing a number with the first argument.
+ * \tparam T size_t& for NUMBER, std::wstring& for IDENTIFIER, Machine& for MACHINE, Token::Type for any type (especially valueless).
+ * \param type The first expected token.
+ * \param rest The remaining expected tokens.
+ */
 template<Token_TypeOrValue... T>
 	void Parser::expect(size_t &number, T &&... rest) {
 		number = this->readNumberToken();
 		this->expect(std::forward<T>(rest)...);
 	};
 
+/*!
+ * Expect some number of token types, starting from the current position.
+ * If one of the tokens is not what is expected, throw UNEXPECTED_TOKEN.
+ * The arguments can be either references to capture a token values (see T) or a Token::Type to assert a specific type without capturing (used for valueless types).
+ * This is the variant for capturing an identifier with the first argument.
+ * \tparam T size_t& for NUMBER, std::wstring& for IDENTIFIER, Machine& for MACHINE, Token::Type for any type (especially valueless).
+ * \param type The first expected token.
+ * \param rest The remaining expected tokens.
+ */
 template<Token_TypeOrValue... T>
 	void Parser::expect(std::wstring &identifier, T &&... rest) {
 		identifier = this->readIdentifierToken();
 		this->expect(std::forward<T>(rest)...);
 	};
 
+/*!
+ * Expect some number of token types, starting from the current position.
+ * If one of the tokens is not what is expected, throw UNEXPECTED_TOKEN.
+ * The arguments can be either references to capture a token values (see T) or a Token::Type to assert a specific type without capturing (used for valueless types).
+ * This is the variant for capturing a machine with the first argument.
+ * \tparam T size_t& for NUMBER, std::wstring& for IDENTIFIER, Machine& for MACHINE, Token::Type for any type (especially valueless).
+ * \param type The first expected token.
+ * \param rest The remaining expected tokens.
+ */
 template<Token_TypeOrValue... T>
 	void Parser::expect(Machine &machine, T &&... rest) {
 		machine = this->readMachineToken();
 		this->expect(std::forward<T>(rest)...);
 	};
 
+/*!
+ * An empty variant of expect() as a base case for the templated variants above.
+ */
 void Parser::expect() {};
 
+/*!
+ * \return The location of the token before the current one.
+ */
 const Location &Parser::getLastTokenLocation() const {
 	return std::prev(this->it)->getLocation();
 };
@@ -1069,21 +1139,6 @@ std::unique_ptr<Statement> Parser::parseLoopStatement() {
 	return std::make_unique<LoopStatement>(std::move(body));
 };
 
-Parser &Parser::parse() {
-	this->expect(Token::Type::BEGINNING);
-	this->parseProgram();
-	this->expect(Token::Type::END);
-
-	if(this->includeResolver.isRequiredMachineAvailable())
-		this->warningIt = std::make_unique<GeneralWarning>(L"Not all provided machines have been used by require statements.");
-
-	return (*this);
-};
-
-Program Parser::extractProgram() {
-	return std::move(this->program);
-};
-
 void Parser::parseIncludeStatement() {
 	std::wstring machineName;
 
@@ -1102,4 +1157,34 @@ void Parser::parseRequireStatement() {
 
 	if(this->isInBranch || this->isInLoop)
 		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" required inside an if branch or a while loop. Machines are always visible globally after definition.");
+};
+
+/*!
+ * Performs the syntactic and semantic analysis.
+ * The AST is stored and can be retrieved by extractProgram().
+ * Warnings are appended using the iterator provided to the constructor.
+ * \return This instance.
+ * \throw ParseError If the LL(1) analysis fails (UNEXPECTED_TOKEN) or if a break or continue statement is outside a loop (STRAY_BREAK, STRAY_CONTINUE).
+ * \throw SymbolError If the symbol table (the Program class) detected an error (unknown or duplicate machine) or IncludeResolver cannot resolve an include.
+ * \throw GeneralError If the IncludeResolver cannot read one of the provided machine.
+ * \throw TypeError If the AST cannot be constructed because of properties/incompatibility of expressions.
+ */
+Parser &Parser::parse() {
+	this->expect(Token::Type::BEGINNING);
+	this->parseProgram();
+	this->expect(Token::Type::END);
+
+	if(this->includeResolver.isRequiredMachineAvailable())
+		this->warningIt = std::make_unique<GeneralWarning>(L"Not all provided machines have been used by require statements.");
+
+	return (*this);
+};
+
+/*!
+ * Retrieve the AST.
+ * The AST will no longer be in the parser.
+ * \return The root of the AST (a unique pointer to an instance of Program).
+ */
+Program Parser::extractProgram() {
+	return std::move(this->program);
 };
