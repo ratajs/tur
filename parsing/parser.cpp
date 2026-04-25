@@ -1183,7 +1183,7 @@ Parser &Parser::parse() {
 /*!
  * Retrieve the AST.
  * The AST will no longer be in the parser.
- * \return The root of the AST (a unique pointer to an instance of Program).
+ * \return The root of the AST (an instance of Program).
  */
 Program Parser::extractProgram() {
 	return std::move(this->program);
