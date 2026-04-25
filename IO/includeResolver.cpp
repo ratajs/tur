@@ -24,6 +24,7 @@ Machine IncludeResolver::include(const std::wstring &name, Location location) co
 	std::wstring text;
 	std::filesystem::path fileName;
 	std::wifstream ifs;
+	Machine machine;
 
 	fileName = (basePath / std::filesystem::path(name+this->fileSuffix));
 
@@ -38,11 +39,10 @@ Machine IncludeResolver::include(const std::wstring &name, Location location) co
 	if(!ifs)
 		throw SymbolError(SymbolError::Type::INCLUDED_MACHINE_ERROR_READING, location, fileName.wstring());
 
-	std::getline(ifs, text, L'\0');
+	if(!(ifs >> machine))
+		throw SymbolError(SymbolError::Type::INCLUDED_MACHINE_INVALID_MACHINE, location, fileName.wstring());
 
-	ifs.close();
-
-	return { text }; //FIXME what if it is invalid?
+	return machine;
 };
 
 /*!
@@ -63,6 +63,7 @@ Machine IncludeResolver::require() {
 	std::wstring text;
 	std::filesystem::path fileName;
 	std::wifstream ifs;
+	Machine machine;
 
 	if(!this->isRequiredMachineAvailable())
 		throw GeneralError(L"More require statements than provided machines.");
@@ -80,9 +81,8 @@ Machine IncludeResolver::require() {
 	if(!ifs)
 		throw GeneralError(L"Required machine file "+Format::blue(fileName.wstring())+L" could not be read.");
 
-	std::getline(ifs, text, L'\0');
+	if(!(ifs >> machine))
+		throw GeneralError(L"Required machine file "+Format::blue(fileName.wstring())+L" is not a valid machine file.");
 
-	ifs.close();
-
-	return { text }; //FIXME what if it is invalid?
+	return machine;
 };

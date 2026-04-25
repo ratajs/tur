@@ -10,7 +10,7 @@
  * \throw UnexpectedError If the type of the error needs a file path to print.
  */
 SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocation): ErrorWithLocation(identifierLocation), type(type) {
-	if(type==SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND || type==SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE || type==SymbolError::Type::INCLUDED_MACHINE_ERROR_READING)
+	if(type==SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND || type==SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE || type==SymbolError::Type::INCLUDED_MACHINE_ERROR_READING || type==SymbolError::Type::INCLUDED_MACHINE_INVALID_MACHINE)
 		throw UnexpectedError(L"Not gotten searchedFileName argument for an error which is file-related.");
 };
 
@@ -22,7 +22,7 @@ SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocat
  * \throw UnexpectedError If the type has nothing to do with a file.
  */
 SymbolError::SymbolError(SymbolError::Type type, const Location &identifierLocation, std::wstring searchedFileName): ErrorWithLocation(identifierLocation), type(type), searchedFileName(std::move(searchedFileName)) {
-	if(type!=SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND && type!=SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE && type!=SymbolError::Type::INCLUDED_MACHINE_ERROR_READING)
+	if(type!=SymbolError::Type::INCLUDED_MACHINE_FILE_NOT_FOUND && type!=SymbolError::Type::INCLUDED_MACHINE_NOT_A_REGULAR_FILE && type!=SymbolError::Type::INCLUDED_MACHINE_ERROR_READING && type!=SymbolError::Type::INCLUDED_MACHINE_INVALID_MACHINE)
 		throw UnexpectedError(L"Gotten searchedFileName argument for an error which is not file-related.");
 };
 
@@ -64,6 +64,9 @@ std::wstring SymbolError::getDetailedMessage() const {
 
 		case SymbolError::Type::INCLUDED_MACHINE_ERROR_READING:
 			return (L" (file "+Format::blue(this->searchedFileName)+L" could not be read)");
+
+		case SymbolError::Type::INCLUDED_MACHINE_INVALID_MACHINE:
+			return (L" (file "+Format::blue(this->searchedFileName)+L" is not a valid machine file)");
 
 		default:
 			std::unreachable();
