@@ -294,11 +294,13 @@ bool Lexer::readToken() {
 		case '.':
 			this->readCharacter();
 
+			// Two other dots have to follow.
+
 			if(this->isAtEnd())
 				throw LexerError(LexerError::Type::UNEXPECTED_END, { { this->it, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 
 			if(this->getCharacter()!='.')
-				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, '.', { { tokenStart, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
+				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, this->getCharacter(), { { tokenStart, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 			else
 				this->readCharacter();
 
@@ -306,7 +308,7 @@ bool Lexer::readToken() {
 				throw LexerError(LexerError::Type::UNEXPECTED_END, { { this->it, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 
 			if(this->getCharacter()!='.')
-				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, '.', { { tokenStart, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
+				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, this->getCharacter(), { { tokenStart, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 			else
 				this->readCharacter();
 

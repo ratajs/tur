@@ -37,7 +37,7 @@ std::wstring LexerError::getMessage() const {
 		case LexerError::Type::UNEXPECTED_CHARACTER:
 			return (
 				L"Unexpected character "+
-				Format::blue(std::wstring { this->character })+ //TODO Do not just print it if it’s e. g. newline
+				Format::blue(std::wstring { this->character })+ //TODO Do not just print it if it’s e.g. newline
 				L" "+this->printLocation()
 			);
 
