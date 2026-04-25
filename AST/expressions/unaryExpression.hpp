@@ -11,7 +11,7 @@ class UnaryExpression: public Expression {
 	public:
 		/*!
 		 * These are the supported unary operators:
-		 * NEG: A logical operator inverting the logical outcome.
+		 * - NEG: A logical operator inverting the logical outcome.
 		 */
 		enum class Type {
 			NEG

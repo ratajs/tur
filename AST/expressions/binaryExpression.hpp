@@ -12,14 +12,14 @@ class BinaryExpression: public Expression {
 	public:
 		/*!
 		 * These are the supported binary operators:
-		 * PLUS: Addition.
-		 * MINUS: Subtraction.
-		 * MUL: Multiplication.
-		 * DIV: Integer division (undefined behavior for division by zero).
-		 * MOD: Division remainder (undefined behavior for division by zero).
-		 * MIN: Minimum of two values.
-		 * MAX: Maximum of two values.
-		 * EQ, NE, LT, LTE, GT, GTE: Equality and inequalities.
+		 * - PLUS: Addition.
+		 * - MINUS: Subtraction.
+		 * - MUL: Multiplication.
+		 * - DIV: Integer division (undefined behavior for division by zero).
+		 * - MOD: Division remainder (undefined behavior for division by zero).
+		 * - MIN: Minimum of two values.
+		 * - MAX: Maximum of two values.
+		 * - EQ, NE, LT, LTE, GT, GTE: Equality and inequalities.
 		 */
 		enum class Type {
 			PLUS, MINUS, MUL, DIV, MOD, MIN, MAX, EQ, NE, LTE, LT, GTE, GT, AND, OR, XOR
