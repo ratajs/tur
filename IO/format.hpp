@@ -1,6 +1,9 @@
 #pragma once
 #include "../common.hpp"
 
+/*!
+ * These are helper functions for formating strings using escape sequences.
+ */
 namespace Format {
 	std::wstring red(std::wstring string);
 	std::wstring yellow(std::wstring string);
