@@ -3,6 +3,9 @@
 #include "../machine/machine.hpp"
 #include "../parsing/location.hpp"
 
+/*!
+ * This class is used by Parser to resolve include and require statements.
+ */
 class IncludeResolver {
 	private:
 		std::wstring fileSuffix;
