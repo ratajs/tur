@@ -300,7 +300,7 @@ bool Lexer::readToken() {
 				throw LexerError(LexerError::Type::UNEXPECTED_END, { { this->it, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 
 			if(this->getCharacter()!='.')
-				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, this->getCharacter(), { { tokenStart, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
+				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, this->getCharacter(), { { this->it, std::next(this->it) }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 			else
 				this->readCharacter();
 
@@ -308,7 +308,7 @@ bool Lexer::readToken() {
 				throw LexerError(LexerError::Type::UNEXPECTED_END, { { this->it, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 
 			if(this->getCharacter()!='.')
-				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, this->getCharacter(), { { tokenStart, this->it }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
+				throw LexerError(LexerError::Type::UNEXPECTED_CHARACTER, this->getCharacter(), { { this->it, std::next(this->it) }, this->lineNumber, this->tokens.front().getLocation().getWholeSource() });
 			else
 				this->readCharacter();
 

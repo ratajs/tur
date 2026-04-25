@@ -25,6 +25,25 @@ LexerError::LexerError(LexerError::Type type, wchar_t character, const Location 
 		throw UnexpectedError(L"Character argument provided for a different error that unexpected character.");
 };
 
+/*!
+ * Get a string description of a given character.
+ * Noramlly just the character, but descriptions easier to interpret are given to whitespace characters.
+ * \param character The character to describe.
+ * \return The describing string.
+ */
+std::wstring LexerError::getCharacterDescription(wchar_t character) const {
+	if(character==' ')
+		return L"space";
+
+	if(character=='\t')
+		return L"tabulator";
+
+	if(character=='\n')
+		return L"new line";
+
+	return { character };
+};
+
 std::optional<std::wstring> LexerError::getTitle() const {
 	return L"Lexer";
 };
@@ -37,7 +56,7 @@ std::wstring LexerError::getMessage() const {
 		case LexerError::Type::UNEXPECTED_CHARACTER:
 			return (
 				L"Unexpected character "+
-				Format::blue(std::wstring { this->character })+ //TODO Do not just print it if it’s e.g. newline
+				Format::blue(this->getCharacterDescription(this->character))+
 				L" "+this->printLocation()
 			);
 

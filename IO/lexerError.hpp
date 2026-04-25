@@ -19,6 +19,8 @@ class LexerError: public ErrorWithLocation {
 		LexerError::Type type;
 		wchar_t character;
 
+		std::wstring getCharacterDescription(wchar_t character) const;
+
 	public:
 		LexerError(LexerError::Type type, const Location &location);
 		LexerError(LexerError::Type type, wchar_t character, const Location &location);
