@@ -143,7 +143,6 @@ void InstructionBuilder::allowInstructionMerging() {
  * Inspects the new (or updated/merged) instruction for tape usage.
  * \return The index of the new (or updated/merged) instruction.
  */
-//TODO only merge with optimizations turned on?
 size_t InstructionBuilder::addInstruction(std::unique_ptr<Instruction> instruction) {
 	std::unique_ptr<Instruction> replacementInstruction;
 
