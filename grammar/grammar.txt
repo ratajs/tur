@@ -1,0 +1,134 @@
+Program → Statements
+
+Statements →
+Statements → Statement SEMICOLON Statements
+
+Statement → AssignmentOrSimpleCall
+Statement → IfStatement
+Statement → WhileStatement
+Statement → LoopStatement
+Statement → BREAK
+Statement → CONTINUE
+Statement → EXIT
+Statement → IncludeStatement
+Statement → RequireStatement
+
+AssignmentOrSimpleCall → DestinationBundle ASSIGN LogicalExpression
+AssignmentOrSimpleCall → IDENTIFIER RemainingAssignmentOrSimpleCall
+
+RemainingAssignmentOrSimpleCall → ASSIGN LogicalExpressionOrSourceBundleOrMachine
+RemainingAssignmentOrSimpleCall → LEFT_SQUARE_BRACKET RemainingArrayAccessAssignment
+RemainingAssignmentOrSimpleCall → LEFT_PARENTHESIS IDENTIFIER ELLIPSIS RIGHT_PARENTHESIS
+RemainingAssignmentOrSimpleCall → INC
+RemainingAssignmentOrSimpleCall → DEC
+
+RemainingArrayAccessAssignment → RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
+RemainingArrayAccessAssignment → NUMBER COLON RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
+
+DestinationBundle → LEFT_SQUARE_BRACKET IDENTIFIER OptionalEllipsis RemainingDestinationBundle RIGHT_SQUARE_BRACKET
+
+RemainingDestinationBundle →
+RemainingDestinationBundle → COMMA IDENTIFIER OptionalEllipsis RemainingDestinationBundle
+
+OptionalEllipsis →
+OptionalEllipsis → ELLIPSIS
+
+LogicalExpressionOrSourceBundleOrMachine → LogicalExpression
+LogicalExpressionOrSourceBundleOrMachine → SourceBundle
+LogicalExpressionOrSourceBundleOrMachine → MACHINE
+
+LogicalExpressionOrSourceBundle → LogicalExpression
+LogicalExpressionOrSourceBundle → SourceBundle
+
+SourceBundle → LEFT_SQUARE_BRACKET SourceBundleContent RIGHT_SQUARE_BRACKET
+
+SourceBundleContent →
+SourceBundleContent → LogicalExpression RemainingSourceBundleContent
+
+RemainingSourceBundleContent →
+RemainingSourceBundleContent → COMMA LogicalExpression RemainingSourceBundleContent
+
+LogicalExpression → LogicalTerm RemainingLogicalExpression
+
+RemainingLogicalExpression →
+RemainingLogicalExpression → OR LogicalTerm RemainingLogicalExpression
+RemainingLogicalExpression → XOR LogicalTerm RemainingLogicalExpression
+
+LogicalTerm → LogicalFactor RemainingLogicalTerm
+
+RemainingLogicalTerm →
+RemainingLogicalTerm → AND LogicalFactor RemainingLogicalTerm
+
+LogicalFactor → NEG LogicalFactor
+LogicalFactor → Expression RemainingLogicalFactor
+
+RemainingLogicalFactor →
+RemainingLogicalFactor → EQ Expression
+RemainingLogicalFactor → NE Expression
+RemainingLogicalFactor → LT Expression
+RemainingLogicalFactor → LTE Expression
+RemainingLogicalFactor → GT Expression
+RemainingLogicalFactor → GTE Expression
+
+Expression → Term RemainingExpression
+
+RemainingExpression →
+RemainingExpression → PLUS Term RemainingExpression
+RemainingExpression → MINUS Term RemainingExpression
+
+Term → Factor RemainingTerm
+
+RemainingTerm →
+RemainingTerm → MUL Factor RemainingTerm
+RemainingTerm → DIV Factor RemainingTerm
+RemainingTerm → MOD Factor RemainingTerm
+
+Factor → MaxArgument RemainingFactor
+
+RemainingFactor →
+RemainingFactor → MAX MaxArgument RemainingFactor
+
+MaxArgument → MinArgument RemainingMaxArgument
+
+RemainingMaxArgument →
+RemainingMaxArgument → MIN MinArgument RemainingMaxArgument
+
+MinArgument → IDENTIFIER OptionalCall OptionalEllipsisOrArrayAccess
+MinArgument → LEFT_PARENTHESIS LogicalExpression RIGHT_PARENTHESIS OptionalEllipsisOrArrayAccess
+MinArgument → NUMBER
+MinArgument → COUNT IDENTIFIER
+
+OptionalCall →
+OptionalCall → LEFT_PARENTHESIS LogicalExpressions RIGHT_PARENTHESIS
+
+OptionalEllipsisOrArrayAccess →
+OptionalEllipsisOrArrayAccess → ELLIPSIS
+OptionalEllipsisOrArrayAccess → LEFT_SQUARE_BRACKET ArrayAccess
+
+ArrayAccess → NUMBER RemainingArrayAccess
+ArrayAccess → COLON OptionalNumber RIGHT_SQUARE_BRACKET
+
+RemainingArrayAccess → RIGHT_SQUARE_BRACKET
+RemainingArrayAccess → COLON OptionalNumber RIGHT_SQUARE_BRACKET
+
+OptionalNumber →
+OptionalNumber → NUMBER
+
+LogicalExpressions →
+LogicalExpressions → LogicalExpression RemainingLogicalExpressions
+
+RemainingLogicalExpressions →
+RemainingLogicalExpressions → COMMA LogicalExpression RemainingLogicalExpressions
+
+IfStatement → IF LogicalExpression COLON Statements OptionalElse ENDIF
+
+OptionalElse →
+OptionalElse → ELSE COLON Statements
+
+WhileStatement → WHILE LogicalExpression COLON Statements ENDWHILE
+
+LoopStatement → LOOP COLON Statements ENDLOOP
+
+IncludeStatement → INCLUDE IDENTIFIER
+
+RequireStatement → REQUIRE IDENTIFIER

@@ -1,0 +1,134 @@
+ε/LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE	ε
+
+ε																																										ε/ELSE/ENDIF/ENDWHILE/ENDLOOP																																																															Program/OptionalElse
+LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE
+
+LEFT_SQUARE_BRACKET/IDENTIFIER																											SEMICOLON
+IF
+WHILE
+LOOP
+BREAK
+CONTINUE
+EXIT
+INCLUDE
+REQUIRE
+
+LEFT_SQUARE_BRACKET																																	SEMICOLON																																																																									Statement
+IDENTIFIER
+
+ASSIGN																																							SEMICOLON																																																																									Assignment
+LEFT_SQUARE_BRACKET
+LEFT_PARENTHESIS
+INC
+DEC
+
+RIGHT_SQUARE_BRACKET																																SEMICOLON																																																																									RemainingAssignment
+NUMBER
+
+LEFT_SQUARE_BRACKET																																	ASSIGN
+
+ε																																										RIGHT_SQUARE_BRACKET
+COMMA
+
+ε																																										COMMA/RIGHT_SQUARE_BRACKET																																																																RemainingDestinationBundle
+ELLIPSIS
+
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON																																																																									RemainingAssignment
+LEFT_SQUARE_BRACKET
+MACHINE
+
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON																																																																									RemainingArrayAccessAssignment
+LEFT_SQUARE_BRACKET
+
+LEFT_SQUARE_BRACKET																																	SEMICOLON																																																																									LogicalExpressionOrSourceBundleOrMachine/LogicalExpressionOrSourceBundle
+
+ε																																										RIGHT_SQUARE_BRACKET
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT
+
+ε																																										RIGHT_SQUARE_BRACKET
+COMMA
+
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																															Assignment/LogicalExpressionOrSourceBundleOrMachine/LogicalExpressionOrSourceBundle/RemainingSourceBundle/LogicalExpressions/RemainingLogicalExpressions
+
+ε																																										SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																															LogicalExpression
+OR
+XOR
+
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																												LogicalExpression/RemainingLogicalExpression
+
+ε																																										OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																												LogicalTerm
+AND
+
+NEG																																									AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																										LogicalTerm/RemainingLogicalTerm
+IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT
+
+ε																																										AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																										LogicalFactor
+EQ
+NE
+LT
+LTE
+GT
+GTE
+
+IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																						EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																LogicalFactor/RemainingLogicalFactor
+
+ε																																										EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																																Expression
+PLUS
+MINUS
+
+IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																						PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																										Expression/RemainingExpression
+
+ε																																										PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																										Term
+MUL
+DIV
+MOD
+
+IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																						MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																				Term/RemainingTerm
+
+ε																																										MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																				Factor
+MAX
+
+IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																						MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																		Factor/RemainingFactor
+
+ε																																										MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																		MaxArgument
+MIN
+
+IDENTIFIER																																					MIN/MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																MaxArgument/RemainingMaxArgument
+LEFT_PARENTHESIS
+NUMBER
+COUNT
+
+ε																																										ELLIPSIS/LEFT_SQUARE_BRACKET/MIN/MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON		MinArgument
+LEFT_PARENTHESIS
+
+ε																																										MIN/MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																MinArgument
+ELLIPSIS
+LEFT_SQUARE_BRACKET
+
+NUMBER																																							MIN/MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																OptionalEllipsisOrArrayAccess
+COLON
+
+RIGHT_SQUARE_BRACKET																																MIN/MAX/MUL/DIV/MOD/PLUS/MINUS/EQ/NE/LT/LTE/GT/GTE/AND/OR/XOR/SEMICOLON/COMMA/RIGHT_SQUARE_BRACKET/RIGHT_PARENTHESIS/COLON																ArrayAccess
+COLON
+
+ε																																										RIGHT_SQUARE_BRACKET
+NUMBER
+
+ε																																										RIGHT_PARENTHESIS
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT
+
+ε																																										RIGHT_PARENTHESIS																																																																					LogicalExpressions
+COMMA
+																																										SEMICOLON																																																																									Statement
+IF
+
+ε																																										ENDIF
+ELSE
+
+WHILE																																								SEMICOLON																																																																									Statement
+
+LOOP																																								SEMICOLON																																																																									Statement
+
+INCLUDE																																							SEMICOLON																																																																									Statement
+
+REQUIRE																																							SEMICOLON																																																																									Statement
