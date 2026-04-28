@@ -40,7 +40,7 @@ OBJS = \
 	AST/expressions/countExpression.o \
 	AST/expressions/callExpression.o \
 	AST/statements/statement.o \
-	AST/statements/copyStatement.o \
+	AST/statements/assignStatement.o \
 	AST/statements/implodeStatement.o \
 	AST/statements/explodeStatement.o \
 	AST/statements/callStatement.o \

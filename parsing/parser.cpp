@@ -7,7 +7,7 @@
 #include "../AST/expressions/binaryExpression.hpp"
 #include "../AST/expressions/countExpression.hpp"
 #include "../AST/expressions/callExpression.hpp"
-#include "../AST/statements/copyStatement.hpp"
+#include "../AST/statements/assignStatement.hpp"
 #include "../AST/statements/implodeStatement.hpp"
 #include "../AST/statements/explodeStatement.hpp"
 #include "../AST/statements/callStatement.hpp"
@@ -286,7 +286,7 @@ std::unique_ptr<Statement> Parser::parseRemainingAssignmentOrSimpleCall(std::wst
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine))
-				return std::make_unique<CopyStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundleOrMachine))
 				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, Location(itA->getLocation(), itB->getLocation()));
@@ -340,7 +340,7 @@ std::unique_ptr<Statement> Parser::parseRemainingArrayAccessAssignment(std::wstr
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<CopyStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
 				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, Location(itA->getLocation(), itB->getLocation()));
@@ -354,7 +354,7 @@ std::unique_ptr<Statement> Parser::parseRemainingArrayAccessAssignment(std::wstr
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<CopyStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
 				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, Location(itA->getLocation(), itB->getLocation()));
