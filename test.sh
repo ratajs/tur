@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
+# No not run this script directly, use make test instead.
+
 BINARY=$(dirname "$0")/tur
 
 for INPUT_FILE in "$(dirname "$0")"/examples/simpleTests/*.in "$(dirname "$0")"/examples/*.in ; do
 	MACHINE_FILE=$(sed -E 's/(.*)\.in/\1.tm/' <<< "$INPUT_FILE")
+	OPTIMIZED_MACHINE_FILE=$(sed -E 's/(.*)\.in/\1.O.tm/' <<< "$INPUT_FILE")
 	OUTPUT_FILE=$(sed -E 's/(.*)\.in/\1.out/' <<< "$INPUT_FILE")
 	LINES_COUNT=$(wc -l < "$INPUT_FILE")
-	printf 'Machine: %s\n' "$MACHINE_FILE" >&2
+	printf 'Machines: %s, %s\n' "$MACHINE_FILE" "$OPTIMIZED_MACHINE_FILE" >&2
 
 	if [ \! -f "$INPUT_FILE" ] ; then
 		echo "Input file isn’t a regular file." >&2
@@ -48,6 +51,21 @@ for INPUT_FILE in "$(dirname "$0")"/examples/simpleTests/*.in "$(dirname "$0")"/
 		exit 1
 	fi
 
+	if [ \! -e "$OPTIMIZED_MACHINE_FILE" ] ; then
+		echo "Optimized machine file doesn’t exist." >&2
+		exit 1
+	fi
+
+	if [ \! -f "$OPTIMIZED_MACHINE_FILE" ] ; then
+		echo "Optimized machine file isn’t a regular file." >&2
+		exit 1
+	fi
+
+	if [ \! -r "$OPTIMIZED_MACHINE_FILE" ] ; then
+		echo "Optimized machine file cannot be read." >&2
+		exit 1
+	fi
+
 	if (($(wc -l < "$OUTPUT_FILE")!=LINES_COUNT)) ; then
 		echo "Input and output lines don’t match." >&2
 		exit 1
@@ -60,12 +78,24 @@ for INPUT_FILE in "$(dirname "$0")"/examples/simpleTests/*.in "$(dirname "$0")"/
 		OUTPUT=$("$BINARY" -rn --no-color "$MACHINE_FILE" 2> /dev/null <<< "$INPUT")
 
 		if (($?!=0)) ; then
-			printf 'Input: %s\nInvalid output.\n' "$INPUT" >&2
+			printf 'Unoptimized machine:\nInput: %s\nInvalid output.\n' "$INPUT" >&2
 			exit 2
 		fi
 
 		if [ "$OUTPUT" != "$REF_OUTPUT" ] ; then
-			printf 'Input: %s\nReference output: %s\nOutput: %s\n' "$INPUT" "$REF_OUTPUT" "$OUTPUT" >&2
+			printf 'Unoptimized machine:\nInput: %s\nReference output: %s\nOutput: %s\n' "$INPUT" "$REF_OUTPUT" "$OUTPUT" >&2
+			exit 2
+		fi
+
+		OUTPUT=$("$BINARY" -rn --no-color "$OPTIMIZED_MACHINE_FILE" 2> /dev/null <<< "$INPUT")
+
+		if (($?!=0)) ; then
+			printf 'Optimized machine:\nInput: %s\nInvalid output.\n' "$INPUT" >&2
+			exit 2
+		fi
+
+		if [ "$OUTPUT" != "$REF_OUTPUT" ] ; then
+			printf 'Optimized machine:\nInput: %s\nReference output: %s\nOutput: %s\n' "$INPUT" "$REF_OUTPUT" "$OUTPUT" >&2
 			exit 2
 		fi
 	done

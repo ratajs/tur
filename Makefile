@@ -118,7 +118,7 @@ ${BIN}: ${OBJS} tur.cpp
 	${CXX} ${CXXFLAGS} -o ${BIN} ${OBJS} tur.cpp
 	${CXX} ${CXXFLAGS} -MM tur.cpp -MT ${BIN} > ./${BIN}.d
 
-test: ${BIN} ${EXAMPLES} test.sh
+test: ${BIN} ${EXAMPLES} ${EXAMPLES:.tm=.O.tm} test.sh
 	./test.sh
 
 algotest: ${TOBJS} algotest.cpp
@@ -145,8 +145,11 @@ include algotest.d
 .cpp.d:
 	${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d}
 
-${EXAMPLES}: %.tm: %.tur ${BIN}
+${EXAMPLES:.tm=.O.tm}: %.O.tm: %.tur ${BIN}
 	./${BIN} -cO $< $@
+
+${EXAMPLES}: %.tm: %.tur ${BIN}
+	./${BIN} -c $< $@
 
 install: ${BIN} ${MAN}
 	install -d -m 0755 ${BINDIR} && install -m 0755 ${BIN} ${BINDIR}
@@ -162,4 +165,5 @@ clean:
 
 .PHONY: install uninstall
 .PHONY: lint algotest
+.PHONY: test
 .PHONY: clean
