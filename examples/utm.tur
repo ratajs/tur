@@ -2,6 +2,7 @@
 # Symbols and states can be represented by any number.
 # Directions are encoded as 0 – N, 1 – L, 2 – R.
 # The initial state is 0.
+# The blank symbol is 0.
 # Output: output of the given machine with the given input
 
 pop = {
