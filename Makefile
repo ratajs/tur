@@ -116,14 +116,14 @@ all: ${BIN}
 
 ${BIN}: ${OBJS} tur.cpp
 	${CXX} ${CXXFLAGS} -o ${BIN} ${OBJS} tur.cpp
-	${CXX} ${CXXFLAGS} -MM tur.cpp -MT ${BIN} > ./${BIN}.d
+# ${CXX} ${CXXFLAGS} -MM tur.cpp -MT ${BIN} > ./${BIN}.d # Uncomment for: -include, sinclude, .-include, .sinclude
 
 test: ${BIN} ${EXAMPLES} ${EXAMPLES:.tm=.O.tm} test.sh
 	./test.sh
 
 algotest: ${TOBJS} algotest.cpp
 	${CXX} ${CXXFLAGS} -o ./algotest ${TOBJS} algotest.cpp && ./algotest
-	${CXX} ${CXXFLAGS} -MM algotest.cpp > ./algotest.d
+#	${CXX} ${CXXFLAGS} -MM algotest.cpp > ./algotest.d # Uncomment for: -include, sinclude, .-include, .sinclude
 
 doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp common.hpp machine/machineLibrary.hpp Doxyfile
 	doxygen ./Doxyfile
@@ -140,8 +140,10 @@ include algotest.d
 
 .cpp.o:
 	${CXX} ${CXXFLAGS} -o $@ -c $<
-	${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d}
+# ${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d} # Uncomment for: -include, sinclude, .-include, .sinclude
 
+# The following is only for: include, .include
+# Remove for: -include, sinclude, .-include, .sinclude
 .cpp.d:
 	${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d}
 
