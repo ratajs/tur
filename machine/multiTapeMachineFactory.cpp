@@ -1516,7 +1516,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::simulate(size_t tape, const Ma
  * \param greaterThanState The end state if tape[index] > number.
  */
 MultiTapeMachineFactory &MultiTapeMachineFactory::compareWithConstant(size_t tape, size_t index, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState) {
-	size_t tapesCount, x, y;
+	size_t tapesCount, x;
 	std::wstring lessThanEndingState, equalEndingState, greaterThanEndingState;
 
 	if(tape==0 || tape > this->tapesCount)
@@ -1538,13 +1538,11 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareWithConstant(size_t tap
 	for(x = 0; x < index; x++)
 		this->skipNumber({}, {});
 
-	this->addSuperTransition<true, true, Machine::Direction::R>({}, {}); // Skip the obligatory 0 at the beginning of the number
+	this->addSuperTransition<true, true, Machine::Direction::R>({}, {}); // Skip the obligatory 1 at the beginning of the number
 
 	for(x = 0; x < number; x++) {
 		this->addTransition<false, false, Machine::Direction::N>({}, lessThanEndingState); // The number ended before the end of this loop, therefore <
-		this->addTransition<true, true, Machine::Direction::R>({}, {});
-		for(y = 1; y < tapesCount; y++)
-			this->addTransition<Machine::Direction::R>({}, {});
+		this->addSuperTransition<true, true, Machine::Direction::R>({}, {});
 	};
 	equalEndingState = this->addTransition<false, false, Machine::Direction::N>({}, {}); // The number ends exactly after the loop, therefore =
 	greaterThanEndingState = this->addTransition<true, true, Machine::Direction::N>(this->generator.getLastState(), {}); // The number ends somewhere further, therefore >
