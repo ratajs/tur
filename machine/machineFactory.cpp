@@ -1,4 +1,13 @@
 #include "./machineFactory.hpp"
+#include <cstdlib>
+#include <utility>
+#include <optional>
+#include <vector>
+#include <set>
+#include <map>
+#include <algorithm>
+#include <string>
+#include <functional>
 #include "../IO/unexpectedError.hpp"
 
 /*!

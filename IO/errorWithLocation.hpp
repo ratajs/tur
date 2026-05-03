@@ -1,5 +1,7 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <string>
+#include <string_view>
 #include "./error.hpp"
 #include "../parsing/location.hpp"
 

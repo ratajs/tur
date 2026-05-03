@@ -1,4 +1,7 @@
 #include "./assignStatement.hpp"
+#include <utility>
+#include <tuple>
+#include <functional>
 #include "../../instructions/writeNumberInstruction.hpp"
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/clearInstruction.hpp"

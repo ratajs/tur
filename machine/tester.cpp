@@ -1,4 +1,11 @@
 #include "./tester.hpp"
+#include <optional>
+#include <deque>
+#include <algorithm>
+#include <iterator>
+#include "./machine.hpp"
+#include "./singleTapeMachineFactory.hpp"
+#include "./multiTapeMachineFactory.hpp"
 #include "./machineLibrary.hpp"
 #include "../IO/unexpectedError.hpp"
 

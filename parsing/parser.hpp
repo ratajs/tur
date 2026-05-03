@@ -1,5 +1,11 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <memory>
+#include <optional>
+#include <variant>
+#include <vector>
+#include <iterator>
+#include <string>
 #include "../machine/machine.hpp"
 #include "./token.hpp"
 #include "./location.hpp"

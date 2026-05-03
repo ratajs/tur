@@ -1,4 +1,5 @@
 #include "./destinationBundle.hpp"
+#include <algorithm>
 #include "../IO/typeError.hpp"
 
 /*!

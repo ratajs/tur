@@ -1,5 +1,6 @@
 #pragma once
-#include "../common.hpp"
+#include <optional>
+#include <string>
 #include "./error.hpp"
 
 /*!

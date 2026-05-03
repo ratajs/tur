@@ -1,4 +1,10 @@
 #include "./binaryExpression.hpp"
+#include <utility>
+#include <variant>
+#include <tuple>
+#include <algorithm>
+#include <string_view>
+#include <functional>
 #include "../../instructions/clearInstruction.hpp"
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/writeNumberInstruction.hpp"

@@ -1,4 +1,6 @@
 #include "./lexerError.hpp"
+#include <utility>
+#include <initializer_list>
 #include "./unexpectedError.hpp"
 #include "./format.hpp"
 

@@ -1,4 +1,5 @@
 #include "./unexpectedError.hpp"
+#include <utility>
 
 /*!
  * The constructor of UnexpectedError.

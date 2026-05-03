@@ -1,4 +1,5 @@
 #include "./stateGenerator.hpp"
+#include <iterator>
 #include "../IO/unexpectedError.hpp"
 
 /*!

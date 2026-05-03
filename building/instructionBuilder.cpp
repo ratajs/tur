@@ -1,4 +1,7 @@
 #include "./instructionBuilder.hpp"
+#include <utility>
+#include <algorithm>
+#include <string>
 #include "../IO/unexpectedError.hpp"
 
 /*!

@@ -1,5 +1,12 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
+#include <vector>
+#include <map>
+#include <string>
+#include <string_view>
+#include <iostream>
+#include <functional>
 #include "./tape.hpp"
 
 /*!

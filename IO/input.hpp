@@ -1,5 +1,12 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <functional>
 #include "./flags.hpp"
 #include "../machine/tape.hpp"
 #include "../machine/machine.hpp"

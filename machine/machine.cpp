@@ -1,4 +1,10 @@
 #include "./machine.hpp"
+#include <utility>
+#include <tuple>
+#include <set>
+#include <queue>
+#include <algorithm>
+#include <sstream>
 #include "../IO/unexpectedError.hpp"
 
 /*!

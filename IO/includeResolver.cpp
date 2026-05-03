@@ -1,4 +1,7 @@
 #include "./includeResolver.hpp"
+#include <utility>
+#include <iostream>
+#include <fstream>
 #include "../IO/format.hpp"
 #include "../IO/generalError.hpp"
 #include "../IO/symbolError.hpp"

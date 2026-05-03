@@ -1,4 +1,5 @@
 #include "./expression.hpp"
+#include <string>
 #include "../../IO/unexpectedError.hpp"
 
 /*!

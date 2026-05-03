@@ -1,4 +1,6 @@
 #include "./location.hpp"
+#include <iterator>
+#include <string>
 #include "../IO/unexpectedError.hpp"
 
 /*!

@@ -1,4 +1,7 @@
 #include "./loopStatement.hpp"
+#include <cstdlib>
+#include <utility>
+#include <algorithm>
 #include "../../instructions/jumpInstruction.hpp"
 
 /*!

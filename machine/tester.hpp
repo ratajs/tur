@@ -1,9 +1,13 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <utility>
+#include <array>
+#include <vector>
+#include <string>
+#include <string_view>
+#include <functional>
 #include "./tape.hpp"
-#include "./machine.hpp"
-#include "./singleTapeMachineFactory.hpp"
-#include "./multiTapeMachineFactory.hpp"
+#include "./machineFactory.hpp"
 
 class Tester {
 	private:

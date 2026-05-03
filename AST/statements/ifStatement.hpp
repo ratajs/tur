@@ -1,5 +1,6 @@
 #pragma once
-#include "../../common.hpp"
+#include <memory>
+#include <vector>
 #include "./statement.hpp"
 #include "../expressions/expression.hpp"
 

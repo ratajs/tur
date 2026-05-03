@@ -1,5 +1,6 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
 
 /*!
  * This is a structor which is created for every variable.

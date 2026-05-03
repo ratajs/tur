@@ -1,4 +1,10 @@
 #include "./input.hpp"
+#include <utility>
+#include <initializer_list>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <sstream>
 #include "../IO/format.hpp"
 #include "../IO/generalError.hpp"
 #include "../IO/unexpectedError.hpp"

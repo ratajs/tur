@@ -1,5 +1,12 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <memory>
+#include <optional>
+#include <vector>
+#include <list>
+#include <string>
+#include <iostream>
+#include <functional>
 #include "../machine/singleTapeMachineFactory.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
 

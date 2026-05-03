@@ -1,4 +1,6 @@
 #include "./countExpression.hpp"
+#include <cstdlib>
+#include <memory>
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/callInstruction.hpp"
 #include "../../machine/machineLibrary.hpp"

@@ -1,4 +1,6 @@
 #include "./sourceBundle.hpp"
+#include <utility>
+#include <algorithm>
 #include "../IO/typeError.hpp"
 
 /*!

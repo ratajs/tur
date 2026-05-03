@@ -1,4 +1,13 @@
 #include "./multiTapeMachineFactory.hpp"
+#include <utility>
+#include <tuple>
+#include <initializer_list>
+#include <vector>
+#include <set>
+#include <map>
+#include <algorithm>
+#include <functional>
+#include "./stateGenerator.hpp"
 #include "./singleTapeMachineFactory.hpp"
 #include "../IO/unexpectedError.hpp"
 

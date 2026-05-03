@@ -1,4 +1,5 @@
 #include "./symbolError.hpp"
+#include <utility>
 #include "../parsing/location.hpp"
 #include "./format.hpp"
 #include "./unexpectedError.hpp"

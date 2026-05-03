@@ -1,5 +1,10 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <concepts>
+#include <optional>
+#include <vector>
+#include <set>
+#include <string>
 #include "./stateGenerator.hpp"
 #include "./machine.hpp"
 

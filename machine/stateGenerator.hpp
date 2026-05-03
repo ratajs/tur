@@ -1,5 +1,5 @@
 #pragma once
-#include "../common.hpp"
+#include <string>
 
 /*!
  * This class generates state names for MachineFactory.

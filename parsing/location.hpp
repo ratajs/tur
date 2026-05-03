@@ -1,5 +1,6 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <string_view>
 
 /*!
  * This class represents a range in the source code.

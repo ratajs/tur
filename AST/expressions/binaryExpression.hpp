@@ -1,5 +1,7 @@
 #pragma once
-#include "../../common.hpp"
+#include <cstdlib>
+#include <memory>
+#include <optional>
 #include "./expression.hpp"
 #include "../../parsing/location.hpp"
 #include "../../machine/machine.hpp"

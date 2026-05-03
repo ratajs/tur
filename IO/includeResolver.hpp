@@ -1,5 +1,7 @@
 #pragma once
-#include "../common.hpp"
+#include <vector>
+#include <string>
+#include <filesystem>
 #include "../machine/machine.hpp"
 #include "../parsing/location.hpp"
 

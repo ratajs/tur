@@ -1,4 +1,11 @@
 #include "./instructionCollection.hpp"
+#include <utility>
+#include <optional>
+#include <queue>
+#include <algorithm>
+#include <iterator>
+#include <string>
+#include <functional>
 #include "../IO/unexpectedError.hpp"
 
 /*!

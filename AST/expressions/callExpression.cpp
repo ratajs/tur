@@ -1,4 +1,9 @@
 #include "./callExpression.hpp"
+#include <cstdlib>
+#include <utility>
+#include <tuple>
+#include <algorithm>
+#include <iterator>
 #include "../../instructions/writeNumberInstruction.hpp"
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/callInstruction.hpp"

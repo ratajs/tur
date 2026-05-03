@@ -1,4 +1,6 @@
-#include "./common.hpp"
+#include <algorithm>
+#include <iostream>
+#include <locale>
 #include "./machine/tester.hpp"
 #include "./IO/error.hpp"
 

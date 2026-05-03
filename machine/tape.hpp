@@ -1,5 +1,11 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
+#include <initializer_list>
+#include <vector>
+#include <deque>
+#include <string>
+#include <iostream>
 
 /*!
  * This class represents the tape of a Turing machine.

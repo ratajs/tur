@@ -1,5 +1,7 @@
 #pragma once
-#include "../common.hpp"
+#include <optional>
+#include <vector>
+#include <string>
 #include "./errorWithLocation.hpp"
 #include "../parsing/token.hpp"
 

@@ -1,4 +1,11 @@
 #include "./singleTapeMachineFactory.hpp"
+#include <utility>
+#include <vector>
+#include <set>
+#include <map>
+#include <algorithm>
+#include <string_view>
+#include <functional>
 #include "../IO/unexpectedError.hpp"
 
 /*!

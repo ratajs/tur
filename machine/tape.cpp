@@ -1,4 +1,7 @@
 #include "./tape.hpp"
+#include <utility>
+#include <algorithm>
+#include <iterator>
 #include "../IO/unexpectedError.hpp"
 #include "../IO/format.hpp"
 

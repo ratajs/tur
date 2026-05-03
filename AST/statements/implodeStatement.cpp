@@ -1,4 +1,8 @@
 #include "./implodeStatement.hpp"
+#include <utility>
+#include <memory>
+#include <tuple>
+#include <functional>
 #include "../../instructions/clearInstruction.hpp"
 #include "../../instructions/writeNumberInstruction.hpp"
 #include "../../instructions/copyInstruction.hpp"

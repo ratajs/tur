@@ -1,5 +1,10 @@
 #pragma once
-#include "../common.hpp"
+#include <memory>
+#include <vector>
+#include <set>
+#include <map>
+#include <iterator>
+#include <string>
 #include "../parsing/location.hpp"
 #include "./variable.hpp"
 #include "../machine/machine.hpp"

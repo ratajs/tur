@@ -1,5 +1,7 @@
 #pragma once
-#include "../common.hpp"
+#include <optional>
+#include <string>
+#include <iostream>
 
 /*!
  * This is an abstract class for all error types used by tur.

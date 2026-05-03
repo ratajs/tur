@@ -1,5 +1,11 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <memory>
+#include <optional>
+#include <vector>
+#include <list>
+#include <set>
+#include <stack>
 #include "./tapeReference.hpp"
 #include "../instructions/instruction.hpp"
 #include "./instructionCollection.hpp"

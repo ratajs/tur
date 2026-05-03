@@ -1,11 +1,7 @@
 #pragma once
-#include "../common.hpp"
-#include "./tapeReference.hpp"
+#include <iostream>
 #include "./instructionCollection.hpp"
-#include "../instructions/instruction.hpp"
 #include "../machine/machineFactory.hpp"
-#include "../machine/singleTapeMachineFactory.hpp"
-#include "../machine/multiTapeMachineFactory.hpp"
 #include "../machine/machine.hpp"
 
 /*!

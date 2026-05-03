@@ -1,4 +1,9 @@
 #include "./program.hpp"
+#include <cstdlib>
+#include <utility>
+#include <optional>
+#include <algorithm>
+#include <ranges>
 #include "../instructions/decompressInstruction.hpp"
 #include "../instructions/compressInstruction.hpp"
 #include "../instructions/jumpInstruction.hpp"

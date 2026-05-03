@@ -1,4 +1,8 @@
 #include "./whileStatement.hpp"
+#include <cstdlib>
+#include <utility>
+#include <tuple>
+#include <algorithm>
 #include "../../instructions/jumpInstruction.hpp"
 #include "../../IO/typeError.hpp"
 

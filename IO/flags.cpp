@@ -1,4 +1,5 @@
 #include "./flags.hpp"
+#include <utility>
 
 /*!
  * Detect whether this flag is in the collection (the option is on).

@@ -1,4 +1,5 @@
 #include "./token.hpp"
+#include <utility>
 #include "../IO/unexpectedError.hpp"
 
 /*!

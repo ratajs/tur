@@ -1,4 +1,10 @@
 #include "./explodeStatement.hpp"
+#include <cstdlib>
+#include <utility>
+#include <memory>
+#include <optional>
+#include <tuple>
+#include <functional>
 #include "../variable.hpp"
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/clearInstruction.hpp"

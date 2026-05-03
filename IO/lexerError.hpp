@@ -1,7 +1,8 @@
 #pragma once
-#include "../common.hpp"
+#include <optional>
+#include <string>
 #include "./errorWithLocation.hpp"
-#include "../parsing/token.hpp"
+#include "../parsing/location.hpp"
 
 /*!
  * This type of error represents a problem during the lexical analysis.

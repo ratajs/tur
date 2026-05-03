@@ -1,5 +1,5 @@
 #pragma once
-#include "../common.hpp"
+#include <string>
 
 /*!
  * These are helper functions for formating strings using escape sequences.

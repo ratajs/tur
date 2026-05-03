@@ -1,4 +1,7 @@
 #include "./unaryExpression.hpp"
+#include <cstdlib>
+#include <utility>
+#include <tuple>
 #include "../../IO/typeError.hpp"
 
 /*!

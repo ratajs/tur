@@ -1,7 +1,8 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
+#include <string>
 #include "./machineFactory.hpp"
-#include "./stateGenerator.hpp"
 #include "./machine.hpp"
 
 /*!

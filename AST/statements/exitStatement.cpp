@@ -1,4 +1,6 @@
 #include "./exitStatement.hpp"
+#include <memory>
+#include <string>
 #include "../../instructions/jumpInstruction.hpp"
 #include "../../IO/unexpectedError.hpp"
 

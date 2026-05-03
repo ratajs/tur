@@ -1,4 +1,5 @@
 #include "./writeNumberInstruction.hpp"
+#include <initializer_list>
 #include "../IO/unexpectedError.hpp"
 
 /*!

@@ -1,5 +1,6 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
 
 /*!
  * For each tape used in the program, this structure knows when it is used for the first time and when for the last time.

@@ -1,7 +1,7 @@
 #pragma once
-#include "../../common.hpp"
+#include <memory>
+#include <vector>
 #include "./statement.hpp"
-#include "../expressions/expression.hpp"
 
 /*!
  * This statement represents a loop without a condition.

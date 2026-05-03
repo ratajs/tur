@@ -125,7 +125,7 @@ algotest: ${TOBJS} algotest.cpp
 	${CXX} ${CXXFLAGS} -o ./algotest ${TOBJS} algotest.cpp && ./algotest
 #	${CXX} ${CXXFLAGS} -MM algotest.cpp > ./algotest.d # Uncomment for: -include, sinclude, .-include, .sinclude
 
-doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp common.hpp machine/machineLibrary.hpp Doxyfile
+doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp Doxyfile
 	doxygen ./Doxyfile
 
 lint: ${MAN}

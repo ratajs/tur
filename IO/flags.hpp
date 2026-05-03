@@ -1,5 +1,4 @@
 #pragma once
-#include "../common.hpp"
 
 /*!
  * This holds a collection of on/off command line options.

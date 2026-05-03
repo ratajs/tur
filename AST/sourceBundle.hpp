@@ -1,5 +1,7 @@
 #pragma once
-#include "../common.hpp"
+#include <memory>
+#include <vector>
+#include <functional>
 #include "./expressions/expression.hpp"
 
 /*!

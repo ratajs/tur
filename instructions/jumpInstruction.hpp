@@ -1,5 +1,9 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <functional>
 #include "./instruction.hpp"
 #include "../machine/singleTapeMachineFactory.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"

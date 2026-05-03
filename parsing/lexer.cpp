@@ -1,4 +1,8 @@
 #include "./lexer.hpp"
+#include <utility>
+#include <initializer_list>
+#include <string_view>
+#include <sstream>
 #include "../IO/lexerError.hpp"
 #include "../IO/generalWarning.hpp"
 

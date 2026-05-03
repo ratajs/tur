@@ -1,5 +1,5 @@
 #pragma once
-#include "../../common.hpp"
+#include <memory>
 #include "./statement.hpp"
 #include "../expressions/expression.hpp"
 #include "../destinationBundle.hpp"

@@ -1,5 +1,9 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <optional>
+#include <vector>
+#include <set>
+#include <functional>
 #include "./variable.hpp"
 #include "../parsing/location.hpp"
 

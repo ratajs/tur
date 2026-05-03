@@ -1,11 +1,11 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <memory>
+#include <vector>
+#include <list>
+#include <iostream>
 #include "./tapeReference.hpp"
 #include "../instructions/instruction.hpp"
-#include "../machine/machineFactory.hpp"
-#include "../machine/singleTapeMachineFactory.hpp"
-#include "../machine/multiTapeMachineFactory.hpp"
-#include "../machine/machine.hpp"
 
 /*!
  * This class stores the list of instructions together with tapes (with data about their first and last reference) and labels (just the number of them).

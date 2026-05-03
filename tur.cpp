@@ -1,4 +1,14 @@
-#include "./common.hpp"
+#include <cstdlib>
+#include <utility>
+#include <memory>
+#include <optional>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <string>
+#include <iostream>
+#include <locale>
+#include <codecvt>
 #include "./IO/input.hpp"
 #include "./IO/flags.hpp"
 #include "./IO/includeResolver.hpp"

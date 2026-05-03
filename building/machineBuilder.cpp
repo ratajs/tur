@@ -1,4 +1,11 @@
 #include "./machineBuilder.hpp"
+#include <cstdlib>
+#include <utility>
+#include <memory>
+#include <initializer_list>
+#include <vector>
+#include <algorithm>
+#include <string>
 #include "../machine/machineFactory.hpp"
 #include "../IO/unexpectedError.hpp"
 

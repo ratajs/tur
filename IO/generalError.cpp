@@ -1,4 +1,5 @@
 #include "./generalError.hpp"
+#include <utility>
 
 /*!
  * The constructor of GeneralWarning.
