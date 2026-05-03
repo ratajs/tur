@@ -66,6 +66,7 @@ OBJS = \
 	instructions/jumpInstruction.o \
 	instructions/compareInstruction.o \
 	instructions/compareTapeLengthInstruction.o \
+	machine/machineLibrary.o \
 	machine/stateGenerator.o \
 	machine/machineFactory.o \
 	machine/singleTapeMachineFactory.o \
@@ -80,6 +81,7 @@ TOBJS	=	\
 	IO/generalWarning.o \
 	machine/tape.o \
 	machine/machine.o \
+	machine/machineLibrary.o \
 	machine/stateGenerator.o \
 	machine/machineFactory.o \
 	machine/singleTapeMachineFactory.o \
