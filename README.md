@@ -266,6 +266,11 @@ output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions ca
 [a, b] = f(a, b)...; # Any expression which can yield more numbers is possible as the right side. The ellipsis is optional here as well.
 ```
 
+## Examples and Tests
+
+Several programs for `tur` are in the directory `examples`. Most of them have their test inputs and reference outputs in `.in` and `.out` files. Running `make test` will compile
+the samples and run all the tests. Compiled machines ending with `.O.tm` are compiled with the `-O` flag.
+
 <img src="https://fit.cvut.cz/static/images/fit-cvut-logo-en.svg" alt="FIT CTU logo" height="200">
 
 This software was developed with the support of the **Faculty of Information Technology, Czech Technical University in Prague**.
