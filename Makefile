@@ -150,7 +150,7 @@ include algotest.d
 	${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d}
 
 ${EXAMPLES:.tm=.O.tm}: %.O.tm: %.tur ${BIN}
-	./${BIN} -cO $< $@
+	./${BIN} -cO -x .O.tm $< $@
 
 ${EXAMPLES}: %.tm: %.tur ${BIN}
 	./${BIN} -c $< $@
