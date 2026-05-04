@@ -515,7 +515,7 @@ std::wstring MultiTapeMachineFactory::copySingleNumberAndZero(std::optional<std:
 	this->addSuperTransition<true, false, Machine::Direction::R>({}, {}); // Mark this position with a hole on the zeroth tape
 	this->placeSymbol({}, this->generator.getCurrentState(), {}, tapeB); // Provide the current state as the goingToTheEndWith0State
 	this->returnToMark({}, {}, tapeA, tapeB);
-	endState = this->addSuperTransition<false, true, Machine::Direction::R>({}, endState); // Remove the hole.
+	endState = this->addSuperTransition<false, true, Machine::Direction::R>({}, endState); // Remove the hole
 
 	return (*endState);
 };
@@ -684,7 +684,7 @@ std::wstring MultiTapeMachineFactory::copyIfNonEmpty(std::optional<std::wstring>
 	this->addSuperTransition<false, false, Machine::Direction::L>({}, {});
 	this->addSuperTransition<false, false, Machine::Direction::L>({}, {});
 
-	this->addTransition<true, false, Machine::Direction::L>({}, {}); // Remove the single one marking the copying.
+	this->addTransition<true, false, Machine::Direction::L>({}, {}); // Remove the single one marking the copying
 	for(x = (tapeB - 1); x > 0; x--)
 		this->addTransition<Machine::Direction::L>({}, {});
 	skippedCopyingState = this->goHome({}, {});
@@ -1258,7 +1258,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::appendAll(size_t tapeA, size_t
 	this->findTape(tapeB, {}, {});
 	this->findEnd({}, {});
 
-	this->addTransition<false, true, Machine::Direction::L>({}, {}); // Mark the destination for copyIfNonEmpty().
+	this->addTransition<false, true, Machine::Direction::L>({}, {}); // Mark the destination for copyIfNonEmpty()
 	for(x = (tapeB - 1); x > 0; x--)
 		this->addTransition<Machine::Direction::L>({}, {});
 	returningToMarkedAreaState = this->generator.getCurrentState();
@@ -1384,7 +1384,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::append(size_t tapeA, size_t be
 	this->findTape(tapeB, {}, {});
 	this->findEnd({}, {});
 
-	this->addTransition<false, true, Machine::Direction::L>({}, {}); // Mark the destination for copyIfNonEmpty().
+	this->addTransition<false, true, Machine::Direction::L>({}, {}); // Mark the destination for copyIfNonEmpty()
 	for(x = (tapeB - 1); x > 0; x--)
 		this->addTransition<Machine::Direction::L>({}, {});
 	returningToMarkedAreaState = this->generator.getCurrentState();
@@ -1689,7 +1689,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 	this->addSuperTransition<true, true, Machine::Direction::R>(lessThanOrEqualFillingZerosStateB, {});
 
 	equalEndingState = this->addTransition<false, false, Machine::Direction::N>({}, {}); // There was only one one left
-	lessThanEndingState = this->addTransition<true, true, Machine::Direction::N>(this->generator.getLastState(), {}); // There is another one.
+	lessThanEndingState = this->addTransition<true, true, Machine::Direction::N>(this->generator.getLastState(), {}); // There is another one
 
 	// Return home from equalEndingState and lessThanEndingState.
 
