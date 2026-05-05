@@ -1,3 +1,3 @@
 #include "./statement.hpp"
 
-Statement::~Statement() {};
+Statement::~Statement() noexcept {};

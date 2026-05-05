@@ -47,7 +47,7 @@ class Expression {
 		Location location;
 
 		Expression(const Location &location);
-		virtual ~Expression();
+		virtual ~Expression() noexcept;
 		bool isCondition() const;
 		bool isConstant() const;
 		size_t buildConstant(InstructionBuilder &builder) const;

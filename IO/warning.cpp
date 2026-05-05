@@ -1,7 +1,7 @@
 #include "./warning.hpp"
 #include "./format.hpp"
 
-Warning::~Warning() {};
+Warning::~Warning() noexcept {};
 
 std::optional<std::wstring> Warning::getTitle() const {
 	return {};

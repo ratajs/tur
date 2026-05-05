@@ -6,7 +6,7 @@
  */
 class Statement {
 	public:
-		virtual ~Statement();
+		virtual ~Statement() noexcept;
 
 		/*!
 		 * This virtual function should generate the instructions of the statement.

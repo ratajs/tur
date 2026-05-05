@@ -57,7 +57,7 @@ Expression::TapeRange::TapeRange(size_t index0, std::optional<size_t> index1): i
  */
 Expression::Expression(const Location &location): location(location) {};
 
-Expression::~Expression() {};
+Expression::~Expression() noexcept {};
 
 /*!
  * \retval true If the expression type is CONDITION.
