@@ -125,7 +125,7 @@ test: ${BIN} ${EXAMPLES} ${EXAMPLES:.tm=.O.tm} test.sh
 
 algotest: ${TOBJS} algotest.cpp
 	${CXX} ${CXXFLAGS} -o ./algotest ${TOBJS} algotest.cpp && ./algotest
-	${CXX} ${CXXFLAGS} -MM algotest.cpp -TM $@ > ./algotest.d
+	${CXX} ${CXXFLAGS} -MM algotest.cpp -MT $@ > ./algotest.d
 
 doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp Doxyfile
 	doxygen ./Doxyfile
@@ -133,22 +133,23 @@ doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary
 lint: ${MAN}
 	mandoc -Tlint ${MAN}
 
-MAKEFLAGS += --no-builtin-rules
+.SUFFIXES: .cpp .o .tur .tm .cpp .d
 
--include ${OBJS:.o=.d}
--include ${TOBJS:.o=.d}
--include tur.d
--include algotest.d
+.include ${OBJS:.o=.d}
+.include ${TOBJS:.o=.d}
+.include tur.d
+.include algotest.d
 
-%.o: %.cpp
+.cpp.o:
 	${CXX} ${CXXFLAGS} -o $@ -c $<
 	${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d}
 
-${EXAMPLES:.tm=.O.tm}: %.O.tm: %.tur ${BIN}
-	./${BIN} -cO -x .O.tm $< $@
+.cpp.d:
+	${CXX} ${CXXFLAGS} -MM $< -MT ${@:.d=.o} > $@
 
-${EXAMPLES}: %.tm: %.tur ${BIN}
+.tur.tm:
 	./${BIN} -c $< $@
+	./${BIN} -cO -x .O.tm $< ${@:.tm=.O.tm}
 
 install: ${BIN} ${MAN}
 	install -d -m 0755 ${BINDIR} && install -m 0755 ${BIN} ${BINDIR}
