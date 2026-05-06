@@ -124,8 +124,9 @@ test: ${BIN} ${EXAMPLES} ${EXAMPLES:.tm=.O.tm} test.sh
 	./test.sh
 
 algotest: ${TOBJS} algotest.cpp
-	${CXX} ${CXXFLAGS} -o ./algotest ${TOBJS} algotest.cpp && ./algotest
+	${CXX} ${CXXFLAGS} -o ./algotest ${TOBJS} algotest.cpp
 	${CXX} ${CXXFLAGS} -MM algotest.cpp -MT $@ > ./algotest.d
+	./algotest
 
 doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp Doxyfile
 	doxygen ./Doxyfile
