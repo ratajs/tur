@@ -133,23 +133,22 @@ doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary
 lint: ${MAN}
 	mandoc -Tlint ${MAN}
 
-.SUFFIXES: .cpp .o .tur .tm .cpp .d
+MAKEFLAGS += --no-builtin-rules
 
-.include ${OBJS:.o=.d}
-.include ${TOBJS:.o=.d}
-.include tur.d
-.include algotest.d
+-include ${OBJS:.o=.d}
+-include ${TOBJS:.o=.d}
+-include tur.d
+-include algotest.d
 
-.cpp.o:
+%.o: %.cpp
 	${CXX} ${CXXFLAGS} -o $@ -c $<
 	${CXX} ${CXXFLAGS} -MM $< -MT $@ > ${@:.o=.d}
 
-.cpp.d:
-	${CXX} ${CXXFLAGS} -MM $< -MT ${@:.d=.o} > $@
+${EXAMPLES:.tm=.O.tm}: %.O.tm: %.tur ${BIN}
+	./${BIN} -cO -x .O.tm $< $@
 
-.tur.tm:
+${EXAMPLES}: %.tm: %.tur ${BIN}
 	./${BIN} -c $< $@
-	./${BIN} -cO -x .O.tm $< ${@:.tm=.O.tm}
 
 install: ${BIN} ${MAN}
 	install -d -m 0755 ${BINDIR} && install -m 0755 ${BIN} ${BINDIR}
