@@ -1,46 +1,45 @@
 # Input: any valid list of numbers
 # Output: the sorted input list
 
-decLast = {
+subtract = { # Subtracting for the first number greater than the second
 	A11RA
 	A00RB
-	B11RA
-	B00LC
-	C00LC
-	C10LD
-	D11LD
-	D00LE
-	E11LD
-	E00RF
-	F00RF
+	B00RB
+	B10RC
+	C00LD
+	D00LD
+	D11LE
+	E11LE
+	E00R_
+	C11LF
+	F00LF
+	F10RB
 };
 
 numbers = input...;
 
 loop:
-	status = [ρ numbers, 0]; # remaining length and swap indicator
+	status = 0; # swap indicator
 	newNumbers = [];
-	while status[0] > 1: # While there are at least two numbers left
+	while ρ numbers > 1: # While there are at least two numbers left
 		if numbers[0] ≤ numbers[1]: # The two next numbers are in order
 			newNumbers[] = numbers[0]; # Append the first number of the pair, the second will still be compared
 			numbers = numbers[1:]; # Remove the first number that was appended to newNumbers
 		else: # The two next numbers are not in order
 			newNumbers[] = numbers[1]; # Append the second number of the pair
-			status[1:] = 1; # Remember that something was swapped in this iteration
-			status[] = numbers[0] - numbers[1]; # Save the difference between the two numbers here (to avoid a new tape for a new variable)
+			status = numbers[0:2]; # Repurpose temporarily this variable to avoid a new tape for a new variable
+			subtract(status...); # Get the difference between the two numbers; status = status[0] - status[1] would create one more tape, optimizations would not prevent it because of the loops
 			numbers = numbers[1:]; # Remove the first number
-			while status[2] > 0: # The first number of the pair should be kept, not the second, change the number
+			while status > 0: # The first number of the pair should be kept, not the second, change the number
 				numbers++;
-				decLast(status...);
+				status--;
 			endwhile;
-			status = status[0:2]; # Remove the number difference
+			status = 1; # Remember that something was swapped
 		endif;
-
-		status--;
 	endwhile;
 	newNumbers[] = numbers...;
 
-	if status[1]==0:
+	if status==0:
 		break;
 	endif;
 
