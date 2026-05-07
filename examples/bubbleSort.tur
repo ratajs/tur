@@ -20,20 +20,20 @@ numbers = input...;
 loop:
 	status = [ρ numbers, 0]; # remaining length and swap indicator
 	newNumbers = [];
-	while status[0] > 1:
-		if numbers[0] ≤ numbers[1]:
-			newNumbers[] = numbers[0];
-			numbers = numbers[1:];
-		else:
-			newNumbers[] = numbers[1];
-			status[1:] = 1;
-			status[] = numbers[0] - numbers[1];
-			numbers = numbers[1:];
-			while status[2] > 0:
+	while status[0] > 1: # While there are at least two numbers left
+		if numbers[0] ≤ numbers[1]: # The two next numbers are in order
+			newNumbers[] = numbers[0]; # Append the first number of the pair, the second will still be compared
+			numbers = numbers[1:]; # Remove the first number that was appended to newNumbers
+		else: # The two next numbers are not in order
+			newNumbers[] = numbers[1]; # Append the second number of the pair
+			status[1:] = 1; # Remember that something was swapped in this iteration
+			status[] = numbers[0] - numbers[1]; # Save the difference between the two numbers here (to avoid a new tape for a new variable)
+			numbers = numbers[1:]; # Remove the first number
+			while status[2] > 0: # The first number of the pair should be kept, not the second, change the number
 				numbers++;
 				decLast(status...);
 			endwhile;
-			status = status[0:2];
+			status = status[0:2]; # Remove the number difference
 		endif;
 
 		status--;
