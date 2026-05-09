@@ -57,6 +57,8 @@ Expression::Result CallExpression::build(InstructionBuilder &builder) const {
 	}
 	else {
 		tape = builder.createTape();
+		if(this->arguments.empty())
+			builder.addInstruction(std::make_unique<ClearInstruction>(tape, 0, std::nullopt)); // Necessary for optimization (so that the original content is cleared if the tape is reused)
 		for(it = this->arguments.begin(); it!=this->arguments.end(); it++) {
 			if((*it)->isConstant())
 				builder.addInstruction(std::make_unique<WriteNumberInstruction>(tape, (it==this->arguments.begin()) ? std::optional<size_t>(0) : std::nullopt, (*it)->buildConstant(builder)));
