@@ -1,0 +1,27 @@
+# From Machine Library:
+ADD = { A10RB B10RC B00R_ C11RC C01LD D11LD D00R_ };
+SUB = { A11RA A00RB B00RB B10RC C00LD D00LD D11LE E11LE E00R_ C11LF F00LF F10LG G00RH H00RH H10RI I10RI I01N_ G11RB };
+COUNT = { A01N_ A11RB B10RB B00RC C00LD D00LD D11LE E11LE E01N_ C11LF F00LF F11RG G01RH H00RH H10RB };
+
+output = [];
+output[] = ADD(input...);
+output[] = ADD(input...)...;
+output[] = ADD(input...)[1:];
+output[] = ADD(input[:2])...;
+output[] = ADD(input[0], input[1])...;
+output[] = ADD(input[1], input[0])...;
+output[] = ADD(input[1], input...)...;
+output[] = SUB(input, 2)...;
+output[] = SUB(input, 1 + 2)...;
+output[] = SUB(input + input, input[1])...;
+output[] = COUNT(input)...;
+output[] = COUNT(input...)...;
+output[] = COUNT(input...)[1:];
+output[] = COUNT(input..., output...)...;
+
+# 0 1 2 3 1
+output[] = COUNT()...;
+output[] = COUNT(1)...;
+output[] = COUNT(1, 2)...;
+output[] = COUNT(1, 2, 1 + 2)...;
+output[] = COUNT(COUNT());
