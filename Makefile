@@ -112,7 +112,8 @@ EXAMPLES = \
 	examples/simpleTests/while.tm \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \
-	examples/simpleTests/loop.tm
+	examples/simpleTests/loop.tm \
+	examples/simpleTests/callStatement.tm
 
 all: ${BIN}
 
