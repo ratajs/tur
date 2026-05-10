@@ -67,7 +67,7 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 				builder.addInstruction(std::make_unique<CopyInstruction>(backupTape, *this->destination.tape, sourceRange.index0 - this->backupRange->index0, sourceRange.index1.transform([this](size_t index) -> size_t { return (index - this->backupRange->index0); }), index));
 				if(!sourceRange.index1)
 					index = {};
-				else
+				else if(index)
 					(*index)+= ((*sourceRange.index1) - sourceRange.index0);
 			}
 			else {
