@@ -8,7 +8,7 @@
  */
 class Warning {
 	public:
-		virtual ~Warning() noexcept;
+		virtual ~Warning() noexcept = default;
 
 		/*!
 		 * This virtual method should return a general type of the warning, it will be followed by ‘ warning:’ when printing.

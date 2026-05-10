@@ -1,8 +1,6 @@
 #include "./instruction.hpp"
 #include "../IO/unexpectedError.hpp"
 
-Instruction::~Instruction() noexcept {};
-
 std::unique_ptr<Instruction> Instruction::tryToMerge(const Instruction &otherInstruction) const {
 	return {};
 };

@@ -1,8 +1,6 @@
 #include "./error.hpp"
 #include "./format.hpp"
 
-Error::~Error() noexcept {};
-
 std::optional<std::wstring> Error::getTitle() const {
 	return {};
 };

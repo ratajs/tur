@@ -8,7 +8,7 @@
  */
 class Error {
 	public:
-		virtual ~Error() noexcept;
+		virtual ~Error() noexcept = default;
 
 		/*!
 		 * This virtual method should return a general type of the error, it will be followed by ‘ error:’ when printing.

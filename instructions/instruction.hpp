@@ -15,7 +15,7 @@
  */
 class Instruction {
 	public:
-		virtual ~Instruction() noexcept;
+		virtual ~Instruction() noexcept = default;
 
 		/*!
 		 * This virtual method should return all tapes used by the instruction.
