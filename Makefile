@@ -158,7 +158,7 @@ uninstall:
 	rm -rf ${MANDIR}/${MAN}
 
 clean:
-	rm -rf ${OBJS} ${TOBJS} ${EXAMPLES} ${OBJS:.o=.d} ${TOBJS:.o=.d}
+	rm -rf ${OBJS} ${TOBJS} ${EXAMPLES} ${EXAMPLES:.tm=.O.tm} ${OBJS:.o=.d} ${TOBJS:.o=.d}
 	rm -rf ${BIN} ./doc/ algotest ${BIN}.d algotest.d vgcore.* *.dSYM *.core *~
 
 .PHONY: install uninstall
