@@ -1,9 +1,41 @@
 #include "./irParser.hpp"
+#include "../IO/generalError.hpp"
+#include "../IO/format.hpp"
 
 void IrParser::parseLine(std::wstring_view line) {
-	//TODO
+	size_t parenthesisPos, tapesCount;
+	std::wstring_view instructionName, instructionArguments;
+	std::wistringstream iss;
 
-	std::wcerr << L"Line " << this->lineNumber << L": " << line << std::endl;
+	if(line.empty())
+		return;
+
+	if(line.starts_with(L"TAPES ")) {
+		if(this->tapesCount)
+			throw GeneralError(L"The number of tapes must be set at the beginning and only once.");
+
+		iss.str(std::wstring(line.substr(6)));
+
+		if(!(iss >> tapesCount) || !iss.eof())
+			throw GeneralError(L"Invalid line "+Format::blue(std::to_wstring(this->lineNumber))+L": "+Format::red(std::wstring(line)));
+
+		this->tapesCount = tapesCount;
+
+		return;
+	};
+
+	if(!this->tapesCount)
+		this->tapesCount = 1;
+
+	parenthesisPos = line.find('(');
+	if(!line.ends_with(L")") || parenthesisPos==line.npos || parenthesisPos==0)
+		throw GeneralError(L"Invalid line "+Format::blue(std::to_wstring(this->lineNumber))+L": "+Format::red(std::wstring(line)));
+
+	instructionName = line.substr(0, parenthesisPos);
+	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
+
+//std::wcerr << L"Line " << this->lineNumber << L": " << line << std::endl;
+	std::wcerr << L"Instruction: " << Format::blue(std::wstring(instructionName)) << L", arguments: " << Format::yellow(std::wstring(instructionArguments)) << std::endl;
 };
 
 IrParser::IrParser(const std::wstring &text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): it(text.begin()), endIt(text.end()), warningIt(warningIt) {};
@@ -29,5 +61,6 @@ InstructionCollection IrParser::parse() {
 		this->lineNumber++;
 	};
 
-	return std::move(this->collection);
+	return {};
+//return { this->instructions };
 };
