@@ -30,6 +30,7 @@ OBJS = \
 	parsing/token.o \
 	parsing/lexer.o \
 	parsing/parser.o \
+	parsing/irParser.o \
 	AST/program.o \
 	AST/variable.o \
 	AST/expressions/expression.o \

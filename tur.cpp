@@ -21,6 +21,7 @@
 #include "./parsing/token.hpp"
 #include "./parsing/lexer.hpp"
 #include "./parsing/parser.hpp"
+#include "./parsing/irParser.hpp"
 #include "./AST/program.hpp"
 #include "./building/instructionBuilder.hpp"
 #include "./building/instructionCollection.hpp"
@@ -52,7 +53,7 @@ static Machine compile(Input &input) {
 			break;
 
 		case InputLanguage::IR:
-			//TODO
+			instructions = IrParser(source, std::back_inserter(warnings)).parse();
 
 			break;
 	};
