@@ -10,6 +10,7 @@ CXXFLAGS = -std=c++23 -Wall -Wno-deprecated-declarations -pedantic -O3
 
 OBJS = \
 	IO/flags.o \
+	IO/inputLanguage.o \
 	IO/input.o \
 	IO/format.o \
 	IO/error.o \

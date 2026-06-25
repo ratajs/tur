@@ -11,6 +11,7 @@
 #include <codecvt>
 #include "./IO/input.hpp"
 #include "./IO/flags.hpp"
+#include "./IO/inputLanguage.hpp"
 #include "./IO/includeResolver.hpp"
 #include "./IO/error.hpp"
 #include "./IO/warning.hpp"
@@ -36,15 +37,25 @@ static Machine compile(Input &input) {
 
 	source = input.readSource();
 
-	tokens = Lexer(source, std::back_inserter(warnings)).analyze();
-	program = Parser(tokens, { input.getBasePath(), input.getMachineFileSuffix(), input.getProvidedMachines() }, std::back_inserter(warnings)).parse().extractProgram();
-	program.checkForWarnings(std::back_inserter(warnings));
+	switch(input.getInputLanguage()) {
+		case InputLanguage::TUR:
+			tokens = Lexer(source, std::back_inserter(warnings)).analyze();
+			program = Parser(tokens, { input.getBasePath(), input.getMachineFileSuffix(), input.getProvidedMachines() }, std::back_inserter(warnings)).parse().extractProgram();
+			program.checkForWarnings(std::back_inserter(warnings));
 
-	if(input.getFlags().isFlagPresent(Flags::Flag::OPTIMIZE))
-		instructionBuilder.allowInstructionMerging();
+			if(input.getFlags().isFlagPresent(Flags::Flag::OPTIMIZE))
+				instructionBuilder.allowInstructionMerging();
 
-	program.build(instructionBuilder);
-	instructions = instructionBuilder.extractInstructions();
+			program.build(instructionBuilder);
+			instructions = instructionBuilder.extractInstructions();
+
+			break;
+
+		case InputLanguage::IR:
+			//TODO
+
+			break;
+	};
 
 	if(input.getFlags().isFlagPresent(Flags::Flag::OPTIMIZE))
 		instructions.optimize();
