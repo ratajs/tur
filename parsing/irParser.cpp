@@ -1,7 +1,6 @@
 #include "./irParser.hpp"
 #include "../IO/generalError.hpp"
 #include "../IO/format.hpp"
-#include "./irArguments.hpp"
 #include "../instructions/decompressInstruction.hpp"
 #include "../instructions/compressInstruction.hpp"
 #include "../instructions/clearInstruction.hpp"
@@ -11,11 +10,31 @@
 #include "../instructions/jumpInstruction.hpp"
 #include "../instructions/compareInstruction.hpp"
 
+std::unique_ptr<Instruction> IrParser::resolveInstrucion(std::wstring_view instructionName, IrArguments arguments) {
+	if(instructionName==L"decompress")
+		return std::make_unique<DecompressInstruction>(arguments);
+	else if(instructionName==L"compress")
+		return std::make_unique<CompressInstruction>(arguments);
+	else if(instructionName==L"clear")
+		return std::make_unique<ClearInstruction>(arguments);
+	else if(instructionName==L"writeNumber")
+		return std::make_unique<WriteNumberInstruction>(arguments);
+	else if(instructionName==L"copy")
+		return std::make_unique<CopyInstruction>(arguments);
+	else if(instructionName==L"call")
+		return std::make_unique<CallInstruction>(arguments);
+	else if(instructionName==L"jump")
+		return std::make_unique<JumpInstruction>(arguments);
+	else if(instructionName==L"compare")
+		return std::make_unique<CompareInstruction>(arguments);
+	else
+		throw GeneralError(L"Unknown instruction on line"+Format::blue(std::to_wstring(arguments.getLineNumber()))+L": "+Format::red(std::wstring(instructionName)));
+};
+
 void IrParser::parseLine(std::wstring_view line) {
 	size_t parenthesisPos, tapesCount;
 	std::wstring_view instructionName, instructionArguments;
 	std::wistringstream iss;
-	IrArguments arguments;
 
 	if(line.empty())
 		return;
@@ -38,32 +57,15 @@ void IrParser::parseLine(std::wstring_view line) {
 		this->tapesCount = 1;
 
 	parenthesisPos = line.find('(');
-	if(!line.ends_with(L")") || parenthesisPos==line.npos || parenthesisPos==0)
+
+	if(!line.ends_with(')') || parenthesisPos==line.npos || parenthesisPos==0)
 		throw GeneralError(L"Invalid line "+Format::blue(std::to_wstring(this->lineNumber))+L": "+Format::red(std::wstring(line)));
 
 	instructionName = line.substr(0, parenthesisPos);
 	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
-	arguments = { instructionArguments, *this->tapesCount, lineNumber };
 
 	//TODO replace lineNumber with Location
-	if(instructionName==L"decompress")
-		this->instructions.push_back(std::make_unique<DecompressInstruction>(arguments));
-	else if(instructionName==L"compress")
-		this->instructions.push_back(std::make_unique<CompressInstruction>(arguments));
-	else if(instructionName==L"clear")
-		this->instructions.push_back(std::make_unique<ClearInstruction>(arguments));
-	else if(instructionName==L"writeNumber")
-		this->instructions.push_back(std::make_unique<WriteNumberInstruction>(arguments));
-	else if(instructionName==L"copy")
-		this->instructions.push_back(std::make_unique<CopyInstruction>(arguments));
-	else if(instructionName==L"call")
-		this->instructions.push_back(std::make_unique<CallInstruction>(arguments));
-	else if(instructionName==L"jump")
-		this->instructions.push_back(std::make_unique<JumpInstruction>(arguments));
-	else if(instructionName==L"compare")
-		this->instructions.push_back(std::make_unique<CompareInstruction>(arguments));
-	else
-		throw GeneralError(L"Unknown instruction on line"+Format::blue(std::to_wstring(lineNumber))+L": "+Format::red(std::wstring(instructionName)));
+	this->instructions.push_back(IrParser::resolveInstrucion(instructionName, { instructionArguments, *this->tapesCount, lineNumber, this->labels }));
 };
 
 IrParser::IrParser(const std::wstring &text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): it(text.begin()), endIt(text.end()), warningIt(warningIt) {};
@@ -89,6 +91,8 @@ InstructionCollection IrParser::parse() {
 		this->lineNumber++;
 	};
 
-	return {};
-//return { this->instructions };
+	if(!this->tapesCount)
+		this->tapesCount = 1;
+
+	return { std::move(this->instructions), std::vector<TapeReference>(*this->tapesCount, TapeReference()), this->labels.size() };
 };

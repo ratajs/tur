@@ -49,9 +49,9 @@ CompareInstruction::CompareInstruction(IrArguments &arguments): argumentA(argume
 
 	this->argumentB = arguments.readTapeAndIndexOrNumber();
 	arguments.readComma();
-	this->trueLabel = arguments.readNumber();
+	this->trueLabel = arguments.readLabel();
 	arguments.readComma();
-	this->falseLabel = arguments.readNumber();
+	this->falseLabel = arguments.readLabel();
 	arguments.end();
 };
 

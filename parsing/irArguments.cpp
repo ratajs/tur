@@ -2,14 +2,7 @@
 #include "../IO/generalError.hpp"
 #include "../IO/format.hpp"
 
-IrArguments::IrArguments(): IrArguments(L"", 0, 0) {};
-
-IrArguments::IrArguments(std::wstring_view view, size_t tapesCount, size_t lineNumber): tapesCount(tapesCount), lineNumber(lineNumber), iss(std::wstring(view)) {};
-
-/*size_t IrArguments::readString(std::same_as<std::wstring_view> auto... allowedStrings) {
-	if constexpr (sizeof...(allowedStrings)==0)
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
-};*/
+IrArguments::IrArguments(std::wstring_view view, size_t tapesCount, size_t lineNumber, std::map<size_t, size_t> &labels): tapesCount(tapesCount), lineNumber(lineNumber), iss(std::wstring(view)), labels(labels) {};
 
 void IrArguments::readCharacter(wchar_t character) {
 	wchar_t readCharacter;
@@ -34,7 +27,7 @@ size_t IrArguments::readString(std::vector<std::wstring> allowedStrings) {
 };
 
 void IrArguments::readComma() {
-	this->readCharacter(L',');
+	this->readCharacter(',');
 };
 
 size_t IrArguments::readNumber() {
@@ -54,19 +47,30 @@ size_t IrArguments::readTape() {
 	if(tape==0 || tape > this->tapesCount)
 		throw GeneralError(L"Invalid tape number on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
 
-	return tape;
+	return (tape - 1);
+};
+
+size_t IrArguments::readLabel() {
+	size_t label;
+
+	label = this->readNumber();
+
+	if(this->labels.contains(label))
+		return this->labels.at(label);
+
+	return this->labels.emplace(label, this->labels.size()).first->second;
 };
 
 std::pair<size_t, std::optional<size_t>> IrArguments::readRange() {
 	size_t index0;
 	std::optional<size_t> index1;
 
-	this->readCharacter(L'[');
+	this->readCharacter('[');
 	index0 = this->readNumber();
-	this->readCharacter(L':');
-	if(this->iss.peek()!=L']')
+	this->readCharacter(':');
+	if(this->iss.peek()!=']')
 		index1 = this->readNumber();
-	this->readCharacter(L']');
+	this->readCharacter(']');
 
 	return { index0, index1 };
 };
@@ -74,16 +78,16 @@ std::pair<size_t, std::optional<size_t>> IrArguments::readRange() {
 std::optional<size_t> IrArguments::readRightwiseUnboundedRange() {
 	size_t index;
 
-	this->readCharacter(L'[');
-	if(this->iss.peek()==L']') {
+	this->readCharacter('[');
+	if(this->iss.peek()==']') {
 		this->iss.get();
 
 		return {};
 	}
 	else {
 		index = this->readNumber();
-		this->readCharacter(L':');
-		this->readCharacter(L']');
+		this->readCharacter(':');
+		this->readCharacter(']');
 
 		return index;
 	};
@@ -93,12 +97,15 @@ std::variant<std::pair<size_t, size_t>, size_t> IrArguments::readTapeAndIndexOrN
 	size_t firstNumber, index;
 
 	firstNumber = this->readNumber();
-	if(this->iss.peek()==L'[') {
+	if(this->iss.peek()=='[') {
 		this->iss.get();
 		index = this->readNumber();
-		this->readCharacter(L']');
+		this->readCharacter(']');
 
-		return std::pair(firstNumber, index);
+		if(firstNumber==0 || firstNumber > this->tapesCount)
+			throw GeneralError(L"Invalid tape number on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+
+		return std::pair(firstNumber - 1, index);
 	}
 	else
 		return firstNumber;
@@ -108,7 +115,7 @@ Machine IrArguments::readMachine() {
 	std::wstring machineString;
 	Machine machine;
 
-	this->readCharacter(L'{');
+	this->readCharacter('{');
 
 	std::getline(iss, machineString, L'}');
 
