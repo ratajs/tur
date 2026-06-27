@@ -21,6 +21,7 @@ OBJS = \
 	IO/parseError.o \
 	IO/typeError.o \
 	IO/symbolError.o \
+	IO/irParseError.o \
 	IO/warning.o \
 	IO/generalWarning.o \
 	IO/includeResolver.o \

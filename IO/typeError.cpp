@@ -1,6 +1,5 @@
 #include "./typeError.hpp"
 #include <utility>
-#include "../parsing/location.hpp"
 #include "./format.hpp"
 
 /*!

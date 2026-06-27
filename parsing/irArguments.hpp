@@ -1,15 +1,17 @@
 #pragma once
 #include "../common.hpp"
+#include "./location.hpp"
 #include "../machine/machine.hpp"
 
 class IrArguments {
 	private:
-		size_t tapesCount, lineNumber;
+		size_t tapesCount;
 		std::wistringstream iss; //TODO use std::wispanstream when it’s supported by libc++
+		Location location;
 		std::map<size_t, size_t> &labels;
 
 	public:
-		IrArguments(std::wstring_view view, size_t tapesCount, size_t lineNumber, std::map<size_t, size_t> &labels);
+		IrArguments(std::wstring_view view, size_t tapesCount, std::map<size_t, size_t> &labels, Location location);
 		void readCharacter(wchar_t character);
 		size_t readString(std::vector<std::wstring> allowedStrings);
 		void readComma();
@@ -21,5 +23,5 @@ class IrArguments {
 		std::variant<std::pair<size_t, size_t>, size_t> readTapeAndIndexOrNumber();
 		Machine readMachine();
 		void end();
-		size_t getLineNumber() const; //TODO replace with location
+		Location getLocation() const;
 };

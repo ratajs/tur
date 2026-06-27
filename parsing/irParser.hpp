@@ -7,18 +7,18 @@
 
 class IrParser {
 	private:
-		static std::unique_ptr<Instruction> resolveInstrucion(std::wstring_view instructionName, IrArguments arguments);
-
 		size_t lineNumber = 1;
 		std::optional<size_t> tapesCount;
-		std::wstring::const_iterator it, endIt;
+		std::wstring_view text;
+		std::wstring_view::const_iterator it;
 		std::map<size_t, size_t> labels; //TODO consider named labels
 		std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> warningIt;
 		std::list<std::unique_ptr<Instruction>> instructions;
 
 		void parseLine(std::wstring_view line);
+		std::unique_ptr<Instruction> resolveInstrucion(std::wstring_view instructionName, IrArguments arguments);
 
 	public:
-		IrParser(const std::wstring &text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt);
+		IrParser(std::wstring_view text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt);
 		InstructionCollection parse();
 };

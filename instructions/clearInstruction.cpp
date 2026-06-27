@@ -1,8 +1,7 @@
 #include "./clearInstruction.hpp"
 #include <initializer_list>
-#include "../IO/generalError.hpp"
 #include "../IO/unexpectedError.hpp"
-#include "../IO/format.hpp"
+#include "../IO/irParseError.hpp"
 
 /*!
  * The constructor of ClearInstruction.
@@ -22,7 +21,7 @@ ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readT
 	arguments.end();
 
 	if(this->index0 > 0 && this->index1)
-		throw GeneralError(L"Invalid range for clear on line "+Format::blue(std::to_wstring(arguments.getLineNumber()))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_RANGE_FOR_CLEAR, arguments.getLocation()); //TODO more precise location?
 };
 
 std::vector<size_t> ClearInstruction::listUsedTapes() const {

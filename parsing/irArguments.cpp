@@ -1,14 +1,13 @@
 #include "./irArguments.hpp"
-#include "../IO/generalError.hpp"
-#include "../IO/format.hpp"
+#include "../IO/irParseError.hpp"
 
-IrArguments::IrArguments(std::wstring_view view, size_t tapesCount, size_t lineNumber, std::map<size_t, size_t> &labels): tapesCount(tapesCount), lineNumber(lineNumber), iss(std::wstring(view)), labels(labels) {};
+IrArguments::IrArguments(std::wstring_view view, size_t tapesCount, std::map<size_t, size_t> &labels, Location location): tapesCount(tapesCount), iss(std::wstring(view)), location(location), labels(labels) {};
 
 void IrArguments::readCharacter(wchar_t character) {
 	wchar_t readCharacter;
 
 	if(!(this->iss >> readCharacter) || readCharacter!=character)
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);
 };
 
 size_t IrArguments::readString(std::vector<std::wstring> allowedStrings) {
@@ -16,12 +15,12 @@ size_t IrArguments::readString(std::vector<std::wstring> allowedStrings) {
 	std::vector<std::wstring>::const_iterator index;
 
 	if(!(this->iss >> string))
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);
 
 	index = std::ranges::find(allowedStrings, string);
 
 	if(index==allowedStrings.end())
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);
 
 	return (index - allowedStrings.begin());
 };
@@ -34,7 +33,7 @@ size_t IrArguments::readNumber() {
 	size_t number;
 
 	if(!(this->iss >> number))
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);
 
 	return number;
 };
@@ -45,7 +44,7 @@ size_t IrArguments::readTape() {
 	tape = this->readNumber();
 
 	if(tape==0 || tape > this->tapesCount)
-		throw GeneralError(L"Invalid tape number on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_TAPE_NUMBER, this->location); //TODO more precise location?
 
 	return (tape - 1);
 };
@@ -103,7 +102,7 @@ std::variant<std::pair<size_t, size_t>, size_t> IrArguments::readTapeAndIndexOrN
 		this->readCharacter(']');
 
 		if(firstNumber==0 || firstNumber > this->tapesCount)
-			throw GeneralError(L"Invalid tape number on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+			throw IrParseError(IrParseError::Type::INVALID_TAPE_NUMBER, this->location); //TODO more precise location?
 
 		return std::pair(firstNumber - 1, index);
 	}
@@ -120,7 +119,7 @@ Machine IrArguments::readMachine() {
 	std::getline(iss, machineString, L'}');
 
 	if(!iss || iss.eof() || (std::wistringstream(std::move(machineString)) >> machine).fail() || !machine)
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);
 
 	return machine;
 };
@@ -128,9 +127,9 @@ Machine IrArguments::readMachine() {
 void IrArguments::end() {
 	this->iss.peek();
 	if(!this->iss.eof())
-		throw GeneralError(L"Invalid arguments on line "+Format::blue(std::to_wstring(this->lineNumber))+L".");
+		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);
 };
 
-size_t IrArguments::getLineNumber() const {
-	return this->lineNumber;
+Location IrArguments::getLocation() const {
+	return this->location;
 };

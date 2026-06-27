@@ -1,6 +1,5 @@
 #include "./irParser.hpp"
-#include "../IO/generalError.hpp"
-#include "../IO/format.hpp"
+#include "../IO/irParseError.hpp"
 #include "../instructions/decompressInstruction.hpp"
 #include "../instructions/compressInstruction.hpp"
 #include "../instructions/clearInstruction.hpp"
@@ -9,6 +8,44 @@
 #include "../instructions/callInstruction.hpp"
 #include "../instructions/jumpInstruction.hpp"
 #include "../instructions/compareInstruction.hpp"
+
+IrParser::IrParser(std::wstring_view text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): text(text), it(text.begin()), warningIt(warningIt) {};
+
+void IrParser::parseLine(std::wstring_view line) {
+	size_t parenthesisPos, tapesCount;
+	std::wstring_view instructionName, instructionArguments;
+	std::wistringstream iss;
+
+	if(line.empty())
+		return;
+
+	if(line.starts_with(L"TAPES ")) {
+		if(this->tapesCount)
+			throw IrParseError(IrParseError::Type::NUMBER_OF_TAPES_ALREADY_SET, { line, this->lineNumber, this->text });
+
+		iss.str(std::wstring(line.substr(6)));
+
+		if(!(iss >> tapesCount) || !iss.eof())
+			throw IrParseError(IrParseError::Type::WRONG_LINE_FORMAT, { line, this->lineNumber, this->text });
+
+		this->tapesCount = tapesCount;
+
+		return;
+	};
+
+	if(!this->tapesCount)
+		this->tapesCount = 1;
+
+	parenthesisPos = line.find('(');
+
+	if(!line.ends_with(')') || parenthesisPos==line.npos || parenthesisPos==0)
+		throw IrParseError(IrParseError::Type::WRONG_LINE_FORMAT, { line, this->lineNumber, this->text });
+
+	instructionName = line.substr(0, parenthesisPos);
+	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
+
+	this->instructions.push_back(this->resolveInstrucion(instructionName, { instructionArguments, *this->tapesCount, this->labels, { instructionArguments, this->lineNumber, this->text } }));
+};
 
 std::unique_ptr<Instruction> IrParser::resolveInstrucion(std::wstring_view instructionName, IrArguments arguments) {
 	if(instructionName==L"decompress")
@@ -28,55 +65,16 @@ std::unique_ptr<Instruction> IrParser::resolveInstrucion(std::wstring_view instr
 	else if(instructionName==L"compare")
 		return std::make_unique<CompareInstruction>(arguments);
 	else
-		throw GeneralError(L"Unknown instruction on line"+Format::blue(std::to_wstring(arguments.getLineNumber()))+L": "+Format::red(std::wstring(instructionName)));
+		throw IrParseError(IrParseError::Type::UNKNOWN_INSTRUCTION, { instructionName, this->lineNumber, this->text });
 };
-
-void IrParser::parseLine(std::wstring_view line) {
-	size_t parenthesisPos, tapesCount;
-	std::wstring_view instructionName, instructionArguments;
-	std::wistringstream iss;
-
-	if(line.empty())
-		return;
-
-	if(line.starts_with(L"TAPES ")) {
-		if(this->tapesCount)
-			throw GeneralError(L"The number of tapes must be set at the beginning and only once.");
-
-		iss.str(std::wstring(line.substr(6)));
-
-		if(!(iss >> tapesCount) || !iss.eof())
-			throw GeneralError(L"Invalid line "+Format::blue(std::to_wstring(this->lineNumber))+L": "+Format::red(std::wstring(line)));
-
-		this->tapesCount = tapesCount;
-
-		return;
-	};
-
-	if(!this->tapesCount)
-		this->tapesCount = 1;
-
-	parenthesisPos = line.find('(');
-
-	if(!line.ends_with(')') || parenthesisPos==line.npos || parenthesisPos==0)
-		throw GeneralError(L"Invalid line "+Format::blue(std::to_wstring(this->lineNumber))+L": "+Format::red(std::wstring(line)));
-
-	instructionName = line.substr(0, parenthesisPos);
-	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
-
-	//TODO replace lineNumber with Location
-	this->instructions.push_back(IrParser::resolveInstrucion(instructionName, { instructionArguments, *this->tapesCount, lineNumber, this->labels }));
-};
-
-IrParser::IrParser(const std::wstring &text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): it(text.begin()), endIt(text.end()), warningIt(warningIt) {};
 
 InstructionCollection IrParser::parse() {
 	size_t pos;
 	std::wstring_view line;
-	std::wstring::const_iterator lineStartIt;
+	std::wstring_view::const_iterator lineStartIt;
 
-	for(lineStartIt = this->it; lineStartIt!=this->endIt; lineStartIt = std::next(this->it)) {
-		for(this->it = lineStartIt; this->it!=endIt && (*this->it)!='\n'; this->it++);
+	for(lineStartIt = this->it; lineStartIt!=this->text.end(); lineStartIt = std::next(this->it)) {
+		for(this->it = lineStartIt; this->it!=this->text.end() && (*this->it)!='\n'; this->it++);
 		line = std::wstring_view(lineStartIt, this->it);
 		pos = line.find('#');
 		if(pos!=line.npos)
