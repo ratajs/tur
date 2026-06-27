@@ -1,4 +1,6 @@
 #include "./irArguments.hpp"
+#include <algorithm>
+#include <iostream>
 #include "../IO/irParseError.hpp"
 
 IrArguments::IrArguments(std::wstring_view view, size_t tapesCount, std::map<size_t, size_t> &labels, Location location): tapesCount(tapesCount), iss(std::wstring(view)), location(location), labels(labels) {};

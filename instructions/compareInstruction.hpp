@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <utility>
 #include <variant>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <functional>

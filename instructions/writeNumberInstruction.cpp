@@ -1,8 +1,6 @@
 #include "./writeNumberInstruction.hpp"
 #include <initializer_list>
-//#include "../IO/generalError.hpp"
 #include "../IO/unexpectedError.hpp"
-//#include "../IO/format.hpp"
 
 /*!
  * The constructor of WriteNumberInstruction.

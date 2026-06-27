@@ -1,5 +1,6 @@
 #include "./copyInstruction.hpp"
 #include <utility>
+#include <tuple>
 #include <initializer_list>
 #include "./clearInstruction.hpp"
 #include "../IO/unexpectedError.hpp"

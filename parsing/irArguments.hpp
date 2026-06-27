@@ -1,5 +1,13 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <utility>
+#include <optional>
+#include <variant>
+#include <vector>
+#include <map>
+#include <string>
+#include <string_view>
+#include <sstream>
 #include "./location.hpp"
 #include "../machine/machine.hpp"
 

@@ -1,5 +1,6 @@
 #include "./compareTapeLengthInstruction.hpp"
 #include <initializer_list>
+#include <functional>
 #include "../IO/unexpectedError.hpp"
 
 /*!

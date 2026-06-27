@@ -1,5 +1,12 @@
 #pragma once
-#include "../common.hpp"
+#include <cstdlib>
+#include <memory>
+#include <optional>
+#include <vector>
+#include <list>
+#include <map>
+#include <iterator>
+#include <string_view>
 #include "../instructions/instruction.hpp"
 #include "../building/instructionCollection.hpp"
 #include "./irArguments.hpp"

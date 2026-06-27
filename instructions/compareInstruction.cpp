@@ -1,6 +1,6 @@
 #include "./compareInstruction.hpp"
 #include <optional>
-#include <vector>
+#include <initializer_list>
 #include "../IO/unexpectedError.hpp"
 
 /*!

@@ -1,4 +1,9 @@
 #include "./irParser.hpp"
+#include <utility>
+#include <iterator>
+#include <string>
+#include <iostream>
+#include <sstream>
 #include "../IO/irParseError.hpp"
 #include "../instructions/decompressInstruction.hpp"
 #include "../instructions/compressInstruction.hpp"

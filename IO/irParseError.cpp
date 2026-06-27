@@ -1,4 +1,5 @@
 #include "./irParseError.hpp"
+#include <utility>
 #include "./format.hpp"
 
 IrParseError::IrParseError(IrParseError::Type type, const Location &location): ErrorWithLocation(location), type(type) {};

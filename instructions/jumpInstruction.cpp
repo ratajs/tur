@@ -1,5 +1,6 @@
 #include "./jumpInstruction.hpp"
 #include <optional>
+#include <initializer_list>
 
 /*!
  * The constructor of JumpInstruction.
