@@ -8,6 +8,7 @@
 #include "../machine/machine.hpp"
 #include "../machine/singleTapeMachineFactory.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
+#include "../parsing/irArguments.hpp"
 
 /*!
  * This instruction simulates a given Turing machine on a given tape.
@@ -15,10 +16,11 @@
 class CallInstruction: public Instruction {
 	private:
 		size_t tape;
-		const Machine &machine;
+		Machine machine;
 
 	public:
-		CallInstruction(size_t tape, const Machine &machine);
+		CallInstruction(size_t tape, Machine machine);
+		CallInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;

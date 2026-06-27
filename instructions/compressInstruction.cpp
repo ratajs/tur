@@ -8,6 +8,10 @@
  */
 CompressInstruction::CompressInstruction(size_t source): source(source) {};
 
+CompressInstruction::CompressInstruction(IrArguments &arguments): source(arguments.readTape()) {
+	arguments.end();
+};
+
 std::vector<size_t> CompressInstruction::listUsedTapes() const {
 	return { this->source };
 };

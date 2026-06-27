@@ -8,6 +8,7 @@
 #include "./instruction.hpp"
 #include "../machine/singleTapeMachineFactory.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
+#include "../parsing/irArguments.hpp"
 
 /*!
  * This instruction compares two numbers and jumps to different labels depending on the result of the comparison.
@@ -34,6 +35,7 @@ class CompareInstruction: public Instruction {
 
 	public:
 		CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type);
+		CompareInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;

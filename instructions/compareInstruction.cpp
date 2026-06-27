@@ -14,6 +14,47 @@
 CompareInstruction::CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type):
 	type(type), trueLabel(trueLabel), falseLabel(falseLabel), argumentA(argumentA), argumentB(argumentB) {};
 
+CompareInstruction::CompareInstruction(IrArguments &arguments): argumentA(arguments.readTapeAndIndexOrNumber()) {
+	switch(arguments.readString({ L"=", L"≠", L"<", L"≤", L">", L"≥" })) {
+		case 0:
+			this->type = CompareInstruction::Type::EQ;
+
+			break;
+
+		case 1:
+			this->type = CompareInstruction::Type::NE;
+
+			break;
+
+		case 2:
+			this->type = CompareInstruction::Type::LT;
+
+			break;
+
+		case 3:
+			this->type = CompareInstruction::Type::LTE;
+
+			break;
+
+		case 4:
+			this->type = CompareInstruction::Type::GT;
+
+			break;
+
+		case 5:
+			this->type = CompareInstruction::Type::GTE;
+
+			break;
+	};
+
+	this->argumentB = arguments.readTapeAndIndexOrNumber();
+	arguments.readComma();
+	this->trueLabel = arguments.readNumber();
+	arguments.readComma();
+	this->falseLabel = arguments.readNumber();
+	arguments.end();
+};
+
 /*!
  * \return The operator which can be used after swapping arguments.
  */

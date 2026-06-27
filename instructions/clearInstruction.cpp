@@ -1,6 +1,8 @@
 #include "./clearInstruction.hpp"
 #include <initializer_list>
+#include "../IO/generalError.hpp"
 #include "../IO/unexpectedError.hpp"
+#include "../IO/format.hpp"
 
 /*!
  * The constructor of ClearInstruction.
@@ -14,6 +16,14 @@ ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<siz
 		if(index0 > 0 && index1)
 			throw UnexpectedError(L"Invalid clear (neither beginning nor end).");
 	};
+
+ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+	std::tie(this->index0, this->index1) = arguments.readRange();
+	arguments.end();
+
+	if(this->index0 > 0 && this->index1)
+		throw GeneralError(L"Invalid range for clear on line "+Format::blue(std::to_wstring(arguments.getLineNumber()))+L".");
+};
 
 std::vector<size_t> ClearInstruction::listUsedTapes() const {
 	return { this->tape };

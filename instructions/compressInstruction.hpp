@@ -7,6 +7,7 @@
 #include "./instruction.hpp"
 #include "../machine/singleTapeMachineFactory.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
+#include "../parsing/irArguments.hpp"
 
 /*!
  * This instruction should be the last instruction in every program.
@@ -19,6 +20,7 @@ class CompressInstruction: public Instruction {
 
 	public:
 		CompressInstruction(size_t destination);
+		CompressInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;

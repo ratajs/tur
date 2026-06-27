@@ -8,6 +8,10 @@
  */
 JumpInstruction::JumpInstruction(size_t label, JumpInstruction::Type type): type(type), label(label) {};
 
+JumpInstruction::JumpInstruction(IrArguments &arguments): type((arguments.readString({ L"GOTO", L"COMEFROM" })==0) ? JumpInstruction::Type::GO_TO : JumpInstruction::Type::COME_FROM), label(arguments.readNumber()) {
+	arguments.end();
+};
+
 std::vector<size_t> JumpInstruction::listUsedTapes() const {
 	return {};
 };

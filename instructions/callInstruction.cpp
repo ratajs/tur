@@ -8,7 +8,11 @@
  * \param tape The tape on which the machine shall be simulated.
  * \param machine The Turing machine to simulate.
  */
-CallInstruction::CallInstruction(size_t tape, const Machine &machine): tape(tape), machine(machine) {};
+CallInstruction::CallInstruction(size_t tape, Machine machine): tape(tape), machine(std::move(machine)) {};
+
+CallInstruction::CallInstruction(IrArguments &arguments): tape(arguments.readTape()), machine((arguments.readComma(), arguments.readMachine())) {
+	arguments.end();
+};
 
 std::vector<size_t> CallInstruction::listUsedTapes() const {
 	return { this->tape };

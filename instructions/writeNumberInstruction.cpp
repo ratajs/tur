@@ -1,6 +1,8 @@
 #include "./writeNumberInstruction.hpp"
 #include <initializer_list>
+//#include "../IO/generalError.hpp"
 #include "../IO/unexpectedError.hpp"
+//#include "../IO/format.hpp"
 
 /*!
  * The constructor of WriteNumberInstruction.
@@ -9,6 +11,23 @@
  * \param number The constant to write on the tape.
  */
 WriteNumberInstruction::WriteNumberInstruction(size_t tape, std::optional<size_t> index, size_t number): tape(tape), number(number), index(index) {};
+
+WriteNumberInstruction::WriteNumberInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+//std::optional<size_t> index1;
+
+	/*
+	std::tie(this->index, index1) = arguments.readRange(); //TODO destination can be []
+
+	if(index1)
+		throw GeneralError(L"Invalid range for writeNumber on line "+Format::blue(std::to_wstring(arguments.getLineNumber()))+L".");
+	*/
+
+	this->index = arguments.readRightwiseUnboundedRange();
+
+	arguments.readComma();
+	this->number = arguments.readNumber();
+	arguments.end();
+};
 
 std::vector<size_t> WriteNumberInstruction::listUsedTapes() const {
 	return { this->tape };

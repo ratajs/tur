@@ -1,11 +1,21 @@
 #include "./irParser.hpp"
 #include "../IO/generalError.hpp"
 #include "../IO/format.hpp"
+#include "./irArguments.hpp"
+#include "../instructions/decompressInstruction.hpp"
+#include "../instructions/compressInstruction.hpp"
+#include "../instructions/clearInstruction.hpp"
+#include "../instructions/writeNumberInstruction.hpp"
+#include "../instructions/copyInstruction.hpp"
+#include "../instructions/callInstruction.hpp"
+#include "../instructions/jumpInstruction.hpp"
+#include "../instructions/compareInstruction.hpp"
 
 void IrParser::parseLine(std::wstring_view line) {
 	size_t parenthesisPos, tapesCount;
 	std::wstring_view instructionName, instructionArguments;
 	std::wistringstream iss;
+	IrArguments arguments;
 
 	if(line.empty())
 		return;
@@ -33,9 +43,27 @@ void IrParser::parseLine(std::wstring_view line) {
 
 	instructionName = line.substr(0, parenthesisPos);
 	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
+	arguments = { instructionArguments, *this->tapesCount, lineNumber };
 
-//std::wcerr << L"Line " << this->lineNumber << L": " << line << std::endl;
-	std::wcerr << L"Instruction: " << Format::blue(std::wstring(instructionName)) << L", arguments: " << Format::yellow(std::wstring(instructionArguments)) << std::endl;
+	//TODO replace lineNumber with Location
+	if(instructionName==L"decompress")
+		this->instructions.push_back(std::make_unique<DecompressInstruction>(arguments));
+	else if(instructionName==L"compress")
+		this->instructions.push_back(std::make_unique<CompressInstruction>(arguments));
+	else if(instructionName==L"clear")
+		this->instructions.push_back(std::make_unique<ClearInstruction>(arguments));
+	else if(instructionName==L"writeNumber")
+		this->instructions.push_back(std::make_unique<WriteNumberInstruction>(arguments));
+	else if(instructionName==L"copy")
+		this->instructions.push_back(std::make_unique<CopyInstruction>(arguments));
+	else if(instructionName==L"call")
+		this->instructions.push_back(std::make_unique<CallInstruction>(arguments));
+	else if(instructionName==L"jump")
+		this->instructions.push_back(std::make_unique<JumpInstruction>(arguments));
+	else if(instructionName==L"compare")
+		this->instructions.push_back(std::make_unique<CompareInstruction>(arguments));
+	else
+		throw GeneralError(L"Unknown instruction on line"+Format::blue(std::to_wstring(lineNumber))+L": "+Format::red(std::wstring(instructionName)));
 };
 
 IrParser::IrParser(const std::wstring &text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): it(text.begin()), endIt(text.end()), warningIt(warningIt) {};

@@ -8,6 +8,10 @@
  */
 DecompressInstruction::DecompressInstruction(size_t destination): destination(destination) {};
 
+DecompressInstruction::DecompressInstruction(IrArguments &arguments): destination(arguments.readTape()) {
+	arguments.end();
+};
+
 std::vector<size_t> DecompressInstruction::listUsedTapes() const {
 	return { this->destination };
 };

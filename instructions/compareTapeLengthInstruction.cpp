@@ -12,6 +12,51 @@
  */
 CompareTapeLengthInstruction::CompareTapeLengthInstruction(size_t tape, size_t number, size_t trueLabel, size_t falseLabel, CompareTapeLengthInstruction::Type type): type(type), tape(tape), number(number), trueLabel(trueLabel), falseLabel(falseLabel) {};
 
+CompareTapeLengthInstruction::CompareTapeLengthInstruction(IrArguments &arguments) {
+	arguments.readCharacter(L'|');
+	this->tape = arguments.readTape();
+	arguments.readCharacter(L'|');
+
+	switch(arguments.readString({ L"=", L"≠", L"<", L"≤", L">", L"≥" })) {
+		case 0:
+			this->type = CompareTapeLengthInstruction::Type::EQ;
+
+			break;
+
+		case 1:
+			this->type = CompareTapeLengthInstruction::Type::NE;
+
+			break;
+
+		case 2:
+			this->type = CompareTapeLengthInstruction::Type::LT;
+
+			break;
+
+		case 3:
+			this->type = CompareTapeLengthInstruction::Type::LTE;
+
+			break;
+
+		case 4:
+			this->type = CompareTapeLengthInstruction::Type::GT;
+
+			break;
+
+		case 5:
+			this->type = CompareTapeLengthInstruction::Type::GTE;
+
+			break;
+	};
+
+	this->number = arguments.readNumber();
+	arguments.readComma();
+	this->trueLabel = arguments.readNumber();
+	arguments.readComma();
+	this->falseLabel = arguments.readNumber();
+	arguments.end();
+};
+
 std::vector<size_t> CompareTapeLengthInstruction::listUsedTapes() const {
 	return { this->tape };
 };

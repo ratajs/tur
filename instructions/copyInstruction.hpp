@@ -9,6 +9,7 @@
 #include <functional>
 #include "./instruction.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
+#include "../parsing/irArguments.hpp"
 
 /*!
  * This instruction copies a range of numbers from one tape to another tape.
@@ -20,6 +21,7 @@ class CopyInstruction: public Instruction {
 
 	public:
 		CopyInstruction(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex);
+		CopyInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		std::optional<std::list<std::unique_ptr<Instruction>>> tryToUnify() const override;
 		std::unique_ptr<Instruction> tryToMerge(const Instruction &otherInstruction) const override;

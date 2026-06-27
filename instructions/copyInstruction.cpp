@@ -19,6 +19,14 @@ CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourc
 			throw UnexpectedError(L"Invalid copy (source is destination).");
 	};
 
+CopyInstruction::CopyInstruction(IrArguments &arguments): source(arguments.readTape()) {
+	std::tie(this->sourceIndex0, this->sourceIndex1) = arguments.readRange();
+	arguments.readComma();
+	this->destination = arguments.readTape();
+	this->destinationIndex = arguments.readRightwiseUnboundedRange();
+	arguments.end();
+};
+
 std::vector<size_t> CopyInstruction::listUsedTapes() const {
 	return { this->source, this->destination };
 };
