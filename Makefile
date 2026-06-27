@@ -1,5 +1,3 @@
-#TODO
-
 BIN	= tur
 MAN	= tur.1
 
@@ -12,6 +10,7 @@ CXXFLAGS = -std=c++23 -Wall -Wno-deprecated-declarations -pedantic -O3
 
 OBJS = \
 	IO/flags.o \
+	IO/inputLanguage.o \
 	IO/input.o \
 	IO/format.o \
 	IO/error.o \
@@ -22,6 +21,7 @@ OBJS = \
 	IO/parseError.o \
 	IO/typeError.o \
 	IO/symbolError.o \
+	IO/irParseError.o \
 	IO/warning.o \
 	IO/generalWarning.o \
 	IO/includeResolver.o \
@@ -31,6 +31,8 @@ OBJS = \
 	parsing/token.o \
 	parsing/lexer.o \
 	parsing/parser.o \
+	parsing/irParser.o \
+	parsing/irArguments.o \
 	AST/program.o \
 	AST/variable.o \
 	AST/expressions/expression.o \
@@ -222,6 +224,9 @@ AST/expressions/binaryExpression.o: AST/expressions/binaryExpression.cpp \
 	AST/expressions/../../instructions/./instruction.hpp \
 	AST/expressions/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/expressions/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/expressions/../../instructions/../parsing/irArguments.hpp \
+	AST/expressions/../../instructions/../parsing/./location.hpp \
+	AST/expressions/../../instructions/../parsing/../machine/machine.hpp \
 	AST/expressions/../../instructions/copyInstruction.hpp \
 	AST/expressions/../../instructions/writeNumberInstruction.hpp \
 	AST/expressions/../../instructions/callInstruction.hpp \
@@ -260,6 +265,9 @@ AST/expressions/callExpression.o: AST/expressions/callExpression.cpp \
 	AST/expressions/../../instructions/./instruction.hpp \
 	AST/expressions/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/expressions/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/expressions/../../instructions/../parsing/irArguments.hpp \
+	AST/expressions/../../instructions/../parsing/./location.hpp \
+	AST/expressions/../../instructions/../parsing/../machine/machine.hpp \
 	AST/expressions/../../instructions/copyInstruction.hpp \
 	AST/expressions/../../instructions/callInstruction.hpp \
 	AST/expressions/../../instructions/../machine/machine.hpp \
@@ -291,6 +299,9 @@ AST/expressions/countExpression.o: AST/expressions/countExpression.cpp \
 	AST/expressions/../../instructions/copyInstruction.hpp \
 	AST/expressions/../../instructions/./instruction.hpp \
 	AST/expressions/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/expressions/../../instructions/../parsing/irArguments.hpp \
+	AST/expressions/../../instructions/../parsing/./location.hpp \
+	AST/expressions/../../instructions/../parsing/../machine/machine.hpp \
 	AST/expressions/../../instructions/callInstruction.hpp \
 	AST/expressions/../../instructions/../machine/machine.hpp \
 	AST/expressions/../../instructions/../machine/singleTapeMachineFactory.hpp \
@@ -400,6 +411,9 @@ AST/program.o: AST/program.cpp AST/./program.hpp \
 	AST/../instructions/./instruction.hpp \
 	AST/../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/../instructions/../parsing/irArguments.hpp \
+	AST/../instructions/../parsing/./location.hpp \
+	AST/../instructions/../parsing/../machine/machine.hpp \
 	AST/../instructions/compressInstruction.hpp \
 	AST/../instructions/jumpInstruction.hpp AST/../IO/unexpectedError.hpp \
 	AST/../IO/./error.hpp AST/../IO/symbolError.hpp \
@@ -452,6 +466,9 @@ AST/statements/assignStatement.o: AST/statements/assignStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/copyInstruction.hpp \
 	AST/statements/../../instructions/clearInstruction.hpp \
 	AST/statements/../../IO/typeError.hpp \
@@ -478,6 +495,9 @@ AST/statements/breakStatement.o: AST/statements/breakStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../IO/unexpectedError.hpp \
 	AST/statements/../../IO/./error.hpp
 AST/statements/callStatement.o: AST/statements/callStatement.cpp \
@@ -501,7 +521,10 @@ AST/statements/callStatement.o: AST/statements/callStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/machine.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
-	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp
+	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp
 AST/statements/continueStatement.o: AST/statements/continueStatement.cpp \
 	AST/statements/./continueStatement.hpp \
 	AST/statements/././statement.hpp \
@@ -522,6 +545,9 @@ AST/statements/continueStatement.o: AST/statements/continueStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../IO/unexpectedError.hpp \
 	AST/statements/../../IO/./error.hpp
 AST/statements/exitStatement.o: AST/statements/exitStatement.cpp \
@@ -543,6 +569,9 @@ AST/statements/exitStatement.o: AST/statements/exitStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../IO/unexpectedError.hpp \
 	AST/statements/../../IO/./error.hpp
 AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
@@ -571,6 +600,9 @@ AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
 	AST/statements/../../instructions/copyInstruction.hpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/clearInstruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../IO/typeError.hpp \
@@ -601,6 +633,9 @@ AST/statements/ifStatement.o: AST/statements/ifStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../IO/typeError.hpp \
 	AST/statements/../../IO/./errorWithLocation.hpp \
 	AST/statements/../../IO/././error.hpp \
@@ -632,6 +667,9 @@ AST/statements/implodeStatement.o: AST/statements/implodeStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/writeNumberInstruction.hpp \
 	AST/statements/../../instructions/copyInstruction.hpp
 AST/statements/loopStatement.o: AST/statements/loopStatement.cpp \
@@ -652,7 +690,10 @@ AST/statements/loopStatement.o: AST/statements/loopStatement.cpp \
 	AST/statements/../../instructions/jumpInstruction.hpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
-	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp
+	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp
 AST/statements/statement.o: AST/statements/statement.cpp \
 	AST/statements/./statement.hpp \
 	AST/statements/./../../building/instructionBuilder.hpp \
@@ -691,6 +732,9 @@ AST/statements/whileStatement.o: AST/statements/whileStatement.cpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../IO/typeError.hpp \
 	AST/statements/../../IO/./errorWithLocation.hpp \
 	AST/statements/../../IO/././error.hpp \
@@ -751,6 +795,9 @@ instructions/callInstruction.o: instructions/callInstruction.cpp \
 	instructions/./../machine/machine.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
 instructions/clearInstruction.o: instructions/clearInstruction.cpp \
 	instructions/./clearInstruction.hpp instructions/././instruction.hpp \
@@ -763,7 +810,14 @@ instructions/clearInstruction.o: instructions/clearInstruction.cpp \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
-	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
+	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp \
+	instructions/../IO/irParseError.hpp \
+	instructions/../IO/./errorWithLocation.hpp \
+	instructions/../IO/././error.hpp \
+	instructions/../IO/./../parsing/location.hpp
 instructions/compareInstruction.o: instructions/compareInstruction.cpp \
 	instructions/./compareInstruction.hpp instructions/././instruction.hpp \
 	instructions/././../machine/singleTapeMachineFactory.hpp \
@@ -775,6 +829,9 @@ instructions/compareInstruction.o: instructions/compareInstruction.cpp \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
 instructions/compareTapeLengthInstruction.o: \
 	instructions/compareTapeLengthInstruction.cpp \
@@ -789,6 +846,9 @@ instructions/compareTapeLengthInstruction.o: \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
 instructions/compressInstruction.o: instructions/compressInstruction.cpp \
 	instructions/./compressInstruction.hpp \
@@ -802,6 +862,9 @@ instructions/compressInstruction.o: instructions/compressInstruction.cpp \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
 instructions/copyInstruction.o: instructions/copyInstruction.cpp \
 	instructions/./copyInstruction.hpp instructions/././instruction.hpp \
@@ -813,6 +876,9 @@ instructions/copyInstruction.o: instructions/copyInstruction.cpp \
 	instructions/././../machine/./machine.hpp \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/./clearInstruction.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
@@ -829,6 +895,9 @@ instructions/decompressInstruction.o: \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
 instructions/instruction.o: instructions/instruction.cpp \
 	instructions/./instruction.hpp \
@@ -850,7 +919,10 @@ instructions/jumpInstruction.o: instructions/jumpInstruction.cpp \
 	instructions/././../machine/./machine.hpp \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
-	instructions/./../machine/multiTapeMachineFactory.hpp
+	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp
 instructions/writeNumberInstruction.o: \
 	instructions/writeNumberInstruction.cpp \
 	instructions/./writeNumberInstruction.hpp \
@@ -864,6 +936,9 @@ instructions/writeNumberInstruction.o: \
 	instructions/././../machine/multiTapeMachineFactory.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
 	instructions/./../machine/multiTapeMachineFactory.hpp \
+	instructions/./../parsing/irArguments.hpp \
+	instructions/./../parsing/./location.hpp \
+	instructions/./../parsing/../machine/machine.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
 IO/error.o: IO/error.cpp IO/./error.hpp IO/./format.hpp
 IO/errorWithLocation.o: IO/errorWithLocation.cpp \
@@ -884,10 +959,14 @@ IO/includeResolver.o: IO/includeResolver.cpp IO/./includeResolver.hpp \
 	IO/../IO/././error.hpp IO/../IO/./../parsing/location.hpp \
 	IO/../IO/../parsing/location.hpp
 IO/input.o: IO/input.cpp IO/./input.hpp IO/././flags.hpp \
-	IO/./../machine/tape.hpp IO/./../machine/machine.hpp \
-	IO/./../machine/./tape.hpp IO/../IO/format.hpp \
-	IO/../IO/generalError.hpp IO/../IO/./error.hpp \
+	IO/././inputLanguage.hpp IO/./../machine/tape.hpp \
+	IO/./../machine/machine.hpp IO/./../machine/./tape.hpp \
+	IO/../IO/format.hpp IO/../IO/generalError.hpp IO/../IO/./error.hpp \
 	IO/../IO/unexpectedError.hpp
+IO/inputLanguage.o: IO/inputLanguage.cpp IO/./inputLanguage.hpp
+IO/irParseError.o: IO/irParseError.cpp IO/./irParseError.hpp \
+	IO/././errorWithLocation.hpp IO/./././error.hpp \
+	IO/././../parsing/location.hpp IO/./format.hpp
 IO/lexerError.o: IO/lexerError.cpp IO/./lexerError.hpp \
 	IO/././errorWithLocation.hpp IO/./././error.hpp \
 	IO/././../parsing/location.hpp IO/./../parsing/location.hpp \
@@ -905,7 +984,7 @@ IO/symbolError.o: IO/symbolError.cpp IO/./symbolError.hpp \
 IO/typeError.o: IO/typeError.cpp IO/./typeError.hpp \
 	IO/././errorWithLocation.hpp IO/./././error.hpp \
 	IO/././../parsing/location.hpp IO/./../parsing/location.hpp \
-	IO/../parsing/location.hpp IO/./format.hpp
+	IO/./format.hpp
 IO/unexpectedError.o: IO/unexpectedError.cpp IO/./unexpectedError.hpp \
 	IO/././error.hpp
 IO/warning.o: IO/warning.cpp IO/./warning.hpp IO/./format.hpp
@@ -936,6 +1015,40 @@ machine/stateGenerator.o: machine/stateGenerator.cpp \
 machine/tape.o: machine/tape.cpp machine/./tape.hpp \
 	machine/../IO/unexpectedError.hpp machine/../IO/./error.hpp \
 	machine/../IO/format.hpp
+parsing/irArguments.o: parsing/irArguments.cpp parsing/./irArguments.hpp \
+	parsing/././location.hpp parsing/./../machine/machine.hpp \
+	parsing/./../machine/./tape.hpp parsing/../IO/irParseError.hpp \
+	parsing/../IO/./errorWithLocation.hpp parsing/../IO/././error.hpp \
+	parsing/../IO/./../parsing/location.hpp
+parsing/irParser.o: parsing/irParser.cpp parsing/./irParser.hpp \
+	parsing/./../instructions/instruction.hpp \
+	parsing/./../instructions/../machine/singleTapeMachineFactory.hpp \
+	parsing/./../instructions/../machine/./machineFactory.hpp \
+	parsing/./../instructions/../machine/././stateGenerator.hpp \
+	parsing/./../instructions/../machine/././machine.hpp \
+	parsing/./../instructions/../machine/./././tape.hpp \
+	parsing/./../instructions/../machine/./machine.hpp \
+	parsing/./../instructions/../machine/multiTapeMachineFactory.hpp \
+	parsing/./../building/instructionCollection.hpp \
+	parsing/./../building/./tapeReference.hpp \
+	parsing/./../building/../instructions/instruction.hpp \
+	parsing/././irArguments.hpp parsing/./././location.hpp \
+	parsing/././../machine/machine.hpp parsing/./../IO/warning.hpp \
+	parsing/../IO/irParseError.hpp parsing/../IO/./errorWithLocation.hpp \
+	parsing/../IO/././error.hpp parsing/../IO/./../parsing/location.hpp \
+	parsing/../instructions/decompressInstruction.hpp \
+	parsing/../instructions/./instruction.hpp \
+	parsing/../instructions/../machine/singleTapeMachineFactory.hpp \
+	parsing/../instructions/../machine/multiTapeMachineFactory.hpp \
+	parsing/../instructions/../parsing/irArguments.hpp \
+	parsing/../instructions/compressInstruction.hpp \
+	parsing/../instructions/clearInstruction.hpp \
+	parsing/../instructions/writeNumberInstruction.hpp \
+	parsing/../instructions/copyInstruction.hpp \
+	parsing/../instructions/callInstruction.hpp \
+	parsing/../instructions/../machine/machine.hpp \
+	parsing/../instructions/jumpInstruction.hpp \
+	parsing/../instructions/compareInstruction.hpp
 parsing/lexer.o: parsing/lexer.cpp parsing/./lexer.hpp \
 	parsing/././token.hpp parsing/./././location.hpp \
 	parsing/././../machine/machine.hpp parsing/././../machine/./tape.hpp \
@@ -1017,8 +1130,9 @@ parsing/token.o: parsing/token.cpp parsing/./token.hpp \
 	parsing/././location.hpp parsing/./../machine/machine.hpp \
 	parsing/./../machine/./tape.hpp parsing/../IO/unexpectedError.hpp \
 	parsing/../IO/./error.hpp
-tur: tur.cpp IO/input.hpp IO/./flags.hpp IO/../machine/tape.hpp \
-	IO/../machine/machine.hpp IO/../machine/./tape.hpp IO/flags.hpp \
+tur: tur.cpp IO/input.hpp IO/./flags.hpp IO/./inputLanguage.hpp \
+	IO/../machine/tape.hpp IO/../machine/machine.hpp \
+	IO/../machine/./tape.hpp IO/flags.hpp IO/inputLanguage.hpp \
 	IO/includeResolver.hpp IO/../parsing/location.hpp IO/error.hpp \
 	IO/warning.hpp IO/generalError.hpp IO/./error.hpp machine/tape.hpp \
 	machine/machine.hpp parsing/token.hpp parsing/./location.hpp \
@@ -1049,7 +1163,10 @@ tur: tur.cpp IO/input.hpp IO/./flags.hpp IO/../machine/tape.hpp \
 	parsing/../AST/sourceBundle.hpp \
 	parsing/../AST/./expressions/expression.hpp \
 	parsing/../AST/destinationBundle.hpp parsing/../IO/includeResolver.hpp \
-	AST/program.hpp building/instructionBuilder.hpp \
-	building/instructionCollection.hpp building/machineBuilder.hpp \
-	building/./instructionCollection.hpp \
+	parsing/irParser.hpp parsing/../instructions/instruction.hpp \
+	parsing/../building/instructionCollection.hpp \
+	parsing/./irArguments.hpp parsing/././location.hpp \
+	parsing/./../machine/machine.hpp AST/program.hpp \
+	building/instructionBuilder.hpp building/instructionCollection.hpp \
+	building/machineBuilder.hpp building/./instructionCollection.hpp \
 	building/../machine/machineFactory.hpp building/../machine/machine.hpp
