@@ -13,6 +13,7 @@
 #include "../instructions/callInstruction.hpp"
 #include "../instructions/jumpInstruction.hpp"
 #include "../instructions/compareInstruction.hpp"
+#include "../instructions/compareTapeLengthInstruction.hpp"
 
 IrParser::IrParser(std::wstring_view text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): text(text), it(text.begin()), warningIt(warningIt) {};
 
@@ -55,22 +56,32 @@ void IrParser::parseLine(std::wstring_view line) {
 std::unique_ptr<Instruction> IrParser::resolveInstrucion(std::wstring_view instructionName, IrArguments arguments) {
 	if(instructionName==L"decompress")
 		return std::make_unique<DecompressInstruction>(arguments);
-	else if(instructionName==L"compress")
+
+	if(instructionName==L"compress")
 		return std::make_unique<CompressInstruction>(arguments);
-	else if(instructionName==L"clear")
+
+	if(instructionName==L"clear")
 		return std::make_unique<ClearInstruction>(arguments);
-	else if(instructionName==L"writeNumber")
+
+	if(instructionName==L"writeNumber")
 		return std::make_unique<WriteNumberInstruction>(arguments);
-	else if(instructionName==L"copy")
+
+	if(instructionName==L"copy")
 		return std::make_unique<CopyInstruction>(arguments);
-	else if(instructionName==L"call")
+
+	if(instructionName==L"call")
 		return std::make_unique<CallInstruction>(arguments);
-	else if(instructionName==L"jump")
+
+	if(instructionName==L"jump")
 		return std::make_unique<JumpInstruction>(arguments);
-	else if(instructionName==L"compare")
+
+	if(instructionName==L"compare")
 		return std::make_unique<CompareInstruction>(arguments);
-	else
-		throw IrParseError(IrParseError::Type::UNKNOWN_INSTRUCTION, { instructionName, this->lineNumber, this->text });
+
+	if(instructionName==L"compareTapeLength")
+		return std::make_unique<CompareTapeLengthInstruction>(arguments);
+
+	throw IrParseError(IrParseError::Type::UNKNOWN_INSTRUCTION, { instructionName, this->lineNumber, this->text });
 };
 
 InstructionCollection IrParser::parse() {
