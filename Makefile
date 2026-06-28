@@ -134,7 +134,7 @@ algotest: ${TOBJS} algotest.cpp
 	${CXX} ${CXXFLAGS} -MM algotest.cpp -MT $@ > ./algotest.d
 	./algotest
 
-doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp Doxyfile
+doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp README.md Doxyfile
 	doxygen ./Doxyfile
 
 lint: ${MAN}
