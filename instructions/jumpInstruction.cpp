@@ -1,5 +1,4 @@
 #include "./jumpInstruction.hpp"
-#include <optional>
 #include <initializer_list>
 
 /*!
@@ -22,6 +21,14 @@ JumpInstruction::JumpInstruction(IrArguments &arguments): type((arguments.readSt
 
 std::vector<size_t> JumpInstruction::listUsedTapes() const {
 	return {};
+};
+
+std::optional<size_t> JumpInstruction::getComeFromOrigin() const {
+	return ((this->type==JumpInstruction::Type::COME_FROM) ? std::optional(this->label) : std::nullopt);
+};
+
+bool JumpInstruction::isGoToInstruction() const {
+	return (this->type==JumpInstruction::Type::GO_TO);
 };
 
 void JumpInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {

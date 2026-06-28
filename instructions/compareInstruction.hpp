@@ -38,6 +38,7 @@ class CompareInstruction: public Instruction {
 		CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type);
 		CompareInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
+		bool isGoToInstruction() const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const override;

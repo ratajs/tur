@@ -4,6 +4,7 @@
 #include <optional>
 #include <vector>
 #include <list>
+#include <set>
 #include <map>
 #include <iterator>
 #include <string_view>
@@ -19,10 +20,12 @@
  */
 class IrParser {
 	private:
+		bool isComeFromExpected = false;
 		size_t lineNumber = 1;
 		std::optional<size_t> tapesCount;
 		std::wstring_view text;
 		std::wstring_view::const_iterator it;
+		std::set<size_t> comeFromOrigins;
 		std::map<size_t, size_t> labels; //TODO consider named labels
 		std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> warningIt;
 		std::list<std::unique_ptr<Instruction>> instructions;

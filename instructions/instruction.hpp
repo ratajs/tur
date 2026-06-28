@@ -24,6 +24,20 @@ class Instruction {
 		virtual std::vector<size_t> listUsedTapes() const = 0;
 
 		/*!
+		 * This virtual method should return the label from which the instruction jumps, if any.
+		 * The default implementation always returns {} (std::nullopt), which means that the instruction does not behave like a COME_FROM jump.
+		 * \return The origin label of a jump. Or {} (std::nullopt) if not applicable.
+		 */
+		virtual std::optional<size_t> getComeFromOrigin() const;
+
+		/*!
+		 * This virtual method should return whether the instruction jumps somewhere.
+		 * The default implementation always returns false.
+		 * \return Whether this is instruction jumps to a label.
+		 */
+		virtual bool isGoToInstruction() const;
+
+		/*!
 		 * This virtual method can be implemented by instructions using exactly two tapes if the tapes can be merged.
 		 * It can be presumed that the first used tape is never used again and that the second tape has not been used before.
 		 * The default implementation always returns {} (std::nullopt), which means that no unification should happen.

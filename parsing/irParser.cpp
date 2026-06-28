@@ -1,6 +1,5 @@
 #include "./irParser.hpp"
 #include <utility>
-#include <iterator>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -71,6 +70,18 @@ void IrParser::parseLine(std::wstring_view line) {
 	};
 
 	this->instructions.push_back(this->resolveInstrucion(instructionName, { instructionArguments, *this->tapesCount, this->labels, { instructionArguments, this->lineNumber, this->text } }));
+
+	if(this->instructions.back()->getComeFromOrigin()) {
+		if(!this->isComeFromExpected)
+			throw IrParseError(IrParseError::Type::COME_FROM_NOT_EXPECTED, { line, this->lineNumber, this->text });
+
+		if(!this->comeFromOrigins.insert(*this->instructions.back()->getComeFromOrigin()).second)
+			throw IrParseError(IrParseError::Type::MULTIPLE_LABEL_ENDPOINTS, { line, this->lineNumber, this->text });
+	}
+	else if(this->isComeFromExpected)
+		throw IrParseError(IrParseError::Type::COME_FROM_EXPECTED, { line, this->lineNumber, this->text });
+
+	this->isComeFromExpected = this->instructions.back()->isGoToInstruction();
 };
 
 /*!

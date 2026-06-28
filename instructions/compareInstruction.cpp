@@ -307,6 +307,10 @@ std::vector<size_t> CompareInstruction::listUsedTapes() const {
 	return tapes;
 };
 
+bool CompareInstruction::isGoToInstruction() const {
+	return true;
+};
+
 void CompareInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
 	if((std::holds_alternative<std::pair<size_t, size_t>>(this->argumentA) && getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentA).first)!=1) || (std::holds_alternative<std::pair<size_t, size_t>>(this->argumentB) && getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentB).first)!=1))
 		throw UnexpectedError(L"Other real tape than 1 appeared in a single tape machine instruction.");

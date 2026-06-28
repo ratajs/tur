@@ -1,6 +1,5 @@
 #include "./compareTapeLengthInstruction.hpp"
 #include <initializer_list>
-#include <functional>
 #include "../IO/unexpectedError.hpp"
 
 /*!
@@ -68,6 +67,10 @@ CompareTapeLengthInstruction::CompareTapeLengthInstruction(IrArguments &argument
 
 std::vector<size_t> CompareTapeLengthInstruction::listUsedTapes() const {
 	return { this->tape };
+};
+
+bool CompareTapeLengthInstruction::isGoToInstruction() const {
+	return true;
 };
 
 void CompareTapeLengthInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {

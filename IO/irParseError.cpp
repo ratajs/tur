@@ -32,6 +32,15 @@ std::wstring IrParseError::getSimpleMessage() const {
 		case IrParseError::Type::INVALID_RANGE_FOR_CLEAR:
 			return L"Invalid range for clear";
 
+		case IrParseError::Type::COME_FROM_EXPECTED:
+			return L"A COMEFROM instruction expected";
+
+		case IrParseError::Type::COME_FROM_NOT_EXPECTED:
+			return L"A COMEFROM instruction not expected";
+
+		case IrParseError::Type::MULTIPLE_LABEL_ENDPOINTS:
+			return L"Multiple COMEFROM instructions with the same label";
+
 		default:
 			std::unreachable();
 	};
