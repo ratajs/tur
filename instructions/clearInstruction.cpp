@@ -17,6 +17,13 @@ ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<siz
 			throw UnexpectedError(L"Invalid clear (neither beginning nor end).");
 	};
 
+/*!
+ * An alternative constructor of ClearInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The tape and range (the first index followed by a colon and an optional second index, all in square brackets) is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
 ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) {
 	std::tie(this->index0, this->index1) = arguments.readRange();
 	arguments.end();

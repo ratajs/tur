@@ -14,6 +14,15 @@
 CompareInstruction::CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type):
 	type(type), trueLabel(trueLabel), falseLabel(falseLabel), argumentA(argumentA), argumentB(argumentB) {};
 
+/*!
+ * An alternative constructor of CompareInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The first argument, type, the second argument, comma, the true label, comma, and the false label is expected in the arguments.
+ * An argument is either a tape number followed by an index in square brackets or just a number.
+ * Type can be one of the following: =, ≠, <, ≤, >, ≥
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
 CompareInstruction::CompareInstruction(IrArguments &arguments): argumentA(arguments.readTapeAndIndexOrNumber()) {
 	switch(arguments.readString({ L"=", L"≠", L"<", L"≤", L">", L"≥" })) {
 		case 0:

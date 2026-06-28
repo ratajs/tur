@@ -2,8 +2,16 @@
 #include <utility>
 #include "./format.hpp"
 
+/*!
+ * The constructor of IrParseError.
+ * \param type The type of the error.
+ * \param location The location to print.
+ */
 IrParseError::IrParseError(IrParseError::Type type, const Location &location): ErrorWithLocation(location), type(type) {};
 
+/*!
+ * \return The beginning of the error message, only from the type.
+ */
 std::wstring IrParseError::getSimpleMessage() const {
 	switch(this->type) {
 		case IrParseError::Type::WRONG_LINE_FORMAT:

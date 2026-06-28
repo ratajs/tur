@@ -15,8 +15,19 @@
 #include "../instructions/compareInstruction.hpp"
 #include "../instructions/compareTapeLengthInstruction.hpp"
 
+/*!
+ * The constructor of IrParser.
+ * \param text The view of the source. It must remain valid as long as the IrParser is used.
+ * \param warningIt The destination where to append warnings, if necessary.
+ */
 IrParser::IrParser(std::wstring_view text, const std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> &warningIt): text(text), it(text.begin()), warningIt(warningIt) {};
+//TODO implement some warnings
 
+/*!
+ * Parser a single line.
+ * \param line The line to parse, without trailing whitespace or commments.
+ * \throw IrParseError If the line is invalid (wrong format, TAPES pseudoinstruction if the number of tapes already set, unknown instruction, invalid arguments).
+ */
 void IrParser::parseLine(std::wstring_view line) {
 	size_t parenthesisPos, tapesCount;
 	std::wstring_view instructionName, instructionArguments;
@@ -47,12 +58,21 @@ void IrParser::parseLine(std::wstring_view line) {
 	if(!line.ends_with(')') || parenthesisPos==line.npos || parenthesisPos==0)
 		throw IrParseError(IrParseError::Type::WRONG_LINE_FORMAT, { line, this->lineNumber, this->text });
 
+	//TODO do something with leading whitespace
+
 	instructionName = line.substr(0, parenthesisPos);
 	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
 
 	this->instructions.push_back(this->resolveInstrucion(instructionName, { instructionArguments, *this->tapesCount, this->labels, { instructionArguments, this->lineNumber, this->text } }));
 };
 
+/*!
+ * Resolve an instruction with its arguments.
+ * \param instructionName The name of the instruction.
+ * \param arguments An instance of IrArguments representing the arguments of the instruction.
+ * \return The parsed instruction.
+ * \throw IrParseError If the instruction is invalid (unknown instruction, invalid arguments).
+ */
 std::unique_ptr<Instruction> IrParser::resolveInstrucion(std::wstring_view instructionName, IrArguments arguments) {
 	if(instructionName==L"decompress")
 		return std::make_unique<DecompressInstruction>(arguments);
@@ -84,6 +104,11 @@ std::unique_ptr<Instruction> IrParser::resolveInstrucion(std::wstring_view instr
 	throw IrParseError(IrParseError::Type::UNKNOWN_INSTRUCTION, { instructionName, this->lineNumber, this->text });
 };
 
+/*!
+ * Parse the source.
+ * \return An instance of InstructionCollection with the parsed IR.
+ * \throw IrParseError If any line is invalid (wrong format, TAPES pseudoinstruction if the number of tapes already set, unknown instruction, invalid arguments).
+ */
 InstructionCollection IrParser::parse() {
 	size_t pos;
 	std::wstring_view line;

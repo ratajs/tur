@@ -11,6 +11,13 @@
  */
 CallInstruction::CallInstruction(size_t tape, Machine machine): tape(tape), machine(std::move(machine)) {};
 
+/*!
+ * An alternative constructor of CallInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The tape, comma, and the machine in braces is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
 CallInstruction::CallInstruction(IrArguments &arguments): tape(arguments.readTape()), machine((arguments.readComma(), arguments.readMachine())) {
 	arguments.end();
 };

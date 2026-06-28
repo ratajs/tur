@@ -12,6 +12,11 @@
 #include "./irArguments.hpp"
 #include "../IO/warning.hpp"
 
+/*!
+ * This class is for parsing the IR input.
+ * It is initialized with a view of the source.
+ * The output is an InstructionCollection.
+ */
 class IrParser {
 	private:
 		size_t lineNumber = 1;

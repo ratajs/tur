@@ -11,6 +11,10 @@
 #include "./location.hpp"
 #include "../machine/machine.hpp"
 
+/*!
+ * An instance of this class represents the inside of parentheses in IR, together with extra information about tapes, labels and the current location in the source.
+ * Various types of arguments can be read from it.
+ */
 class IrArguments {
 	private:
 		size_t tapesCount;

@@ -13,6 +13,14 @@
  */
 CompareTapeLengthInstruction::CompareTapeLengthInstruction(size_t tape, size_t number, size_t trueLabel, size_t falseLabel, CompareTapeLengthInstruction::Type type): type(type), tape(tape), number(number), trueLabel(trueLabel), falseLabel(falseLabel) {};
 
+/*!
+ * An alternative constructor of CompareTapeLengthInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The tape number enclosed in vertical bars, type, the number with which to compare, comma, the true label, comma, and the false label is expected in the arguments.
+ * Type can be one of the following: =, ≠, <, ≤, >, ≥
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
 CompareTapeLengthInstruction::CompareTapeLengthInstruction(IrArguments &arguments) {
 	arguments.readCharacter(L'|');
 	this->tape = arguments.readTape();

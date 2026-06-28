@@ -429,7 +429,7 @@ Flags Input::getFlags() const {
 };
 
 /*!
- * \return The input language, either TUR, or IR.
+ * \return The input language, either TUR or IR.
  */
 InputLanguage Input::getInputLanguage() const {
 	return this->inputLanguage;

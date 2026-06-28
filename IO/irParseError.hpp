@@ -3,8 +3,14 @@
 #include <string>
 #include "./errorWithLocation.hpp"
 
+/*!
+ * This type of error signifies an invalid IR program.
+ */
 class IrParseError: public ErrorWithLocation {
 	public:
+		/*!
+		 * These are all types of IrParseError.
+		 */
 		enum class Type {
 			WRONG_LINE_FORMAT,
 			NUMBER_OF_TAPES_ALREADY_SET,

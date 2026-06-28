@@ -8,6 +8,13 @@
  */
 CompressInstruction::CompressInstruction(size_t source): source(source) {};
 
+/*!
+ * An alternative constructor of CompressInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * Only the source tape number is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
 CompressInstruction::CompressInstruction(IrArguments &arguments): source(arguments.readTape()) {
 	arguments.end();
 };
