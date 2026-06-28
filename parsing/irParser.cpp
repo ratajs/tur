@@ -25,11 +25,11 @@ IrParser::IrParser(std::wstring_view text, const std::back_insert_iterator<std::
 
 /*!
  * Parser a single line.
- * \param line The line to parse, without trailing whitespace or commments.
+ * \param line The line to parse, without leading/trailing whitespace or comments.
  * \throw IrParseError If the line is invalid (wrong format, TAPES pseudoinstruction if the number of tapes already set, unknown instruction, invalid arguments).
  */
 void IrParser::parseLine(std::wstring_view line) {
-	size_t parenthesisPos, tapesCount;
+	size_t parenthesisPos, tapesCount, pos;
 	std::wstring_view instructionName, instructionArguments;
 	std::wistringstream iss;
 
@@ -58,10 +58,17 @@ void IrParser::parseLine(std::wstring_view line) {
 	if(!line.ends_with(')') || parenthesisPos==line.npos || parenthesisPos==0)
 		throw IrParseError(IrParseError::Type::WRONG_LINE_FORMAT, { line, this->lineNumber, this->text });
 
-	//TODO do something with leading whitespace
-
 	instructionName = line.substr(0, parenthesisPos);
 	instructionArguments = line.substr(parenthesisPos + 1, line.size() - parenthesisPos - 2);
+
+	instructionName.remove_suffix(instructionName.size() - instructionName.find_last_not_of(L" \t") - 1); // Remove instruction name trailing whitespace
+	pos = instructionArguments.find_last_not_of(L" \t");
+	if(pos==instructionArguments.npos)
+		instructionArguments.remove_suffix(instructionArguments.size()); // Clear arguments if only whitespace
+	else {
+		instructionArguments.remove_suffix(instructionArguments.size() - pos - 1); // Remove arguments trailing whitespace
+		instructionArguments.remove_prefix(instructionArguments.find_first_not_of(L" \t")); // Remove arguments leading whitespace
+	};
 
 	this->instructions.push_back(this->resolveInstrucion(instructionName, { instructionArguments, *this->tapesCount, this->labels, { instructionArguments, this->lineNumber, this->text } }));
 };
@@ -119,12 +126,14 @@ InstructionCollection IrParser::parse() {
 		line = std::wstring_view(lineStartIt, this->it);
 		pos = line.find('#');
 		if(pos!=line.npos)
-			line.remove_suffix(line.size() - pos);
+			line.remove_suffix(line.size() - pos); // Remove comment
 		pos = line.find_last_not_of(L" \t");
 		if(pos==line.npos)
-			line.remove_suffix(line.size());
-		else
-			line.remove_suffix(line.size() - pos - 1);
+			line.remove_suffix(line.size()); // Clear if only whitespace
+		else {
+			line.remove_suffix(line.size() - pos - 1); // Remove trailing whitespace
+			line.remove_prefix(line.find_first_not_of(L" \t")); // Remove leading whitespace
+		};
 
 		this->parseLine(line);
 		this->lineNumber++;
