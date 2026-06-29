@@ -44,7 +44,11 @@ class Machine {
 
 	public:
 		Machine() = default;
+		Machine(const Machine&) = default;
+		Machine(Machine&&) = default;
 		Machine(std::wstring text);
+		Machine &operator = (const Machine&) = default;
+		Machine &operator = (Machine&&) = default;
 		bool addTransition(const std::wstring &state, bool symbol, bool newSymbol, Machine::Direction direction, const std::wstring &newState);
 		void forEachTransition(const std::function<void (const std::wstring&, bool, bool, Machine::Direction, const std::wstring&)> &function) const;
 		Machine &removeNTransitions();

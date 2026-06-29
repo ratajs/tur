@@ -1,7 +1,6 @@
 #include "./input.hpp"
 #include <utility>
 #include <initializer_list>
-#include <vector>
 #include <algorithm>
 #include <iterator>
 #include <sstream>
@@ -237,6 +236,19 @@ std::optional<std::function<void (const std::wstring&)>> Input::processShortOpti
 
 			return {};
 
+		case 'l': // input-language
+			return ([this](const std::wstring &languageString) -> void {
+				InputLanguage language;
+				std::wistringstream iss;
+
+				iss.str(languageString);
+
+				if(!(iss >> language) || !iss.eof())
+					throw GeneralError(L"Unknown input language: "+Format::red(languageString));
+
+				this->inputLanguage = language;
+			});
+
 		case 'i': // instructions
 			this->flags.addFlag(Flags::Flag::INSTRUCTIONS);
 
@@ -313,6 +325,19 @@ std::optional<std::function<void (const std::wstring&)>> Input::processLongOptio
 		this->flags.addFlag(Flags::Flag::COMPILE);
 
 		return {};
+	}
+	else if(option==L"input-language") {
+		return ([this](const std::wstring &languageString) -> void {
+			InputLanguage language;
+			std::wistringstream iss;
+
+			iss.str(languageString);
+
+			if(!(iss >> language) || !iss.eof())
+				throw GeneralError(L"Unknown input language: "+Format::red(languageString));
+
+			this->inputLanguage = language;
+		});
 	}
 	else if(option==L"instructions") {
 		this->flags.addFlag(Flags::Flag::INSTRUCTIONS);
@@ -401,6 +426,13 @@ void Input::openOutputFileStream(const std::filesystem::path &fileName) {
  */
 Flags Input::getFlags() const {
 	return this->flags;
+};
+
+/*!
+ * \return The input language, either TUR or IR.
+ */
+InputLanguage Input::getInputLanguage() const {
+	return this->inputLanguage;
 };
 
 /*!

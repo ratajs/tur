@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdlib>
 #include <optional>
+#include <vector>
 #include <string>
 #include <string_view>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include <filesystem>
 #include <functional>
 #include "./flags.hpp"
+#include "./inputLanguage.hpp"
 #include "../machine/tape.hpp"
 #include "../machine/machine.hpp"
 
@@ -20,6 +22,7 @@ class Input {
 		static std::vector<size_t> readNumbers(std::wistream &stream);
 
 		Flags flags;
+		InputLanguage inputLanguage = InputLanguage::TUR;
 		std::wstring argument0;
 		std::optional<std::wstring> includeMachineFileSuffix;
 		std::optional<std::filesystem::path> baseIncludePath, inputFilePath, outputFilePath;
@@ -40,6 +43,7 @@ class Input {
 	public:
 		Input(const std::vector<std::wstring> &arguments, std::wistream &defaultInputStream = std::wcin, std::wostream &defaultOutputStream = std::wcout);
 		Flags getFlags() const;
+		InputLanguage getInputLanguage() const;
 		std::filesystem::path getBasePath() const;
 		std::wstring getMachineFileSuffix() const;
 		const std::vector<std::filesystem::path> &getProvidedMachines() const;

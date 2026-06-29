@@ -1,6 +1,6 @@
 #include "./compareInstruction.hpp"
 #include <optional>
-#include <vector>
+#include <initializer_list>
 #include "../IO/unexpectedError.hpp"
 
 /*!
@@ -13,6 +13,56 @@
  */
 CompareInstruction::CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type):
 	type(type), trueLabel(trueLabel), falseLabel(falseLabel), argumentA(argumentA), argumentB(argumentB) {};
+
+/*!
+ * An alternative constructor of CompareInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The first argument, type, the second argument, comma, the true label, comma, and the false label is expected in the arguments.
+ * An argument is either a tape number followed by an index in square brackets or just a number.
+ * Type can be one of the following: =, ≠, <, ≤, >, ≥
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
+CompareInstruction::CompareInstruction(IrArguments &arguments): argumentA(arguments.readTapeAndIndexOrNumber()) {
+	switch(arguments.readString({ L"=", L"≠", L"<", L"≤", L">", L"≥" })) {
+		case 0:
+			this->type = CompareInstruction::Type::EQ;
+
+			break;
+
+		case 1:
+			this->type = CompareInstruction::Type::NE;
+
+			break;
+
+		case 2:
+			this->type = CompareInstruction::Type::LT;
+
+			break;
+
+		case 3:
+			this->type = CompareInstruction::Type::LTE;
+
+			break;
+
+		case 4:
+			this->type = CompareInstruction::Type::GT;
+
+			break;
+
+		case 5:
+			this->type = CompareInstruction::Type::GTE;
+
+			break;
+	};
+
+	this->argumentB = arguments.readTapeAndIndexOrNumber();
+	arguments.readComma();
+	this->trueLabel = arguments.readLabel();
+	arguments.readComma();
+	this->falseLabel = arguments.readLabel();
+	arguments.end();
+};
 
 /*!
  * \return The operator which can be used after swapping arguments.
@@ -255,6 +305,10 @@ std::vector<size_t> CompareInstruction::listUsedTapes() const {
 		tapes.push_back(std::get<std::pair<size_t, size_t>>(this->argumentB).first);
 
 	return tapes;
+};
+
+bool CompareInstruction::isGoToInstruction() const {
+	return true;
 };
 
 void CompareInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {

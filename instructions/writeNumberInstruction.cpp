@@ -10,6 +10,21 @@
  */
 WriteNumberInstruction::WriteNumberInstruction(size_t tape, std::optional<size_t> index, size_t number): tape(tape), number(number), index(index) {};
 
+/*!
+ * An alternative constructor of WriteNumberInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The target tape, destination (an index followed by a colon, all in square brackets, or empty square brackets), a comma, and the number is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
+WriteNumberInstruction::WriteNumberInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+	this->index = arguments.readRightwiseUnboundedRange();
+
+	arguments.readComma();
+	this->number = arguments.readNumber();
+	arguments.end();
+};
+
 std::vector<size_t> WriteNumberInstruction::listUsedTapes() const {
 	return { this->tape };
 };

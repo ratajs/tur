@@ -17,9 +17,9 @@ To uninstall, run `make uninstall` (with the same `PREFIX` you used for installi
 
 The following ways to run the program are possible:
 
-- `tur [-c] [-iIO] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] [source.tur] [machine.tm]` – compile
+- `tur [-c] [-iIO] [-l tur | ir] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] [source.tur] [machine.tm]` – compile
 - `tur -r [-denskC] machine.tm` – run
-- `tur -cr [-iOenskC] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] source.tur` – compile and run
+- `tur -cr [-iOenskC] [-l tur | ir] [-b path] [-x suffix] [-m machine1.tm -m machine2.tm...] source.tur` – compile and run
 
 ## Options
 
@@ -42,6 +42,9 @@ Do not create the machine, only display the instructions. These are printed into
 
 #### `-O`, `--optimize`
 Optimize the machine.
+
+#### `-l tur | ir`, `--input-language tur | ir`
+`-l tur` (default) means that the input is in the primary source language of tur, `-l ir` means that the input is in the form of IR (intermediate representation).
 
 #### `-b path`, `--include-base path`
 Use this path as the base path for include statements in the source. The default path is the directory where the source file is located.
@@ -264,6 +267,83 @@ output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions ca
 [a, b] = input...; # The ellipsis can be there, but it is optional.
 [a, b] = a[1:]; # Other indexation than ellipsis is possible, but it has to be rightwise unbounded.
 [a, b] = f(a, b)...; # Any expression which can yield more numbers is possible as the right side. The ellipsis is optional here as well.
+```
+
+## Instructions
+In addition the source language described above, intermediate representation (IR) can also be used. The flags -i and -I are used to print the IR as output, while -l ir can be used to accept IR as input. The first line of IR states how many tapes are used by the program. It
+looks like this:
+```
+  TAPES 3
+```
+If this line is missing, one tape is assumed. The next lines are instructions. Each line contains the name of the instructions followed by its arguments in parentheses. Leading and trailing whitespace and comments (#) are ignored. Here is an example of a simple program:
+```
+  TAPES 1
+  decompress(1) # Use tape 1 as input
+  compare(1[0] = 42, 2, 3) # Compare the first number on tape 1 with 42
+  jump(COMEFROM 2) # Come from the label 2 (if true)
+  writeNumber(1[0:], 1) # Write 1 on the beginning of tape 1
+  jump(GOTO 1) # Go to the label 1
+  jump(COMEFROM 3) # Jump from the label 3 (if false)
+  writeNumber(1[0:], 0) # Write 0 on the beginning of tape 1
+  jump(GOTO 1) # Go to the label 1
+  jump(COMEFROM 1) # Come from the label 1
+  compress(1) # Use tape 1 as output
+```
+The following instructions are supported:
+
+#### `decompress`
+This should be the first instruction of every program. It specifies where the input of the compiled Turing machine should be placed. The only argument of this instruction is the input tape.
+
+#### `compress`
+This should be the last instruction of every program. It specifies which tape is considered to be the output. The only argument of this instruction is the output tape.
+
+#### `writeNumber`
+This instruction writes a number on a specific position on a tape. The rest of the tape is deleted. When this instruction is executed, the tape must be long enough, so that the position is not further than the end of the tape. It has two arguments separated by
+comma: destination and number. The destination has two variants:
+```
+  writeNumber(2[5:], 10) # Write 10 directly after the fifth number on the tape 2
+  writeNumber(2[], 15) # Append 15 to the tape 2
+```
+
+#### `clear`
+This instruction clears a range on a tape. The range must start with the index 0 or must be rightwise unbounded. The tape with range is the only argument.
+```
+  clear(1[0:]) # Clear the whole tape 1
+  clear(1[0:5]) # Delete the first five numbers while keeping the rest
+  clear(1[5:]) # Delete everything after the fifth number
+```
+
+#### `copy`
+This instruction copies a range from one tape to another. The arguments are: the source tape, the source range, comma, the destination tape, the destination range. The source range is specified by the first index, followed by colon and the optional second index, all
+in square brackets. The destination range must be rightwise unbounded, it is specified by an index followed by colon, all in square brackets, or by empty sqaure brackets, which means that the data should be appended.
+```
+  copy(3[0:1], 4[0:]) # Copy the first number of the tape 3 to the beginning of the tape 4, the content of the tape 4 will be lost
+  copy(3[1:], 4[]) # Copy the content of the tape 3 except for the first number to the end of the tape 4, the content of the tape 4 will not be lost
+```
+
+#### `call`
+This instruction simulates a defined Turing machine on a single tape. It has two arguments separated by comma: the tape and the machine.
+```
+  call(1, { A11LA A01N_ }) # Increment the first number on tape 1
+```
+
+#### `jump`
+This instruction jumps to or from a label, which is a number. There are two types of jumps: GOTO and COMEFROM. Each label should be associated with one COMEFROM jump and at least one GOTO jump, compare or compareTapeLength. As arguments, the type (GOTO or COMEFROM)
+followed by the label (without comma) is provided.
+
+#### `compare`
+This instruction compares two arguments and jumps to one of two specified labels, depending on the result of the comparison. The comparison arguments can either be constants or tapes with indices. These operators can be used: =, ≠, <, >, ≤, ≥
+```
+  compare(1[3] > 2[0], 1, 2) # If the fourth number on tape 1 is greater than the first number on tape 2, jump to 1, else jump to 2
+  compare(1[3] < 20, 3, 4) # If the fourth number on tape 1 is less than 20, jump to 3, else jump to 4
+  compare(1 = 1, 5, 6) # This always jumps to 5
+```
+
+#### `compareTapeLength`
+This instruction compares the length of a tape with a number. These operators can be used: =, ≠, <, >, ≤, ≥
+```
+  compareTapeLength(|1| < 2, 1, 2) # If there are fewer than 2 numbers on the tape 1, jump to 1, else jump to 2
+  compareTapeLength(|2| = 0, 3, 4) # If the tape 2 is empty, jump to 3, else jump to 4
 ```
 
 ## Examples and Tests

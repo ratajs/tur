@@ -10,6 +10,7 @@ CXXFLAGS = -std=c++23 -Wall -Wno-deprecated-declarations -pedantic -O3
 
 OBJS = \
 	IO/flags.o \
+	IO/inputLanguage.o \
 	IO/input.o \
 	IO/format.o \
 	IO/error.o \
@@ -20,6 +21,7 @@ OBJS = \
 	IO/parseError.o \
 	IO/typeError.o \
 	IO/symbolError.o \
+	IO/irParseError.o \
 	IO/warning.o \
 	IO/generalWarning.o \
 	IO/includeResolver.o \
@@ -29,6 +31,8 @@ OBJS = \
 	parsing/token.o \
 	parsing/lexer.o \
 	parsing/parser.o \
+	parsing/irParser.o \
+	parsing/irArguments.o \
 	AST/program.o \
 	AST/variable.o \
 	AST/expressions/expression.o \
@@ -130,7 +134,7 @@ algotest: ${TOBJS} algotest.cpp
 	${CXX} ${CXXFLAGS} -MM algotest.cpp -MT $@ > ./algotest.d
 	./algotest
 
-doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp Doxyfile
+doc: ${OBJS:.o=.hpp} ${OBJS:.o=.cpp} tur.cpp algotest.cpp machine/machineLibrary.hpp README.md Doxyfile
 	doxygen ./Doxyfile
 
 lint: ${MAN}

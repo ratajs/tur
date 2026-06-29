@@ -1,4 +1,5 @@
 #include "./callInstruction.hpp"
+#include <utility>
 #include <initializer_list>
 #include <string_view>
 #include "../IO/unexpectedError.hpp"
@@ -8,7 +9,18 @@
  * \param tape The tape on which the machine shall be simulated.
  * \param machine The Turing machine to simulate.
  */
-CallInstruction::CallInstruction(size_t tape, const Machine &machine): tape(tape), machine(machine) {};
+CallInstruction::CallInstruction(size_t tape, Machine machine): tape(tape), machine(std::move(machine)) {};
+
+/*!
+ * An alternative constructor of CallInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The tape, comma, and the machine in braces is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
+CallInstruction::CallInstruction(IrArguments &arguments): tape(arguments.readTape()), machine((arguments.readComma(), arguments.readMachine())) {
+	arguments.end();
+};
 
 std::vector<size_t> CallInstruction::listUsedTapes() const {
 	return { this->tape };

@@ -1,6 +1,14 @@
 #include "./instruction.hpp"
 #include "../IO/unexpectedError.hpp"
 
+std::optional<size_t> Instruction::getComeFromOrigin() const {
+	return {};
+};
+
+bool Instruction::isGoToInstruction() const {
+	return false;
+};
+
 std::unique_ptr<Instruction> Instruction::tryToMerge(const Instruction &otherInstruction) const {
 	return {};
 };

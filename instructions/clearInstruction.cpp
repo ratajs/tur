@@ -1,6 +1,8 @@
 #include "./clearInstruction.hpp"
+#include <tuple>
 #include <initializer_list>
 #include "../IO/unexpectedError.hpp"
+#include "../IO/irParseError.hpp"
 
 /*!
  * The constructor of ClearInstruction.
@@ -14,6 +16,21 @@ ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<siz
 		if(index0 > 0 && index1)
 			throw UnexpectedError(L"Invalid clear (neither beginning nor end).");
 	};
+
+/*!
+ * An alternative constructor of ClearInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The tape and range (the first index followed by a colon and an optional second index, all in square brackets) is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
+ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+	std::tie(this->index0, this->index1) = arguments.readRange();
+	arguments.end();
+
+	if(this->index0 > 0 && this->index1)
+		throw IrParseError(IrParseError::Type::INVALID_RANGE_FOR_CLEAR, arguments.getLocation()); //TODO more precise location?
+};
 
 std::vector<size_t> ClearInstruction::listUsedTapes() const {
 	return { this->tape };

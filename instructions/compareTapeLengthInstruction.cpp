@@ -12,8 +12,65 @@
  */
 CompareTapeLengthInstruction::CompareTapeLengthInstruction(size_t tape, size_t number, size_t trueLabel, size_t falseLabel, CompareTapeLengthInstruction::Type type): type(type), tape(tape), number(number), trueLabel(trueLabel), falseLabel(falseLabel) {};
 
+/*!
+ * An alternative constructor of CompareTapeLengthInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The tape number enclosed in vertical bars, type, the number with which to compare, comma, the true label, comma, and the false label is expected in the arguments.
+ * Type can be one of the following: =, ≠, <, ≤, >, ≥
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
+CompareTapeLengthInstruction::CompareTapeLengthInstruction(IrArguments &arguments) {
+	arguments.readCharacter(L'|');
+	this->tape = arguments.readTape();
+	arguments.readCharacter(L'|');
+
+	switch(arguments.readString({ L"=", L"≠", L"<", L"≤", L">", L"≥" })) {
+		case 0:
+			this->type = CompareTapeLengthInstruction::Type::EQ;
+
+			break;
+
+		case 1:
+			this->type = CompareTapeLengthInstruction::Type::NE;
+
+			break;
+
+		case 2:
+			this->type = CompareTapeLengthInstruction::Type::LT;
+
+			break;
+
+		case 3:
+			this->type = CompareTapeLengthInstruction::Type::LTE;
+
+			break;
+
+		case 4:
+			this->type = CompareTapeLengthInstruction::Type::GT;
+
+			break;
+
+		case 5:
+			this->type = CompareTapeLengthInstruction::Type::GTE;
+
+			break;
+	};
+
+	this->number = arguments.readNumber();
+	arguments.readComma();
+	this->trueLabel = arguments.readLabel();
+	arguments.readComma();
+	this->falseLabel = arguments.readLabel();
+	arguments.end();
+};
+
 std::vector<size_t> CompareTapeLengthInstruction::listUsedTapes() const {
 	return { this->tape };
+};
+
+bool CompareTapeLengthInstruction::isGoToInstruction() const {
+	return true;
 };
 
 void CompareTapeLengthInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {

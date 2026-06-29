@@ -1,5 +1,6 @@
 #include "./copyInstruction.hpp"
 #include <utility>
+#include <tuple>
 #include <initializer_list>
 #include "./clearInstruction.hpp"
 #include "../IO/unexpectedError.hpp"
@@ -18,6 +19,21 @@ CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourc
 		if(source==destination)
 			throw UnexpectedError(L"Invalid copy (source is destination).");
 	};
+
+/*!
+ * An alternative constructor of CopyInstruction.
+ * The arguments are extracted from an instance of IrArguments.
+ * The source tape, the source range (the first index followed by a colon and an optional second index, all in square brackets), comma, the destination tape, and destination index (an index followed by a colon, all in square brackets, or empty square brackets) is expected in the arguments.
+ * \param arguments The arguments of the instruction from the IR input.
+ * \throw IrParseError If the arguments do not match the expected format.
+ */
+CopyInstruction::CopyInstruction(IrArguments &arguments): source(arguments.readTape()) {
+	std::tie(this->sourceIndex0, this->sourceIndex1) = arguments.readRange();
+	arguments.readComma();
+	this->destination = arguments.readTape();
+	this->destinationIndex = arguments.readRightwiseUnboundedRange();
+	arguments.end();
+};
 
 std::vector<size_t> CopyInstruction::listUsedTapes() const {
 	return { this->source, this->destination };
