@@ -8,6 +8,7 @@
 #include "../variable.hpp"
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/clearInstruction.hpp"
+#include "../../instructions/reversePseudoinstruction.hpp"
 #include "../../IO/typeError.hpp"
 
 /*!
@@ -26,23 +27,30 @@ ExplodeStatement::ExplodeStatement(std::unique_ptr<Expression> source, Destinati
 
 	if(this->source->getArrayAccessLength() && (*this->source->getArrayAccessLength())!=0)
 		throw TypeError(TypeError::Type::BOUNDED_EXPRESSION_AN_EXPLOSION_STATEMENT, this->source->location);
-
+	/*
 	if(this->destination.hasNonFinalEllipsis())
 		throw TypeError(TypeError::Type::NON_FINAL_ELLIPSIS_IN_A_DESTINATION_BUNDLE, bundleLocation);
+	*/
 };
 
 void ExplodeStatement::build(InstructionBuilder &builder) const {
 	size_t index, sourceTape;
-	std::optional<std::pair<size_t, std::optional<size_t>>> sourceVariablePosition;
 	Expression::TapeRange sourceRange;
+	std::optional<std::function<void ()>> clearSourceVariable;
 
 	std::tie(sourceTape, sourceRange) = this->source->buildTape(builder);
 
 	index = 0;
-	this->destination.forEachVariable(
-		[this, &builder, sourceTape, &sourceRange, &index, &sourceVariablePosition](const Variable &variable, bool hasEllipsis) -> void {
-			if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) // Source variable, no copying
-				sourceVariablePosition = std::pair(sourceRange.index0 + index, hasEllipsis ? std::nullopt : std::optional(sourceRange.index0 + index + 1));
+	this->destination.forEachVariableFromStartUntilEllipsis(
+		[this, &builder, sourceTape, &sourceRange, &index, &clearSourceVariable](const Variable &variable, bool hasEllipsis) -> void {
+			if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) { // Source variable, no copying
+				clearSourceVariable = ([&builder, sourceTape, &sourceRange, index, hasEllipsis]() -> void {
+					if(sourceRange.index0 + index > 0)
+						builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 0, sourceRange.index0 + index));
+					if(!hasEllipsis)
+						builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 1, std::nullopt));
+				});
+			}
 			else {
 				if(hasEllipsis)
 					builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *variable.tape, sourceRange.index0 + index, std::nullopt, 0));
@@ -53,13 +61,37 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 			index++;
 		}
 	);
+	if(clearSourceVariable)
+		(*clearSourceVariable)();
 
-	if(!sourceVariablePosition)
-		return;
+	if(this->destination.hasNonFinalEllipsis()) {
+		clearSourceVariable.reset();
+		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+		index = 0;
+		this->destination.forEachVariableFromEndUntilEllipsis(
+			[this, &builder, sourceTape, &index, &clearSourceVariable](const Variable &variable, bool hasEllipsis) -> void {
+				if(hasEllipsis) {
+					builder.addInstruction(std::make_unique<ClearInstruction>(*variable.tape, 0, index)); //FIXME for source variable after non-final ellipsis
 
-	if(sourceVariablePosition->first > 0)
-		builder.addInstruction(std::make_unique<ClearInstruction>(*this->source->getVariable()->get().tape, 0, sourceVariablePosition->first));
+					return;
+				};
 
-	if(sourceVariablePosition->second)
-		builder.addInstruction(std::make_unique<ClearInstruction>(*this->source->getVariable()->get().tape, (*sourceVariablePosition->second) - sourceVariablePosition->first, std::nullopt));
+				if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) { // Source variable, no copying
+					clearSourceVariable = ([&builder, sourceTape, index, hasEllipsis]() -> void {
+						if(index > 0)
+							builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 0, index));
+						if(!hasEllipsis)
+							builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 1, std::nullopt));
+					});
+				}
+				else
+					builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *variable.tape, index, index + 1, 0));
+
+				index++;
+			}
+		);
+		if(clearSourceVariable)
+			(*clearSourceVariable)();
+		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+	};
 };

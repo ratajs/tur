@@ -70,6 +70,7 @@ OBJS = \
 	instructions/jumpInstruction.o \
 	instructions/compareInstruction.o \
 	instructions/compareTapeLengthInstruction.o \
+	instructions/reversePseudoinstruction.o \
 	machine/machineLibrary.o \
 	machine/stateGenerator.o \
 	machine/machineFactory.o \
