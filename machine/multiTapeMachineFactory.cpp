@@ -1928,3 +1928,15 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareTapeLength(size_t tape,
 
 	return (*this);
 };
+
+MultiTapeMachineFactory &MultiTapeMachineFactory::reverse() {
+	std::wstring traversingState;
+
+	traversingState = this->generator.getCurrentState();
+	this->addSuperTransition<true, true, Machine::Direction::R>(traversingState, traversingState);
+	this->addTransition<false, true, Machine::Direction::N>(traversingState, {});
+
+	this->isReversed = (!this->isReversed);
+
+	return (*this);
+};

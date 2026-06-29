@@ -55,4 +55,5 @@ class MultiTapeMachineFactory: public MachineFactory {
 		MultiTapeMachineFactory &compare(size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		MultiTapeMachineFactory &compare(size_t tape, size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		MultiTapeMachineFactory &compareTapeLength(size_t tape, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
+		MultiTapeMachineFactory &reverse();
 };
