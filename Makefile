@@ -1,4 +1,3 @@
-#TODO
 BIN	= tur
 MAN	= tur.1
 
@@ -71,6 +70,7 @@ OBJS = \
 	instructions/jumpInstruction.o \
 	instructions/compareInstruction.o \
 	instructions/compareTapeLengthInstruction.o \
+	instructions/reversePseudoinstruction.o \
 	machine/machineLibrary.o \
 	machine/stateGenerator.o \
 	machine/machineFactory.o \
@@ -172,7 +172,7 @@ clean:
 .PHONY: clean
 
 AST/destinationBundle.o: AST/destinationBundle.cpp \
-	AST/./destinationBundle.hpp AST/././variable.hpp \
+	AST/./destinationBundle.hpp AST/./../common.hpp AST/././variable.hpp \
 	AST/./../parsing/location.hpp AST/../IO/typeError.hpp \
 	AST/../IO/./errorWithLocation.hpp AST/../IO/././error.hpp \
 	AST/../IO/./../parsing/location.hpp AST/../IO/../parsing/location.hpp
@@ -595,7 +595,7 @@ AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
 	AST/statements/./../expressions/../variable.hpp \
 	AST/statements/./../expressions/../../building/instructionBuilder.hpp \
 	AST/statements/./../destinationBundle.hpp \
-	AST/statements/./.././variable.hpp \
+	AST/statements/./../../common.hpp AST/statements/./.././variable.hpp \
 	AST/statements/./../../parsing/location.hpp \
 	AST/statements/../variable.hpp \
 	AST/statements/../../instructions/copyInstruction.hpp \
@@ -606,6 +606,8 @@ AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
 	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/clearInstruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
+	AST/statements/../../instructions/reversePseudoinstruction.hpp \
+	AST/statements/../../instructions/../common.hpp \
 	AST/statements/../../IO/typeError.hpp \
 	AST/statements/../../IO/./errorWithLocation.hpp \
 	AST/statements/../../IO/././error.hpp \
@@ -924,6 +926,17 @@ instructions/jumpInstruction.o: instructions/jumpInstruction.cpp \
 	instructions/./../parsing/irArguments.hpp \
 	instructions/./../parsing/./location.hpp \
 	instructions/./../parsing/../machine/machine.hpp
+instructions/reversePseudoinstruction.o: \
+	instructions/reversePseudoinstruction.cpp \
+	instructions/./reversePseudoinstruction.hpp \
+	instructions/./../common.hpp instructions/././instruction.hpp \
+	instructions/././../machine/singleTapeMachineFactory.hpp \
+	instructions/././../machine/./machineFactory.hpp \
+	instructions/././../machine/././stateGenerator.hpp \
+	instructions/././../machine/././machine.hpp \
+	instructions/././../machine/./././tape.hpp \
+	instructions/././../machine/./machine.hpp \
+	instructions/././../machine/multiTapeMachineFactory.hpp
 instructions/writeNumberInstruction.o: \
 	instructions/writeNumberInstruction.cpp \
 	instructions/./writeNumberInstruction.hpp \
@@ -1049,7 +1062,8 @@ parsing/irParser.o: parsing/irParser.cpp parsing/./irParser.hpp \
 	parsing/../instructions/callInstruction.hpp \
 	parsing/../instructions/../machine/machine.hpp \
 	parsing/../instructions/jumpInstruction.hpp \
-	parsing/../instructions/compareInstruction.hpp
+	parsing/../instructions/compareInstruction.hpp \
+	parsing/../instructions/compareTapeLengthInstruction.hpp
 parsing/lexer.o: parsing/lexer.cpp parsing/./lexer.hpp \
 	parsing/././token.hpp parsing/./././location.hpp \
 	parsing/././../machine/machine.hpp parsing/././../machine/./tape.hpp \
@@ -1089,7 +1103,7 @@ parsing/parser.o: parsing/parser.cpp parsing/./parser.hpp \
 	parsing/./../AST/expressions/../../building/instructionBuilder.hpp \
 	parsing/./../AST/sourceBundle.hpp \
 	parsing/./../AST/./expressions/expression.hpp \
-	parsing/./../AST/destinationBundle.hpp \
+	parsing/./../AST/destinationBundle.hpp parsing/./../AST/../common.hpp \
 	parsing/./../IO/includeResolver.hpp \
 	parsing/./../IO/../machine/machine.hpp \
 	parsing/./../IO/../parsing/location.hpp parsing/./../IO/warning.hpp \
@@ -1163,8 +1177,9 @@ tur: tur.cpp IO/input.hpp IO/./flags.hpp IO/./inputLanguage.hpp \
 	parsing/../AST/expressions/../../building/instructionBuilder.hpp \
 	parsing/../AST/sourceBundle.hpp \
 	parsing/../AST/./expressions/expression.hpp \
-	parsing/../AST/destinationBundle.hpp parsing/../IO/includeResolver.hpp \
-	parsing/irParser.hpp parsing/../instructions/instruction.hpp \
+	parsing/../AST/destinationBundle.hpp parsing/../AST/../common.hpp \
+	parsing/../IO/includeResolver.hpp parsing/irParser.hpp \
+	parsing/../instructions/instruction.hpp \
 	parsing/../building/instructionCollection.hpp \
 	parsing/./irArguments.hpp parsing/././location.hpp \
 	parsing/./../machine/machine.hpp AST/program.hpp \
