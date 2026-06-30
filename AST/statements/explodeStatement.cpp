@@ -70,7 +70,7 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 		this->destination.forEachVariableFromEndUntilEllipsis(
 			[this, &builder, sourceTape, &index, &clearSourceVariable](const Variable &variable, bool hasEllipsis) -> void {
 				if(hasEllipsis) {
-					builder.addInstruction(std::make_unique<ClearInstruction>(*variable.tape, 0, index)); //FIXME for source variable after non-final ellipsis
+					builder.addInstruction(std::make_unique<ClearInstruction>(*variable.tape, 0, index));
 
 					return;
 				};

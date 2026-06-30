@@ -37,6 +37,11 @@ class Instruction {
 		 */
 		virtual bool isGoToInstruction() const;
 
+		/*!
+		 * This virtual method should return the labels to which the instruction can jump.
+		 * If this instruction does not jump anywhere, it should return an empty vector.
+		 * \return Vector of possible destinations.
+		 */
 		virtual std::vector<size_t> getGoToDestinations() const;
 
 		/*!

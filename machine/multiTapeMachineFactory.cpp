@@ -1959,6 +1959,12 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareTapeLength(size_t tape,
 	return (*this);
 };
 
+/*!
+ * Reverse the tape.
+ * From this call on, everything will be mirrored.
+ * The old indices of virtual tapes will still be valid.
+ * If the current state is not disabled, travelsal of the tape will take place, so that the machine will be at the beginning again.
+ */
 MultiTapeMachineFactory &MultiTapeMachineFactory::reverse() {
 	std::wstring traversingState;
 
