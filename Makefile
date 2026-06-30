@@ -112,6 +112,7 @@ EXAMPLES = \
 	examples/simpleTests/implosion.tm \
 	examples/simpleTests/explosion.tm \
 	examples/simpleTests/explosionWithSourceVariable.tm \
+	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/while.tm \
