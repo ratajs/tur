@@ -495,7 +495,8 @@ SingleTapeMachineFactory &SingleTapeMachineFactory::compareTapeLength(size_t num
 
 SingleTapeMachineFactory &SingleTapeMachineFactory::reverse() {
 	this->isReversed = (!this->isReversed);
-	this->goHome({}, {});
+	if(!this->isCurrentStateDisabled)
+		this->goHome({}, {});
 
 	return (*this);
 };

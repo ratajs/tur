@@ -31,6 +31,13 @@ bool JumpInstruction::isGoToInstruction() const {
 	return (this->type==JumpInstruction::Type::GO_TO);
 };
 
+std::vector<size_t> JumpInstruction::getGoToDestinations() const {
+	if(this->type==JumpInstruction::Type::GO_TO)
+		return { this->label };
+	else
+		return {};
+};
+
 void JumpInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
 	switch(this->type) {
 		case JumpInstruction::Type::GO_TO:

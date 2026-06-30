@@ -37,6 +37,8 @@ class Instruction {
 		 */
 		virtual bool isGoToInstruction() const;
 
+		virtual std::vector<size_t> getGoToDestinations() const;
+
 		/*!
 		 * This virtual method can be implemented by instructions using exactly two tapes if the tapes can be merged.
 		 * It can be presumed that the first used tape is never used again and that the second tape has not been used before.

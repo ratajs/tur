@@ -31,6 +31,7 @@ class JumpInstruction: public Instruction {
 		std::vector<size_t> listUsedTapes() const override;
 		std::optional<size_t> getComeFromOrigin() const override;
 		bool isGoToInstruction() const override;
+		std::vector<size_t> getGoToDestinations() const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const override;

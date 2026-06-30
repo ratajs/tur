@@ -73,6 +73,10 @@ bool CompareTapeLengthInstruction::isGoToInstruction() const {
 	return true;
 };
 
+std::vector<size_t> CompareTapeLengthInstruction::getGoToDestinations() const {
+	return { this->trueLabel, this->falseLabel };
+};
+
 void CompareTapeLengthInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
 	std::wstring trueState, falseState;
 
