@@ -35,15 +35,15 @@ ExplodeStatement::ExplodeStatement(std::unique_ptr<Expression> source, Destinati
 void ExplodeStatement::build(InstructionBuilder &builder) const {
 	size_t index, sourceTape;
 	Expression::TapeRange sourceRange;
-	std::optional<std::function<void ()>> clearSourceVariable;
+	std::optional<std::function<void ()>> clearSourceVariableL, clearSourceVariableR;
 
 	std::tie(sourceTape, sourceRange) = this->source->buildTape(builder);
 
 	index = 0;
 	this->destination.forEachVariableFromStartUntilEllipsis(
-		[this, &builder, sourceTape, &sourceRange, &index, &clearSourceVariable](const Variable &variable, bool hasEllipsis) -> void {
+		[this, &builder, sourceTape, &sourceRange, &index, &clearSourceVariableL](const Variable &variable, bool hasEllipsis) -> void {
 			if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) { // Source variable, no copying
-				clearSourceVariable = ([&builder, sourceTape, &sourceRange, index, hasEllipsis]() -> void {
+				clearSourceVariableL = ([&builder, sourceTape, &sourceRange, index, hasEllipsis]() -> void {
 					if(sourceRange.index0 + index > 0)
 						builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 0, sourceRange.index0 + index));
 					if(!hasEllipsis)
@@ -60,15 +60,12 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 			index++;
 		}
 	);
-	if(clearSourceVariable)
-		(*clearSourceVariable)();
 
 	if(this->destination.hasNonFinalEllipsis()) {
-		clearSourceVariable.reset();
 		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
 		index = 0;
 		this->destination.forEachVariableFromEndUntilEllipsis(
-			[this, &builder, sourceTape, &index, &clearSourceVariable](const Variable &variable, bool hasEllipsis) -> void {
+			[this, &builder, sourceTape, &index, &clearSourceVariableR](const Variable &variable, bool hasEllipsis) -> void {
 				if(hasEllipsis) {
 					builder.addInstruction(std::make_unique<ClearInstruction>(*variable.tape, 0, index));
 
@@ -76,7 +73,7 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 				};
 
 				if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) { // Source variable, no copying
-					clearSourceVariable = ([&builder, sourceTape, index, hasEllipsis]() -> void {
+					clearSourceVariableR = ([&builder, sourceTape, index, hasEllipsis]() -> void {
 						if(index > 0)
 							builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 0, index));
 						if(!hasEllipsis)
@@ -89,8 +86,11 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 				index++;
 			}
 		);
-		if(clearSourceVariable)
-			(*clearSourceVariable)();
+		if(clearSourceVariableR)
+			(*clearSourceVariableR)();
 		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
 	};
+
+	if(clearSourceVariableL)
+		(*clearSourceVariableL)();
 };
