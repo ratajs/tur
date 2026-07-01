@@ -223,7 +223,11 @@ b--; # Either two hyphen-minuses or two Unicode minuses.
 ```
 if input==42:
   output = 1;
-else: # The else part is optional, endif can directly follow the first branch.
+# The other branches are optional, endif can go here.
+elseif input > 0:
+  output = 2;
+# More elseif branches can follow.
+else:
   output = 0;
 endif;
 ```
