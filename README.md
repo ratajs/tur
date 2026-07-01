@@ -328,8 +328,8 @@ This instruction simulates a defined Turing machine on a single tape. It has two
 ```
 
 #### `jump`
-This instruction jumps to or from a label, which is a number. There are two types of jumps: GOTO and COMEFROM. Each label should be associated with one COMEFROM jump and at least one GOTO jump, compare or compareTapeLength. As arguments, the type (GOTO or COMEFROM)
-followed by the label (without comma) is provided.
+This instruction jumps to or from a label, which is a number. There are two types of jumps: `GOTO` and `COMEFROM`. Each label should be associated with one `COMEFROM` jump and at least one `GOTO` jump, compare or compareTapeLength. As arguments, the type (`GOTO` or `COMEFROM`)
+followed by the label (without comma) is provided. A `COMEFROM` jump must follow if and only if the previous instruction jumps somewhere (`GOTO` jump, compare, compareTapeLength).
 
 #### `compare`
 This instruction compares two arguments and jumps to one of two specified labels, depending on the result of the comparison. The comparison arguments can either be constants or tapes with indices. These operators can be used: =, ≠, <, >, ≤, ≥
@@ -345,6 +345,15 @@ This instruction compares the length of a tape with a number. These operators ca
   compareTapeLength(|1| < 2, 1, 2) # If there are fewer than 2 numbers on the tape 1, jump to 1, else jump to 2
   compareTapeLength(|2| = 0, 3, 4) # If the tape 2 is empty, jump to 3, else jump to 4
 ```
+
+#### `REVERSE`
+This is a pseudoistruction which causes the machine to work like in mirror. The tape numbers will stay, but their starts will now be ends and vice versa. This state will remain until the next `REVERSE`. It is possible to combine jumps with `REVERSE`, but it is neces‐
+sary that the reversed labels match (jumps from a reversed part of the program must lead also to a reversed part).
+````
+  REVERSE # Start the reversed state
+  clear(1[1:]) # This clears everything but the last number
+  REVERSE # End the reversed state
+````
 
 ## Examples and Tests
 
