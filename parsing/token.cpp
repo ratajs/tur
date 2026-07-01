@@ -110,6 +110,9 @@ std::wstring Token::typeToString(Token::Type type) {
 		case Token::Type::ELSE:
 			return L"ELSE";
 
+		case Token::Type::ELSEIF:
+			return L"ELSEIF";
+
 		case Token::Type::ENDIF:
 			return L"ENDIF";
 

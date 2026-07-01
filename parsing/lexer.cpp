@@ -128,6 +128,9 @@ std::variant<std::wstring, Token::Type> Lexer::readIdentifierOrKeyword() {
 	if(value==L"else")
 		return Token::Type::ELSE;
 
+	if(value==L"elseif")
+		return Token::Type::ELSEIF;
+
 	if(value==L"endif")
 		return Token::Type::ENDIF;
 

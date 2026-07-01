@@ -1,6 +1,6 @@
 ε/LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE	ε
 
-ε																																										ε/ELSE/ENDIF/ENDWHILE/ENDLOOP																																																															Program/OptionalElse
+ε																																										ε/ELSE/ELSEIF/ENDIF/ENDWHILE/ENDLOOP																																																											Program/OptionalElse
 LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE
 
 LEFT_SQUARE_BRACKET/IDENTIFIER																											SEMICOLON
@@ -124,6 +124,7 @@ IF
 
 ε																																										ENDIF
 ELSE
+ELSEIF
 
 WHILE																																								SEMICOLON																																																																									Statement
 

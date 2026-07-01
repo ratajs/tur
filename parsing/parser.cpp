@@ -1,5 +1,7 @@
 #include "./parser.hpp"
 #include <utility>
+#include <array>
+#include <ranges>
 #include <string_view>
 #include "./location.hpp"
 #include "../AST/expressions/numberExpression.hpp"
@@ -170,6 +172,7 @@ std::vector<std::unique_ptr<Statement>> Parser::parseStatements() {
 		switch(this->getNextTokenType()) {
 			case Token::Type::END:
 			case Token::Type::ELSE:
+			case Token::Type::ELSEIF:
 			case Token::Type::ENDIF:
 			case Token::Type::ENDWHILE:
 			case Token::Type::ENDLOOP:
@@ -1098,6 +1101,9 @@ std::unique_ptr<Statement> Parser::parseIfStatement() {
 };
 
 std::vector<std::unique_ptr<Statement>> Parser::parseOptionalElse() {
+	std::unique_ptr<Expression> condition;
+	std::vector<std::unique_ptr<Statement>> trueBranch, falseBranch;
+
 	switch(this->getNextTokenType()) {
 		case Token::Type::ENDIF:
 			return {};
@@ -1106,6 +1112,16 @@ std::vector<std::unique_ptr<Statement>> Parser::parseOptionalElse() {
 			this->expect(Token::Type::ELSE, Token::Type::COLON);
 
 			return this->parseStatements();
+
+		case Token::Type::ELSEIF:
+			this->expect(Token::Type::ELSEIF);
+
+			condition = this->parseLogicalExpression();
+			this->expect(Token::Type::COLON);
+			trueBranch = this->parseStatements();
+			falseBranch = this->parseOptionalElse();
+
+			return std::vector<std::unique_ptr<Statement>>(std::from_range, std::array<std::unique_ptr<Statement>, 1> { std::make_unique<IfStatement>(std::move(condition), std::move(trueBranch), std::move(falseBranch)) } | std::views::as_rvalue);
 
 		default:
 			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);

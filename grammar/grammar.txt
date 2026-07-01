@@ -124,6 +124,7 @@ IfStatement → IF LogicalExpression COLON Statements OptionalElse ENDIF
 
 OptionalElse →
 OptionalElse → ELSE COLON Statements
+OptionalElse → ELSEIF LogicalExpression COLON Statements OptionalElse
 
 WhileStatement → WHILE LogicalExpression COLON Statements ENDWHILE
 

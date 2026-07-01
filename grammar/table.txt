@@ -14,6 +14,7 @@ Program:
 Statements:
 	END: 3
 	ELSE: 3
+	ELSEIF: 3
 	ENDIF: 3
 	ENDWHILE: 3
 	ENDLOOP: 3
@@ -347,15 +348,16 @@ IfStatement:
 OptionalElse:
 	ENDIF: 125
 	ELSE: 126
+	ELSEIF: 127
 
 WhileStatement:
-	WHILE: 128
+	WHILE: 129
 
 LoopStatement:
-	LOOP: 130
+	LOOP: 131
 
 IncludeStatement:
-	INCLUDE: 132
+	INCLUDE: 133
 
 RequireStatement:
-	REQUIRE: 134
+	REQUIRE: 135
