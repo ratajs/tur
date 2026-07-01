@@ -115,6 +115,7 @@ EXAMPLES = \
 	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
+	examples/simpleTests/branchingWithElseif.tm \
 	examples/simpleTests/while.tm \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \

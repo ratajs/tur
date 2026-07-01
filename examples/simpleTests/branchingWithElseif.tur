@@ -1,0 +1,20 @@
+if input==0:
+	output = 15;
+elseif input==1:
+	output = 13;
+elseif input==2:
+	output = 14;
+elseif ρ input > 1:
+	if input[1]==0:
+		output = 10;
+	elseif input[1]==1:
+		output = 11;
+	else:
+		output = 0;
+	endif;
+else:
+	output = 1;
+	if input > 5:
+		output[] = 2;
+	endif;
+endif;
