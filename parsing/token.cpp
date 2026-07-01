@@ -128,6 +128,12 @@ std::wstring Token::typeToString(Token::Type type) {
 		case Token::Type::ENDLOOP:
 			return L"ENDLOOP";
 
+		case Token::Type::FOR:
+			return L"FOR";
+
+		case Token::Type::ENDFOR:
+			return L"ENDFOR";
+
 		case Token::Type::BREAK:
 			return L"BREAK";
 

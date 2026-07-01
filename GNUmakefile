@@ -51,6 +51,7 @@ OBJS = \
 	AST/statements/ifStatement.o \
 	AST/statements/whileStatement.o \
 	AST/statements/loopStatement.o \
+	AST/statements/forStatement.o \
 	AST/statements/breakStatement.o \
 	AST/statements/continueStatement.o \
 	AST/statements/exitStatement.o \

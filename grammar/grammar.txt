@@ -7,6 +7,7 @@ Statement → AssignmentOrSimpleCall
 Statement → IfStatement
 Statement → WhileStatement
 Statement → LoopStatement
+Statement → ForStatement
 Statement → BREAK
 Statement → CONTINUE
 Statement → EXIT
@@ -129,6 +130,8 @@ OptionalElse → ELSEIF LogicalExpression COLON Statements OptionalElse
 WhileStatement → WHILE LogicalExpression COLON Statements ENDWHILE
 
 LoopStatement → LOOP COLON Statements ENDLOOP
+
+ForStatement → FOR Statement SEMICOLON LogicalExpression SEMICOLON Statement COLON Statements ENDFOR
 
 IncludeStatement → INCLUDE IDENTIFIER
 

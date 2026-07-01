@@ -18,6 +18,7 @@
 #include "../AST/statements/ifStatement.hpp"
 #include "../AST/statements/whileStatement.hpp"
 #include "../AST/statements/loopStatement.hpp"
+#include "../AST/statements/forStatement.hpp"
 #include "../AST/statements/breakStatement.hpp"
 #include "../AST/statements/continueStatement.hpp"
 #include "../AST/statements/exitStatement.hpp"
@@ -176,6 +177,7 @@ std::vector<std::unique_ptr<Statement>> Parser::parseStatements() {
 			case Token::Type::ENDIF:
 			case Token::Type::ENDWHILE:
 			case Token::Type::ENDLOOP:
+			case Token::Type::ENDFOR:
 				return statements;
 
 			case Token::Type::LEFT_SQUARE_BRACKET:
@@ -183,6 +185,7 @@ std::vector<std::unique_ptr<Statement>> Parser::parseStatements() {
 			case Token::Type::IF:
 			case Token::Type::WHILE:
 			case Token::Type::LOOP:
+			case Token::Type::FOR:
 			case Token::Type::BREAK:
 			case Token::Type::CONTINUE:
 			case Token::Type::EXIT:
@@ -215,6 +218,9 @@ std::unique_ptr<Statement> Parser::parseStatement() {
 
 		case Token::Type::LOOP:
 			return this->parseLoopStatement();
+
+		case Token::Type::FOR:
+			return this->parseForStatement();
 
 		case Token::Type::BREAK:
 			if(!this->isInLoop)
@@ -1155,6 +1161,27 @@ std::unique_ptr<Statement> Parser::parseLoopStatement() {
 	this->expect(Token::Type::ENDLOOP);
 
 	return std::make_unique<LoopStatement>(std::move(body));
+};
+
+std::unique_ptr<Statement> Parser::parseForStatement() {
+	bool wasInLoop;
+	std::unique_ptr<Expression> condition;
+	std::unique_ptr<Statement> initStatement, stepStatement;
+	std::vector<std::unique_ptr<Statement>> body;
+
+	this->expect(Token::Type::FOR);
+	wasInLoop = std::exchange(this->isInLoop, true);
+	initStatement = this->parseStatement();
+	this->expect(Token::Type::SEMICOLON);
+	condition = this->parseLogicalExpression();
+	this->expect(Token::Type::SEMICOLON);
+	stepStatement = this->parseStatement();
+	this->expect(Token::Type::COLON);
+	body = this->parseStatements();
+	this->isInLoop = wasInLoop;
+	this->expect(Token::Type::ENDFOR);
+
+	return std::make_unique<ForStatement>(std::move(initStatement), std::move(condition), std::move(stepStatement), std::move(body));
 };
 
 void Parser::parseIncludeStatement() {

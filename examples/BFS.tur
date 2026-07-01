@@ -11,10 +11,9 @@ distance = 1;
 
 loop:
 	x = 0;
-	while x < edgesCount:
+	for x = 0; x < edgesCount; x++:
 		if input[0]!=queue[0]: # Irrelevant edge
 			input = [input[2:], input[0:2]];
-			x++;
 			continue;
 		endif;
 
@@ -31,7 +30,6 @@ loop:
 
 		if visited[0]==input[1]:
 			input = [input[2:], input[0:2]];
-			x++;
 			continue;
 		endif;
 
@@ -43,8 +41,7 @@ loop:
 		distances[] = distance;
 
 		input = [input[2:], input[0:2]];
-		x++;
-	endwhile;
+	endfor;
 	queue = queue[1:];
 
 	if queue[0]==0: # End of layer

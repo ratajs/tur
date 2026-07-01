@@ -1,28 +1,29 @@
-ε/LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE	ε
+ε/LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/FOR/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE	ε
 
-ε																																										ε/ELSE/ELSEIF/ENDIF/ENDWHILE/ENDLOOP																																																											Program/OptionalElse
-LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE
+ε																																										ε/ELSE/ELSEIF/ENDIF/ENDWHILE/ENDLOOP/ENDFOR																																																								Program/OptionalElse
+LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/FOR/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE
 
-LEFT_SQUARE_BRACKET/IDENTIFIER																											SEMICOLON
+LEFT_SQUARE_BRACKET/IDENTIFIER																											SEMICOLON/COLON
 IF
 WHILE
 LOOP
+FOR
 BREAK
 CONTINUE
 EXIT
 INCLUDE
 REQUIRE
 
-LEFT_SQUARE_BRACKET																																	SEMICOLON																																																																									Statement
+LEFT_SQUARE_BRACKET																																	SEMICOLON/COLON																																																																						Statement
 IDENTIFIER
 
-ASSIGN																																							SEMICOLON																																																																									Assignment
+ASSIGN																																							SEMICOLON/COLON																																																																						Assignment
 LEFT_SQUARE_BRACKET
 LEFT_PARENTHESIS
 INC
 DEC
 
-RIGHT_SQUARE_BRACKET																																SEMICOLON																																																																									RemainingAssignment
+RIGHT_SQUARE_BRACKET																																SEMICOLON/COLON																																																																						RemainingAssignment
 NUMBER
 
 LEFT_SQUARE_BRACKET																																	ASSIGN
@@ -33,14 +34,14 @@ COMMA
 ε																																										COMMA/RIGHT_SQUARE_BRACKET																																																																RemainingDestinationBundle
 ELLIPSIS
 
-NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON																																																																									RemainingAssignment
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON/COLON																																																																						RemainingAssignment
 LEFT_SQUARE_BRACKET
 MACHINE
 
-NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON																																																																									RemainingArrayAccessAssignment
+NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON/COLON																																																																						RemainingArrayAccessAssignment
 LEFT_SQUARE_BRACKET
 
-LEFT_SQUARE_BRACKET																																	SEMICOLON																																																																									LogicalExpressionOrSourceBundleOrMachine/LogicalExpressionOrSourceBundle
+LEFT_SQUARE_BRACKET																																	SEMICOLON/COLON																																																																						LogicalExpressionOrSourceBundleOrMachine/LogicalExpressionOrSourceBundle
 
 ε																																										RIGHT_SQUARE_BRACKET
 NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT
@@ -119,17 +120,19 @@ NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT
 
 ε																																										RIGHT_PARENTHESIS																																																																					LogicalExpressions
 COMMA
-																																										SEMICOLON																																																																									Statement
-IF
+
+IF																																									SEMICOLON/COLON																																																																						Statement
 
 ε																																										ENDIF
 ELSE
 ELSEIF
 
-WHILE																																								SEMICOLON																																																																									Statement
+WHILE																																								SEMICOLON/COLON																																																																						Statement
 
-LOOP																																								SEMICOLON																																																																									Statement
+LOOP																																								SEMICOLON/COLON																																																																						Statement
 
-INCLUDE																																							SEMICOLON																																																																									Statement
+FOR																																									SEMICOLON/COLON																																																																						Statement
 
-REQUIRE																																							SEMICOLON																																																																									Statement
+INCLUDE																																							SEMICOLON/COLON																																																																						Statement
+
+REQUIRE																																							SEMICOLON/COLON																																																																						Statement
