@@ -32,9 +32,6 @@ std::wstring TypeError::getSimpleMessage() const {
 		case TypeError::Type::VARIABLE_MULTIPLE_TIMES_IN_A_DESTINATION_BUNDLE:
 			return L"Invalid explosion: The same variable multiple times in a destination bundle";
 
-		case TypeError::Type::NON_FINAL_ELLIPSIS_IN_A_DESTINATION_BUNDLE:
-			return L"Invalid destination bundle for explosion: Ellipsis not at the end";
-
 		case TypeError::Type::NON_CONDITION_IN_A_WHILE_STATEMENT:
 			return L"Invalid while condition: Not a condition";
 

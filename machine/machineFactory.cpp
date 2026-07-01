@@ -1,12 +1,7 @@
 #include "./machineFactory.hpp"
-#include <cstdlib>
 #include <utility>
-#include <optional>
-#include <vector>
-#include <set>
 #include <map>
 #include <algorithm>
-#include <string>
 #include <functional>
 #include "../IO/unexpectedError.hpp"
 
@@ -88,7 +83,7 @@ template<bool symbol, bool newSymbol, Machine::Direction direction>
 		if(!state)
 			state = this->generator.getCurrentState();
 
-		this->machine.addTransition(*state, symbol, newSymbol, direction, *state);
+		this->machine.addTransition(*state, symbol, newSymbol, this->isReversed ? Machine::otherDirection<direction> : direction, *state);
 
 		return (*state);
 	};
@@ -112,7 +107,7 @@ template<bool symbol, bool newSymbol, Machine::Direction direction>
 			newState = this->generator.getCurrentState();
 		};
 
-		this->machine.addTransition(*state, symbol, newSymbol, direction, *newState);
+		this->machine.addTransition(*state, symbol, newSymbol, this->isReversed ? Machine::otherDirection<direction> : direction, *newState);
 
 		return (*newState);
 	};
@@ -130,8 +125,8 @@ template<Machine::Direction direction>
 		if(!state)
 			state = this->generator.getCurrentState();
 
-		this->machine.addTransition(*state, false, false, direction, *state);
-		this->machine.addTransition(*state, true, true, direction, *state);
+		this->machine.addTransition(*state, false, false, this->isReversed ? Machine::otherDirection<direction> : direction, *state);
+		this->machine.addTransition(*state, true, true, this->isReversed ? Machine::otherDirection<direction> : direction, *state);
 
 		return (*state);
 	};
@@ -154,8 +149,8 @@ template<Machine::Direction direction>
 			newState = this->generator.getCurrentState();
 		};
 
-		this->machine.addTransition(*state, false, false, direction, *newState);
-		this->machine.addTransition(*state, true, true, direction, *newState);
+		this->machine.addTransition(*state, false, false, this->isReversed ? Machine::otherDirection<direction> : direction, *newState);
+		this->machine.addTransition(*state, true, true, this->isReversed ? Machine::otherDirection<direction> : direction, *newState);
 
 		return (*newState);
 	};

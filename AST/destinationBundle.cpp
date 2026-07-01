@@ -1,5 +1,6 @@
 #include "./destinationBundle.hpp"
 #include <algorithm>
+#include <ranges>
 #include "../IO/typeError.hpp"
 
 /*!
@@ -22,18 +23,35 @@ void DestinationBundle::add(Variable &variable, bool hasEllipsis, Location varia
 };
 
 /*!
- * Run a closure for each variable in the bundle.
+ * Run a closure for each variable in the bundle until a variable with ellipsis (included).
+ * The fuction should accept two parameters: the variable and the indicator if this is the variable with ellipsis.
  * \param function The function to run.
  */
-void DestinationBundle::forEachVariable(const std::function<void (const Variable&, bool)> &function) const {
-	size_t index = 0;
-
-	std::ranges::for_each(this->variables,
-		[this, &function, &index](const Variable &variable) -> void {
-			function(variable, (index==this->ellipsisVariable));
-			index++;
+void DestinationBundle::forEachVariableFromStartUntilEllipsis(const std::function<void (const Variable&, bool)> &function) const {
+	std::ranges::for_each(this->variables | std::views::take(this->ellipsisVariable.value_or(this->variables.size())),
+		[&function](const Variable &variable) -> void {
+			function(variable, false);
 		}
 	);
+
+	if(this->ellipsisVariable)
+		function(this->variables[*this->ellipsisVariable], true);
+};
+
+/*!
+ * Run a closure for each variable in the bundle from the end until a variable with ellipsis (included).
+ * The fuction should accept two parameters: the variable and the indicator if this is the variable with ellipsis.
+ * \param function The function to run.
+ */
+void DestinationBundle::forEachVariableFromEndUntilEllipsis(const std::function<void (const Variable&, bool)> &function) const {
+	std::ranges::for_each(this->variables | std::views::reverse | std::views::take(this->ellipsisVariable ? (this->variables.size() - (*this->ellipsisVariable) - 1) : this->variables.size()),
+		[&function](const Variable &variable) -> void {
+			function(variable, false);
+		}
+	);
+
+	if(this->ellipsisVariable)
+		function(this->variables[*this->ellipsisVariable], true);
 };
 
 /*!

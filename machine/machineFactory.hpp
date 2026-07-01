@@ -17,7 +17,7 @@ class MachineFactory {
 		static Machine compose(const std::vector<Machine> &machines);
 
 	protected:
-		bool isCurrentStateDisabled = false;
+		bool isCurrentStateDisabled = false, isReversed = false;
 		std::set<std::wstring> extraStates;
 		Machine machine;
 		StateGenerator generator;

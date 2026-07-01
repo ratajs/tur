@@ -38,6 +38,13 @@ class Instruction {
 		virtual bool isGoToInstruction() const;
 
 		/*!
+		 * This virtual method should return the labels to which the instruction can jump.
+		 * If this instruction does not jump anywhere, it should return an empty vector.
+		 * \return Vector of possible destinations.
+		 */
+		virtual std::vector<size_t> getGoToDestinations() const;
+
+		/*!
 		 * This virtual method can be implemented by instructions using exactly two tapes if the tapes can be merged.
 		 * It can be presumed that the first used tape is never used again and that the second tape has not been used before.
 		 * The default implementation always returns {} (std::nullopt), which means that no unification should happen.

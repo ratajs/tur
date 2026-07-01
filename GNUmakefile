@@ -70,6 +70,7 @@ OBJS = \
 	instructions/jumpInstruction.o \
 	instructions/compareInstruction.o \
 	instructions/compareTapeLengthInstruction.o \
+	instructions/reversePseudoinstruction.o \
 	machine/machineLibrary.o \
 	machine/stateGenerator.o \
 	machine/machineFactory.o \
@@ -111,6 +112,7 @@ EXAMPLES = \
 	examples/simpleTests/implosion.tm \
 	examples/simpleTests/explosion.tm \
 	examples/simpleTests/explosionWithSourceVariable.tm \
+	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/while.tm \

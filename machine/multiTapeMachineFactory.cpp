@@ -87,6 +87,11 @@ template<Machine::Direction direction> requires (direction!=Machine::Direction::
 		return (*newState);
 	};
 
+void MultiTapeMachineFactory::invertTapeNumberIfNecessary(size_t &tapeNumber) const {
+	if(this->isReversed)
+		tapeNumber = (this->tapesCount - tapeNumber + 1);
+};
+
 /*!
  * This method goes to the first 1 of the zeroth tape.
  * \param returningState The start state, if {}, then the current state of the state generator.
@@ -766,6 +771,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::decompress(size_t inputTape) {
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(inputTape);
 
 	startState = this->generator.getCurrentState();
 
@@ -858,6 +864,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compress(size_t outputTape) {
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(outputTape);
 
 	// The first thing that the machine does is the finding of the beginning of the output tape.
 	// Everything before the beginning is zeroed out.
@@ -1031,6 +1038,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::clearBeginning(size_t tape, si
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	this->findTape(tape, {}, {}, false);
 
@@ -1063,6 +1071,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::clearEnd(size_t tape, size_t b
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	this->findTape(tape, {}, {});
 	if(begin==0) {
@@ -1112,6 +1121,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::writeNumber(size_t tape, size_
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	this->findTape(tape, {}, {});
 	for(x = 0; x < begin; x++)
@@ -1155,6 +1165,8 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::appendNumber(size_t tape, size
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
 
+	this->invertTapeNumberIfNecessary(tape);
+
 	this->findTape(tape, {}, {});
 	this->findEnd({}, {}, tape);
 
@@ -1194,6 +1206,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::copyAll(size_t tapeA, size_t b
 
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
+
+	this->invertTapeNumberIfNecessary(tapeA);
+	this->invertTapeNumberIfNecessary(tapeB);
 
 	// The first thing to do is to clear everything behind beginB.
 
@@ -1253,6 +1268,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::appendAll(size_t tapeA, size_t
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
 
+	this->invertTapeNumberIfNecessary(tapeA);
+	this->invertTapeNumberIfNecessary(tapeB);
+
 	// The copyIfNonEmpty() function requires a number 0 (a single one) at the destination at the end of endB.
 
 	this->findTape(tapeB, {}, {});
@@ -1305,6 +1323,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::copy(size_t tapeA, size_t begi
 
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
+
+	this->invertTapeNumberIfNecessary(tapeA);
+	this->invertTapeNumberIfNecessary(tapeB);
 
 	// The first thing to do is to clear everything behind beginB.
 
@@ -1379,6 +1400,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::append(size_t tapeA, size_t be
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
 
+	this->invertTapeNumberIfNecessary(tapeA);
+	this->invertTapeNumberIfNecessary(tapeB);
+
 	// The copyIfNonEmpty() function requires a number 0 (a single one) at the destination at the end of endB.
 
 	this->findTape(tapeB, {}, {});
@@ -1430,6 +1454,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::simulate(size_t tape, const Ma
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	this->findTape(tape, {}, {});
 	machine.forEachTransition(
@@ -1538,6 +1563,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareWithConstant(size_t tap
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	this->generator.increment();
 	lessThanEndingState = this->generator.getCurrentState();
@@ -1612,6 +1638,8 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tapeA);
+	this->invertTapeNumberIfNecessary(tapeB);
 
 	// The beginning of the compared numbers is going to be gradually replaced with zeros to keep track of the comparison.
 	// Usually, they can be reconstructed using the end of the preceding number, but if the number is the first one on the tape, it is not possible.
@@ -1791,6 +1819,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tape, size_t in
 	};
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	this->findTape(tape, {}, {});
 
@@ -1876,6 +1905,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareTapeLength(size_t tape,
 		throw UnexpectedError(L"Current state is disabled.");
 
 	tapesCount = (this->tapesCount + 1);
+	this->invertTapeNumberIfNecessary(tape);
 
 	startState = this->generator.getCurrentState();
 
@@ -1925,6 +1955,26 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareTapeLength(size_t tape,
 	this->goHome({}, greaterThanState);
 
 	this->isCurrentStateDisabled = true;
+
+	return (*this);
+};
+
+/*!
+ * Reverse the tape.
+ * From this call on, everything will be mirrored.
+ * The old indices of virtual tapes will still be valid.
+ * If the current state is not disabled, travelsal of the tape will take place, so that the machine will be at the beginning again.
+ */
+MultiTapeMachineFactory &MultiTapeMachineFactory::reverse() {
+	std::wstring traversingState;
+
+	if(!this->isCurrentStateDisabled) {
+		traversingState = this->generator.getCurrentState();
+		this->addSuperTransition<true, true, Machine::Direction::R>(traversingState, traversingState);
+		this->addTransition<false, true, Machine::Direction::N>(traversingState, {});
+	};
+
+	this->isReversed = (!this->isReversed);
 
 	return (*this);
 };

@@ -70,6 +70,7 @@ OBJS = \
 	instructions/jumpInstruction.o \
 	instructions/compareInstruction.o \
 	instructions/compareTapeLengthInstruction.o \
+	instructions/reversePseudoinstruction.o \
 	machine/machineLibrary.o \
 	machine/stateGenerator.o \
 	machine/machineFactory.o \
@@ -111,6 +112,7 @@ EXAMPLES = \
 	examples/simpleTests/implosion.tm \
 	examples/simpleTests/explosion.tm \
 	examples/simpleTests/explosionWithSourceVariable.tm \
+	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/while.tm \
@@ -170,6 +172,9 @@ clean:
 .PHONY: test
 .PHONY: clean
 
+algotest: algotest.cpp machine/tester.hpp machine/./tape.hpp \
+	machine/./machineFactory.hpp machine/././stateGenerator.hpp \
+	machine/././machine.hpp machine/./././tape.hpp IO/error.hpp
 AST/destinationBundle.o: AST/destinationBundle.cpp \
 	AST/./destinationBundle.hpp AST/././variable.hpp \
 	AST/./../parsing/location.hpp AST/../IO/typeError.hpp \
@@ -605,6 +610,7 @@ AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
 	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/clearInstruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
+	AST/statements/../../instructions/reversePseudoinstruction.hpp \
 	AST/statements/../../IO/typeError.hpp \
 	AST/statements/../../IO/./errorWithLocation.hpp \
 	AST/statements/../../IO/././error.hpp \
@@ -923,6 +929,17 @@ instructions/jumpInstruction.o: instructions/jumpInstruction.cpp \
 	instructions/./../parsing/irArguments.hpp \
 	instructions/./../parsing/./location.hpp \
 	instructions/./../parsing/../machine/machine.hpp
+instructions/reversePseudoinstruction.o: \
+	instructions/reversePseudoinstruction.cpp \
+	instructions/./reversePseudoinstruction.hpp \
+	instructions/././instruction.hpp \
+	instructions/././../machine/singleTapeMachineFactory.hpp \
+	instructions/././../machine/./machineFactory.hpp \
+	instructions/././../machine/././stateGenerator.hpp \
+	instructions/././../machine/././machine.hpp \
+	instructions/././../machine/./././tape.hpp \
+	instructions/././../machine/./machine.hpp \
+	instructions/././../machine/multiTapeMachineFactory.hpp
 instructions/writeNumberInstruction.o: \
 	instructions/writeNumberInstruction.cpp \
 	instructions/./writeNumberInstruction.hpp \
@@ -1015,6 +1032,13 @@ machine/stateGenerator.o: machine/stateGenerator.cpp \
 machine/tape.o: machine/tape.cpp machine/./tape.hpp \
 	machine/../IO/unexpectedError.hpp machine/../IO/./error.hpp \
 	machine/../IO/format.hpp
+machine/tester.o: machine/tester.cpp machine/./tester.hpp \
+	machine/././tape.hpp machine/././machineFactory.hpp \
+	machine/./././stateGenerator.hpp machine/./././machine.hpp \
+	machine/././././tape.hpp machine/./machine.hpp \
+	machine/./singleTapeMachineFactory.hpp machine/././machine.hpp \
+	machine/./multiTapeMachineFactory.hpp machine/./machineLibrary.hpp \
+	machine/../IO/unexpectedError.hpp machine/../IO/./error.hpp
 parsing/irArguments.o: parsing/irArguments.cpp parsing/./irArguments.hpp \
 	parsing/././location.hpp parsing/./../machine/machine.hpp \
 	parsing/./../machine/./tape.hpp parsing/../IO/irParseError.hpp \
@@ -1048,7 +1072,9 @@ parsing/irParser.o: parsing/irParser.cpp parsing/./irParser.hpp \
 	parsing/../instructions/callInstruction.hpp \
 	parsing/../instructions/../machine/machine.hpp \
 	parsing/../instructions/jumpInstruction.hpp \
-	parsing/../instructions/compareInstruction.hpp
+	parsing/../instructions/compareInstruction.hpp \
+	parsing/../instructions/compareTapeLengthInstruction.hpp \
+	parsing/../instructions/reversePseudoinstruction.hpp
 parsing/lexer.o: parsing/lexer.cpp parsing/./lexer.hpp \
 	parsing/././token.hpp parsing/./././location.hpp \
 	parsing/././../machine/machine.hpp parsing/././../machine/./tape.hpp \

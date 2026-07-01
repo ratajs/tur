@@ -41,6 +41,9 @@ std::wstring IrParseError::getSimpleMessage() const {
 		case IrParseError::Type::MULTIPLE_LABEL_ENDPOINTS:
 			return L"Multiple COMEFROM instructions with the same label";
 
+		case IrParseError::Type::LABEL_REVERSAL_MISMATCH:
+			return L"Label reversal mismatch";
+
 		default:
 			std::unreachable();
 	};

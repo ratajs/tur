@@ -19,6 +19,9 @@ class MultiTapeMachineFactory: public MachineFactory {
 		template<Machine::Direction direction> requires (direction!=Machine::Direction::N)
 			std::wstring addSuperTransition(std::optional<std::wstring> state, std::optional<std::wstring> newState, size_t tape = 0);
 
+		// Tape management
+		void invertTapeNumberIfNecessary(size_t &tapeNumber) const;
+
 		// General
 		std::wstring goHome(std::optional<std::wstring> returningState, std::optional<std::wstring> endState, size_t tape = 0); // Mark first symbol if tape ≠ 0
 		std::wstring findTape(size_t tape, std::optional<std::wstring> startState, std::optional<std::wstring> endState, bool isEmptyTapeAllowed = true);
@@ -55,4 +58,5 @@ class MultiTapeMachineFactory: public MachineFactory {
 		MultiTapeMachineFactory &compare(size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		MultiTapeMachineFactory &compare(size_t tape, size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		MultiTapeMachineFactory &compareTapeLength(size_t tape, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
+		MultiTapeMachineFactory &reverse();
 };

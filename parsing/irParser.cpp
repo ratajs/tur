@@ -1,5 +1,6 @@
 #include "./irParser.hpp"
 #include <utility>
+#include <algorithm>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -13,6 +14,7 @@
 #include "../instructions/jumpInstruction.hpp"
 #include "../instructions/compareInstruction.hpp"
 #include "../instructions/compareTapeLengthInstruction.hpp"
+#include "../instructions/reversePseudoinstruction.hpp"
 
 /*!
  * The constructor of IrParser.
@@ -52,6 +54,13 @@ void IrParser::parseLine(std::wstring_view line) {
 	if(!this->tapesCount)
 		this->tapesCount = 1;
 
+	if(line==L"REVERSE") {
+		this->instructions.push_back(std::make_unique<ReversePseudoinstruction>());
+		this->isReversed = (!this->isReversed);
+
+		return;
+	};
+
 	parenthesisPos = line.find('(');
 
 	if(!line.ends_with(')') || parenthesisPos==line.npos || parenthesisPos==0)
@@ -77,11 +86,21 @@ void IrParser::parseLine(std::wstring_view line) {
 
 		if(!this->comeFromOrigins.insert(*this->instructions.back()->getComeFromOrigin()).second)
 			throw IrParseError(IrParseError::Type::MULTIPLE_LABEL_ENDPOINTS, { line, this->lineNumber, this->text });
+
+		if(this->labelReversals.emplace(*this->instructions.back()->getComeFromOrigin(), this->isReversed).first->second!=this->isReversed)
+			throw IrParseError(IrParseError::Type::LABEL_REVERSAL_MISMATCH, { line, this->lineNumber, this->text });
 	}
 	else if(this->isComeFromExpected)
 		throw IrParseError(IrParseError::Type::COME_FROM_EXPECTED, { line, this->lineNumber, this->text });
 
 	this->isComeFromExpected = this->instructions.back()->isGoToInstruction();
+
+	std::ranges::for_each(this->instructions.back()->getGoToDestinations(),
+		[this, &line](size_t label) -> void {
+			if(this->labelReversals.emplace(label, this->isReversed).first->second!=this->isReversed)
+				throw IrParseError(IrParseError::Type::LABEL_REVERSAL_MISMATCH, { line, this->lineNumber, this->text });
+		}
+	);
 };
 
 /*!
@@ -155,3 +174,10 @@ InstructionCollection IrParser::parse() {
 
 	return { std::move(this->instructions), std::vector<TapeReference>(*this->tapesCount, TapeReference()), this->labels.size() };
 };
+
+/* Warnings to implement:
+ * no compress/decompress (especially with multiple tapes)
+ * no endpoint of a label
+ * reversed tape at the end
+ * unused tape
+ */

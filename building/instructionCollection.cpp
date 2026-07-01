@@ -86,14 +86,10 @@ void InstructionCollection::optimize() {
 		it++;
 	};
 
-	std::ranges::for_each(tapes,
-		[](const std::optional<size_t> &tape) -> void {
-			if(!tape)
-				throw UnexpectedError(L"Unused tape detected.");
-		}
-	);
+	std::ranges::transform(tapes, std::back_inserter(result), [](std::optional<size_t> tape) -> size_t { return tape.value_or(0); });
 
-	std::ranges::transform(tapes, std::back_inserter(result), [](std::optional<size_t> tape) -> size_t { return (*tape); });
+	if(tapesCount==0)
+		tapesCount = 1;
 
 	this->renamedTapesCount = tapesCount;
 	this->renamedTapes = std::move(result);

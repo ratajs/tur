@@ -1,4 +1,4 @@
-.Dd 2026-06-28
+.Dd 2026-07-01
 .Dt TUR 1
 .Os
 .Sh NAME
@@ -372,7 +372,8 @@ output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions ca
 .It Splitting (exploding) an expression to multiple variables:
 .Bd -literal
 [a, b, c] = input; # First number goes to a, second number goes to b, third number goes to c (undefined behavior for less than 3 numbers in input).
-[a, b...] = input; # First number goes to a, the reset goes to b (undefined behavior for empty input). Only the last variable can have the ellipsis.
+[a, b...] = input; # First number goes to a, the reset goes to b (undefined behavior for empty input).
+[a, b..., c, d] = input; # First number goes to a, last two numbers go to c and d, the rest goes to b (undefined behavior for less than 3 numbers in input).
 [a, b] = input...; # The ellipsis can be there, but it is optional.
 [a, b] = a[1:]; # Other indexation than ellipsis is possible, but it has to be rightwise unbounded.
 [a, b] = f(a, b)...; # Any expression which can yield more numbers is possible as the right side. The ellipsis is optional here as well.
@@ -465,11 +466,27 @@ call(1, { A11LA A01N_ }) # Increment the first number on tape 1
 .Ed
 .It Ic jump
 This instruction jumps to or from a label, which is a number.
-There are two types of jumps: GOTO and COMEFROM.
-Each label should be associated with one COMEFROM jump and
-at least one GOTO jump, compare or compareTapeLength.
+There are two types of jumps:
+.Ic GOTO
+and
+.Ic COMEFROM .
+Each label should be associated with one
+.Ic COMEFROM
+jump and
+at least one
+.Ic GOTO
+jump, compare or compareTapeLength.
 As arguments, the type (GOTO or COMEFROM) followed by the label (without comma)
 is provided.
+A
+.Ic COMEFROM
+jump must follow if and only if the previous instruction jumps
+somewhere
+.Po
+.Ic GOTO
+jump,
+.Ic compare , compareTapeLength\&
+.Pc .
 .It Ic compare
 This instruction compares two arguments and jumps to one of two specified
 labels, depending on the result of the comparison.
@@ -486,6 +503,20 @@ These operators can be used: \(eq, \(!=, <, >, \(<=, \(>=
 .Bd -literal
 compareTapeLength(|1| < 2, 1, 2) # If there are fewer than 2 numbers on the tape 1, jump to 1, else jump to 2
 compareTapeLength(|2| = 0, 3, 4) # If the tape 2 is empty, jump to 3, else jump to 4
+.Ed
+.It Ic REVERSE
+This is a pseudoistruction which causes the machine to work like in mirror.
+The tape numbers will stay, but their starts will now be ends and vice versa.
+This state will remain until the next
+.Ic REVERSE .
+It is possible to combine jumps with
+.Ic REVERSE ,
+but it is necessary that the reversed labels match (jumps from a reversed part
+of the program must lead also to a reversed part).
+.Bd -literal
+REVERSE # Start the reversed state
+clear(1[1:]) # This clears everything but the last number
+REVERSE # End the reversed state
 .Ed
 .El
 .Sh AUTHORS

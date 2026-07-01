@@ -492,3 +492,16 @@ SingleTapeMachineFactory &SingleTapeMachineFactory::compareTapeLength(size_t num
 
 	return (*this);
 };
+
+/*!
+ * Reverse the tape.
+ * From this call on, everything will be mirrored.
+ * If the current state is not disabled, travelsal of the tape will take place, so that the machine will be at the beginning again.
+ */
+SingleTapeMachineFactory &SingleTapeMachineFactory::reverse() {
+	this->isReversed = (!this->isReversed);
+	if(!this->isCurrentStateDisabled)
+		this->goHome({}, {});
+
+	return (*this);
+};

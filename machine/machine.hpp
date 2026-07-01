@@ -18,6 +18,8 @@
 class Machine {
 	public:
 		enum class Direction { L, N, R };
+		template<Machine::Direction direction>
+			static constexpr Direction otherDirection = ((direction==Machine::Direction::L) ? Machine::Direction::R : ((direction==Machine::Direction::R) ? Machine::Direction::L : Machine::Direction::N));
 
 	private:
 		static void skipWhiteSpaceAndComments(std::wistream &stream);

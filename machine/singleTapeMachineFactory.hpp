@@ -27,4 +27,5 @@ class SingleTapeMachineFactory: public MachineFactory {
 		SingleTapeMachineFactory &compareWithConstant(size_t index, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		SingleTapeMachineFactory &compare(size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		SingleTapeMachineFactory &compareTapeLength(size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
+		SingleTapeMachineFactory &reverse();
 };

@@ -19,6 +19,7 @@ class DestinationBundle {
 
 	public:
 		void add(Variable &variable, bool hasEllipsis, Location variableLocation);
-		void forEachVariable(const std::function<void (const Variable&, bool)> &function) const;
+		void forEachVariableFromStartUntilEllipsis(const std::function<void (const Variable&, bool)> &function) const;
+		void forEachVariableFromEndUntilEllipsis(const std::function<void (const Variable&, bool)> &function) const;
 		bool hasNonFinalEllipsis() const;
 };

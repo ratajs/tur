@@ -9,6 +9,10 @@ bool Instruction::isGoToInstruction() const {
 	return false;
 };
 
+std::vector<size_t> Instruction::getGoToDestinations() const {
+	return {};
+};
+
 std::unique_ptr<Instruction> Instruction::tryToMerge(const Instruction &otherInstruction) const {
 	return {};
 };
