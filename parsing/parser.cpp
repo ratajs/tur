@@ -1209,13 +1209,17 @@ std::unique_ptr<Statement> Parser::parseOptionalStatement() {
 };
 
 void Parser::parseRemainingStatements(std::vector<std::unique_ptr<Statement>> &statements) {
+	std::unique_ptr<Statement> statement;
+
 	switch(this->getNextTokenType()) {
 		case Token::Type::COLON:
 			return;
 
 		case Token::Type::SEMICOLON:
 			this->expect(Token::Type::SEMICOLON);
-			statements.push_back(this->parseStatement());
+			statement = this->parseStatement();
+			if(statement)
+				statements.push_back(std::move(statement));
 			this->parseRemainingStatements(statements);
 
 			return;
