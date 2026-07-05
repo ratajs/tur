@@ -121,6 +121,7 @@ EXAMPLES = \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \
 	examples/simpleTests/loop.tm \
+	examples/simpleTests/for.tm \
 	examples/simpleTests/callStatement.tm \
 	examples/simpleTests/callExpression.tm
 
