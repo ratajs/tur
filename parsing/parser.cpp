@@ -1236,7 +1236,7 @@ void Parser::parseIncludeStatement() {
 	this->program.addMachine(machineName, this->includeResolver.include(machineName, this->getLastTokenLocation()), this->getLastTokenLocation());
 
 	if(this->isInBranch || this->isInLoop)
-		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" included inside an if branch or a while loop. Machines are always visible globally after definition.");
+		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" included inside an if branch or a loop. Machines are always visible globally after definition.");
 };
 
 void Parser::parseRequireStatement() {
@@ -1246,7 +1246,7 @@ void Parser::parseRequireStatement() {
 	this->program.addMachine(machineName, this->includeResolver.require(), this->getLastTokenLocation());
 
 	if(this->isInBranch || this->isInLoop)
-		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" required inside an if branch or a while loop. Machines are always visible globally after definition.");
+		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" required inside an if branch or a loop. Machines are always visible globally after definition.");
 };
 
 /*!

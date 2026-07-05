@@ -6,6 +6,14 @@
 #include "../../instructions/jumpInstruction.hpp"
 #include "../../IO/typeError.hpp"
 
+/*!
+ * The constructor of ForStatement.
+ * \param initStatement The initial statement, possible nullptr if there is none.
+ * \param condition The condition.
+ * \param stepStatements The step statements.
+ * \param body The statemets in the body.
+ * \throw TypeError If the type of the condition expression is not CONDITION.
+ */
 ForStatement::ForStatement(std::unique_ptr<Statement> initStatement, std::unique_ptr<Expression> condition, std::vector<std::unique_ptr<Statement>> stepStatements, std::vector<std::unique_ptr<Statement>> body): condition(std::move(condition)), initStatement(std::move(initStatement)), stepStatements(std::move(stepStatements)), body(std::move(body)) {
 	if(!this->condition->isCondition())
 		throw TypeError(TypeError::Type::NON_CONDITION_IN_A_WHILE_STATEMENT, this->condition->location);
