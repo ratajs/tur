@@ -51,6 +51,7 @@ OBJS = \
 	AST/statements/ifStatement.o \
 	AST/statements/whileStatement.o \
 	AST/statements/loopStatement.o \
+	AST/statements/forStatement.o \
 	AST/statements/breakStatement.o \
 	AST/statements/continueStatement.o \
 	AST/statements/exitStatement.o \
@@ -120,6 +121,7 @@ EXAMPLES = \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \
 	examples/simpleTests/loop.tm \
+	examples/simpleTests/for.tm \
 	examples/simpleTests/callStatement.tm \
 	examples/simpleTests/callExpression.tm
 

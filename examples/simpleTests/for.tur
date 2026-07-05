@@ -1,0 +1,27 @@
+output = [];
+
+for x = 0; x < input[0]; x++:
+	output[] = x;
+endfor;
+
+for ; x > 0; x−−:
+	output[] = x;
+endfor;
+
+for ; x < input; x++:
+	if x==0 or input % x==0:
+		continue;
+	endif;
+	output[] = x;
+endfor;
+
+for ; ρ input > 0 and x > 0; input = input[1:]; x--:
+	output[] = x;
+endfor;
+
+for x = 0; 0==0; x++:
+	output[] = x;
+	if x==2:
+		break;
+	endif;
+endfor;

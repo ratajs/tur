@@ -146,6 +146,12 @@ std::variant<std::wstring, Token::Type> Lexer::readIdentifierOrKeyword() {
 	if(value==L"endloop")
 		return Token::Type::ENDLOOP;
 
+	if(value==L"for")
+		return Token::Type::FOR;
+
+	if(value==L"endfor")
+		return Token::Type::ENDFOR;
+
 	if(value==L"break")
 		return Token::Type::BREAK;
 

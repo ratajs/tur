@@ -1,4 +1,4 @@
-.Dd 2026-07-01
+.Dd 2026-07-05
 .Dt TUR 1
 .Os
 .Sh NAME
@@ -344,7 +344,7 @@ else:
 	output = 0;
 endif;
 .Ed
-.It Loops ( Ic while , Ic loop Ns ):
+.It Loops ( Ic while , Ic loop Ns , Ic for Ns ):
 .Bd -literal
 loop: # Loop without condition (until break):
 	while a > 0: # Loop with condition.
@@ -358,6 +358,15 @@ loop: # Loop without condition (until break):
 		break; # Exit the innermost loop (the outer loop here).
 	endif;
 endloop;
+
+for x = 0; x < a; x++: # Initial statement, condition, step statement.
+	if x % 5==0:
+		continue; # Jump to the step statement.
+	endif;
+	output[] = x;
+endfor;
+
+for ; a > b; a--; b++: endfor; # The initial statement and the body is optional, there can be multiple step statements (but at least one).
 .Ed
 .It Ic exit No statement :
 .Bd -literal

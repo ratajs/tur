@@ -80,6 +80,9 @@ class Parser {
 		std::vector<std::unique_ptr<Statement>> parseOptionalElse();
 		std::unique_ptr<Statement> parseWhileStatement();
 		std::unique_ptr<Statement> parseLoopStatement();
+		std::unique_ptr<Statement> parseForStatement();
+		std::unique_ptr<Statement> parseOptionalStatement();
+		void parseRemainingStatements(std::vector<std::unique_ptr<Statement>> &statements);
 		void parseIncludeStatement();
 		void parseRequireStatement();
 

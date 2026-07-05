@@ -40,11 +40,10 @@ getLast = {
 [transitionsCount, input...] = input...;
 
 machine = [];
-while transitionsCount > 0:
+for ; transitionsCount > 0; transitionsCount−−:
 	machine[] = input[0:5];
 	input = input[5:];
-	transitionsCount−−;
-endwhile;
+endfor;
 
 leftTape = [];
 rightTape = input...;
@@ -56,13 +55,11 @@ endif;
 state = 0;
 
 loop:
-	searchedTransitions = machine...;
-	while (ρ searchedTransitions) > 0:
+	for searchedTransitions = machine...; (ρ searchedTransitions) > 0; searchedTransitions = searchedTransitions[5:]:
 		if searchedTransitions[0]==state ∧ searchedTransitions[1]==rightTape[0]:
 			break;
 		endif;
-		searchedTransitions = searchedTransitions[5:];
-	endwhile;
+	endfor;
 	if (ρ searchedTransitions)==0:
 		break;
 	endif;

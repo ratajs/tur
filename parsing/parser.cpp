@@ -18,6 +18,7 @@
 #include "../AST/statements/ifStatement.hpp"
 #include "../AST/statements/whileStatement.hpp"
 #include "../AST/statements/loopStatement.hpp"
+#include "../AST/statements/forStatement.hpp"
 #include "../AST/statements/breakStatement.hpp"
 #include "../AST/statements/continueStatement.hpp"
 #include "../AST/statements/exitStatement.hpp"
@@ -176,6 +177,7 @@ std::vector<std::unique_ptr<Statement>> Parser::parseStatements() {
 			case Token::Type::ENDIF:
 			case Token::Type::ENDWHILE:
 			case Token::Type::ENDLOOP:
+			case Token::Type::ENDFOR:
 				return statements;
 
 			case Token::Type::LEFT_SQUARE_BRACKET:
@@ -183,6 +185,7 @@ std::vector<std::unique_ptr<Statement>> Parser::parseStatements() {
 			case Token::Type::IF:
 			case Token::Type::WHILE:
 			case Token::Type::LOOP:
+			case Token::Type::FOR:
 			case Token::Type::BREAK:
 			case Token::Type::CONTINUE:
 			case Token::Type::EXIT:
@@ -215,6 +218,9 @@ std::unique_ptr<Statement> Parser::parseStatement() {
 
 		case Token::Type::LOOP:
 			return this->parseLoopStatement();
+
+		case Token::Type::FOR:
+			return this->parseForStatement();
 
 		case Token::Type::BREAK:
 			if(!this->isInLoop)
@@ -1157,6 +1163,72 @@ std::unique_ptr<Statement> Parser::parseLoopStatement() {
 	return std::make_unique<LoopStatement>(std::move(body));
 };
 
+std::unique_ptr<Statement> Parser::parseForStatement() {
+	bool wasInLoop;
+	std::unique_ptr<Expression> condition;
+	std::unique_ptr<Statement> initStatement;
+	std::vector<std::unique_ptr<Statement>> stepStatements, body;
+
+	this->expect(Token::Type::FOR);
+	wasInLoop = std::exchange(this->isInLoop, true);
+	initStatement = this->parseOptionalStatement();
+	this->expect(Token::Type::SEMICOLON);
+	condition = this->parseLogicalExpression();
+	this->expect(Token::Type::SEMICOLON);
+	stepStatements.push_back(this->parseStatement());
+	this->parseRemainingStatements(stepStatements);
+	this->expect(Token::Type::COLON);
+	body = this->parseStatements();
+	this->isInLoop = wasInLoop;
+	this->expect(Token::Type::ENDFOR);
+
+	return std::make_unique<ForStatement>(std::move(initStatement), std::move(condition), std::move(stepStatements), std::move(body));
+};
+
+std::unique_ptr<Statement> Parser::parseOptionalStatement() {
+	switch(this->getNextTokenType()) {
+		case Token::Type::SEMICOLON:
+			return {};
+
+		case Token::Type::LEFT_SQUARE_BRACKET:
+		case Token::Type::IDENTIFIER:
+		case Token::Type::IF:
+		case Token::Type::WHILE:
+		case Token::Type::LOOP:
+		case Token::Type::FOR:
+		case Token::Type::BREAK:
+		case Token::Type::CONTINUE:
+		case Token::Type::EXIT:
+		case Token::Type::INCLUDE:
+		case Token::Type::REQUIRE:
+			return this->parseStatement();
+
+		default:
+			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
+	};
+};
+
+void Parser::parseRemainingStatements(std::vector<std::unique_ptr<Statement>> &statements) {
+	std::unique_ptr<Statement> statement;
+
+	switch(this->getNextTokenType()) {
+		case Token::Type::COLON:
+			return;
+
+		case Token::Type::SEMICOLON:
+			this->expect(Token::Type::SEMICOLON);
+			statement = this->parseStatement();
+			if(statement)
+				statements.push_back(std::move(statement));
+			this->parseRemainingStatements(statements);
+
+			return;
+
+		default:
+			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
+	};
+};
+
 void Parser::parseIncludeStatement() {
 	std::wstring machineName;
 
@@ -1164,7 +1236,7 @@ void Parser::parseIncludeStatement() {
 	this->program.addMachine(machineName, this->includeResolver.include(machineName, this->getLastTokenLocation()), this->getLastTokenLocation());
 
 	if(this->isInBranch || this->isInLoop)
-		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" included inside an if branch or a while loop. Machines are always visible globally after definition.");
+		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" included inside an if branch or a loop. Machines are always visible globally after definition.");
 };
 
 void Parser::parseRequireStatement() {
@@ -1174,7 +1246,7 @@ void Parser::parseRequireStatement() {
 	this->program.addMachine(machineName, this->includeResolver.require(), this->getLastTokenLocation());
 
 	if(this->isInBranch || this->isInLoop)
-		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" required inside an if branch or a while loop. Machines are always visible globally after definition.");
+		this->warningIt = std::make_unique<GeneralWarning>(L"Machine "+Format::blue(machineName)+L" required inside an if branch or a loop. Machines are always visible globally after definition.");
 };
 
 /*!

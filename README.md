@@ -232,7 +232,7 @@ else:
 endif;
 ```
 
-#### Loops (`while`, `loop`):
+#### Loops (`while`, `loop`, `for`):
 ```
 loop: # Loop without condition (until break):
   while a > 0: # Loop with condition.
@@ -246,6 +246,15 @@ loop: # Loop without condition (until break):
     break; # Exit the innermost loop (the outer loop here).
   endif;
 endloop;
+
+for x = 0; x < a; x++: # Initial statement, condition, step statement.
+  if x % 5==0:
+    continue; # Jump to the step statement.
+  endif;
+  output[] = x;
+endfor;
+
+for ; a > b; a--; b++: endfor; # The initial statement and the body is optional, there can be multiple step statements (but at least one).
 ```
 
 #### `exit` statement:

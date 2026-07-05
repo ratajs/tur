@@ -51,6 +51,7 @@ OBJS = \
 	AST/statements/ifStatement.o \
 	AST/statements/whileStatement.o \
 	AST/statements/loopStatement.o \
+	AST/statements/forStatement.o \
 	AST/statements/breakStatement.o \
 	AST/statements/continueStatement.o \
 	AST/statements/exitStatement.o \
@@ -120,6 +121,7 @@ EXAMPLES = \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \
 	examples/simpleTests/loop.tm \
+	examples/simpleTests/for.tm \
 	examples/simpleTests/callStatement.tm \
 	examples/simpleTests/callExpression.tm
 
@@ -612,6 +614,37 @@ AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
 	AST/statements/../../instructions/clearInstruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
 	AST/statements/../../instructions/reversePseudoinstruction.hpp \
+	AST/statements/../../IO/typeError.hpp \
+	AST/statements/../../IO/./errorWithLocation.hpp \
+	AST/statements/../../IO/././error.hpp \
+	AST/statements/../../IO/./../parsing/location.hpp \
+	AST/statements/../../IO/../parsing/location.hpp
+AST/statements/forStatement.o: AST/statements/forStatement.cpp \
+	AST/statements/./forStatement.hpp AST/statements/././statement.hpp \
+	AST/statements/././../../building/instructionBuilder.hpp \
+	AST/statements/././../../building/./tapeReference.hpp \
+	AST/statements/././../../building/../instructions/instruction.hpp \
+	AST/statements/././../../building/../instructions/../machine/singleTapeMachineFactory.hpp \
+	AST/statements/././../../building/../instructions/../machine/./machineFactory.hpp \
+	AST/statements/././../../building/../instructions/../machine/././stateGenerator.hpp \
+	AST/statements/././../../building/../instructions/../machine/././machine.hpp \
+	AST/statements/././../../building/../instructions/../machine/./././tape.hpp \
+	AST/statements/././../../building/../instructions/../machine/./machine.hpp \
+	AST/statements/././../../building/../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/././../../building/./instructionCollection.hpp \
+	AST/statements/././../../building/././tapeReference.hpp \
+	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/./../expressions/expression.hpp \
+	AST/statements/./../expressions/../../parsing/location.hpp \
+	AST/statements/./../expressions/../variable.hpp \
+	AST/statements/./../expressions/../../building/instructionBuilder.hpp \
+	AST/statements/../../instructions/jumpInstruction.hpp \
+	AST/statements/../../instructions/./instruction.hpp \
+	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../machine/multiTapeMachineFactory.hpp \
+	AST/statements/../../instructions/../parsing/irArguments.hpp \
+	AST/statements/../../instructions/../parsing/./location.hpp \
+	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../IO/typeError.hpp \
 	AST/statements/../../IO/./errorWithLocation.hpp \
 	AST/statements/../../IO/././error.hpp \
@@ -1145,6 +1178,7 @@ parsing/parser.o: parsing/parser.cpp parsing/./parser.hpp \
 	parsing/../AST/statements/ifStatement.hpp \
 	parsing/../AST/statements/whileStatement.hpp \
 	parsing/../AST/statements/loopStatement.hpp \
+	parsing/../AST/statements/forStatement.hpp \
 	parsing/../AST/statements/breakStatement.hpp \
 	parsing/../AST/statements/continueStatement.hpp \
 	parsing/../AST/statements/exitStatement.hpp \
