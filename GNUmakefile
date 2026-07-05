@@ -114,6 +114,8 @@ EXAMPLES = \
 	examples/simpleTests/explosion.tm \
 	examples/simpleTests/explosionWithSourceVariable.tm \
 	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
+	examples/simpleTests/reversedAssignment.tm \
+	examples/simpleTests/reversedImplosion.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/branchingWithElseif.tm \

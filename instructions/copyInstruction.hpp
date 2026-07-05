@@ -1,4 +1,5 @@
 #pragma once
+#include "./instruction.hpp"
 #include <cstdlib>
 #include <memory>
 #include <optional>
@@ -7,7 +8,6 @@
 #include <string>
 #include <iostream>
 #include <functional>
-#include "./instruction.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
 #include "../parsing/irArguments.hpp"
 
@@ -16,11 +16,12 @@
  */
 class CopyInstruction: public Instruction {
 	private:
+		bool areSourceIndicesFromEnd, isDestinationIndexFromEnd;
 		size_t source, destination, sourceIndex0;
 		std::optional<size_t> sourceIndex1, destinationIndex;
 
 	public:
-		CopyInstruction(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex);
+		CopyInstruction(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex, bool areSourceIndicesFromEnd = false, bool isDestinationIndexFromEnd = false);
 		CopyInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		std::optional<std::list<std::unique_ptr<Instruction>>> tryToUnify() const override;

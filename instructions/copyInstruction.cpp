@@ -14,10 +14,12 @@
  * \param destinationIndex The index where the destination is ({} if the destination is the end of the destination tape).
  * \throw UnexpectedError If the source and destination tape is the same.
  */
-CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex):
-	source(source), destination(destination), sourceIndex0(sourceIndex0), sourceIndex1(sourceIndex1), destinationIndex(destinationIndex) {
+CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex, bool areSourceIndicesFromEnd, bool isDestinationIndexFromEnd):
+	areSourceIndicesFromEnd(areSourceIndicesFromEnd), isDestinationIndexFromEnd(isDestinationIndexFromEnd), source(source), destination(destination), sourceIndex0(sourceIndex0), sourceIndex1(sourceIndex1), destinationIndex(destinationIndex) {
 		if(source==destination)
 			throw UnexpectedError(L"Invalid copy (source is destination).");
+		if((!areSourceIndicesFromEnd && sourceIndex1 && (*sourceIndex1) <= sourceIndex0) || (areSourceIndicesFromEnd && sourceIndex1 && (*sourceIndex1) >= sourceIndex0))
+			throw UnexpectedError(L"Invalid source indices for copy.");
 	};
 
 /*!
@@ -28,6 +30,7 @@ CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourc
  * \throw IrParseError If the arguments do not match the expected format.
  */
 CopyInstruction::CopyInstruction(IrArguments &arguments): source(arguments.readTape()) {
+//TODO add support for − and check inequalities
 	std::tie(this->sourceIndex0, this->sourceIndex1) = arguments.readRange();
 	arguments.readComma();
 	this->destination = arguments.readTape();
@@ -69,15 +72,15 @@ std::unique_ptr<Instruction> CopyInstruction::tryToMergeWithCopy(size_t source, 
 void CopyInstruction::build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
 	if(this->destinationIndex) {
 		if(this->sourceIndex1)
-			machineFactory.copy(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), *this->destinationIndex, (*this->sourceIndex1) - this->sourceIndex0);
+			machineFactory.copy(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), *this->destinationIndex, this->areSourceIndicesFromEnd ? (this->sourceIndex0 - (*this->sourceIndex1)) : ((*this->sourceIndex1) - this->sourceIndex0), this->areSourceIndicesFromEnd, this->isDestinationIndexFromEnd);
 		else
-			machineFactory.copyAll(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), *this->destinationIndex);
+			machineFactory.copyAll(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), *this->destinationIndex, this->areSourceIndicesFromEnd, this->isDestinationIndexFromEnd);
 	}
 	else {
 		if(this->sourceIndex1)
-			machineFactory.append(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), (*this->sourceIndex1) - this->sourceIndex0);
+			machineFactory.append(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), this->areSourceIndicesFromEnd ? (this->sourceIndex0 - (*this->sourceIndex1)) : ((*this->sourceIndex1) - this->sourceIndex0), this->areSourceIndicesFromEnd);
 		else
-			machineFactory.appendAll(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination));
+			machineFactory.appendAll(getRealTape(this->source), this->sourceIndex0, getRealTape(this->destination), this->areSourceIndicesFromEnd);
 	};
 };
 
@@ -85,8 +88,8 @@ void CopyInstruction::print(std::wostream &stream, std::function<size_t (size_t)
 	stream <<
 		L"copy(" <<
 		getRealTape(this->source) <<
-		L"[" << this->sourceIndex0 << L":" << (this->sourceIndex1 ? std::to_wstring(*this->sourceIndex1) : L"") << L"], " <<
+		L"[" << (this->areSourceIndicesFromEnd ? L"−" : L"") << this->sourceIndex0 << L":" << (this->areSourceIndicesFromEnd ? L"−" : L"") << (this->sourceIndex1 ? std::to_wstring(*this->sourceIndex1) : L"") << L"], " <<
 		getRealTape(this->destination) <<
-		L"[" << (this->destinationIndex ? (std::to_wstring(*this->destinationIndex)+L":") : L"") << L"]" <<
+		L"[" << (this->isDestinationIndexFromEnd ? L"−" : L"") << (this->destinationIndex ? (std::to_wstring(*this->destinationIndex)+L":") : L"") << L"]" <<
 		L")" << std::endl;
 };

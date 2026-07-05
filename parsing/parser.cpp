@@ -297,10 +297,10 @@ std::unique_ptr<Statement> Parser::parseRemainingAssignmentOrSimpleCall(std::wst
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, false);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundleOrMachine))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, false, Location(itA->getLocation(), itB->getLocation()));
 
 			if(std::holds_alternative<Machine>(expressionOrSourceBundleOrMachine)) {
 				this->program.addMachine(identifier, std::move(std::get<Machine>(expressionOrSourceBundleOrMachine)), identifierLocation);
@@ -351,10 +351,10 @@ std::unique_ptr<Statement> Parser::parseRemainingArrayAccessAssignment(std::wstr
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, false);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, false, Location(itA->getLocation(), itB->getLocation()));
 
 			std::unreachable();
 
@@ -365,10 +365,24 @@ std::unique_ptr<Statement> Parser::parseRemainingArrayAccessAssignment(std::wstr
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, false);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, false, Location(itA->getLocation(), itB->getLocation()));
+
+			std::unreachable();
+
+		case Token::Type::COLON:
+			this->expect(Token::Type::COLON, number, Token::Type::RIGHT_SQUARE_BRACKET, Token::Type::ASSIGN);
+			itA = this->it;
+			expressionOrSourceBundle = this->parseLogicalExpressionOrSourceBundle();
+			itB = std::prev(this->it);
+
+			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, true);
+
+			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, true, Location(itA->getLocation(), itB->getLocation()));
 
 			std::unreachable();
 

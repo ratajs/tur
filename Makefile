@@ -114,6 +114,8 @@ EXAMPLES = \
 	examples/simpleTests/explosion.tm \
 	examples/simpleTests/explosionWithSourceVariable.tm \
 	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
+	examples/simpleTests/reversedAssignment.tm \
+	examples/simpleTests/reversedImplosion.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/branchingWithElseif.tm \
@@ -479,11 +481,14 @@ AST/statements/assignStatement.o: AST/statements/assignStatement.cpp \
 	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/copyInstruction.hpp \
 	AST/statements/../../instructions/clearInstruction.hpp \
+	AST/statements/../../instructions/reversePseudoinstruction.hpp \
 	AST/statements/../../IO/typeError.hpp \
 	AST/statements/../../IO/./errorWithLocation.hpp \
 	AST/statements/../../IO/././error.hpp \
 	AST/statements/../../IO/./../parsing/location.hpp \
-	AST/statements/../../IO/../parsing/location.hpp
+	AST/statements/../../IO/../parsing/location.hpp \
+	AST/statements/../../IO/unexpectedError.hpp \
+	AST/statements/../../IO/./error.hpp
 AST/statements/breakStatement.o: AST/statements/breakStatement.cpp \
 	AST/statements/./breakStatement.hpp AST/statements/././statement.hpp \
 	AST/statements/././../../building/instructionBuilder.hpp \
@@ -711,7 +716,10 @@ AST/statements/implodeStatement.o: AST/statements/implodeStatement.cpp \
 	AST/statements/../../instructions/../parsing/./location.hpp \
 	AST/statements/../../instructions/../parsing/../machine/machine.hpp \
 	AST/statements/../../instructions/writeNumberInstruction.hpp \
-	AST/statements/../../instructions/copyInstruction.hpp
+	AST/statements/../../instructions/copyInstruction.hpp \
+	AST/statements/../../instructions/reversePseudoinstruction.hpp \
+	AST/statements/../../IO/unexpectedError.hpp \
+	AST/statements/../../IO/./error.hpp
 AST/statements/loopStatement.o: AST/statements/loopStatement.cpp \
 	AST/statements/./loopStatement.hpp AST/statements/././statement.hpp \
 	AST/statements/././../../building/instructionBuilder.hpp \

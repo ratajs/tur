@@ -11,9 +11,9 @@
  * \param index1 The end index of the range to clear (exclusive; {} if the range is rightwise unbounded).
  * \throw UnexpectedError If the range represents neither the beginning (index0 is 0) nor the end (index1 is {}) of the tape.
  */
-ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<size_t> index1):
-	tape(tape), index0(index0), index1(index1) {
-		if(index0 > 0 && index1)
+ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<size_t> index1, bool isIndex0FromEnd):
+	isIndex0FromEnd(isIndex0FromEnd), tape(tape), index0(index0), index1(index1) {
+		if((index0 > 0 && index1) || (isIndex0FromEnd && index1))
 			throw UnexpectedError(L"Invalid clear (neither beginning nor end).");
 	};
 
@@ -24,7 +24,7 @@ ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<siz
  * \param arguments The arguments of the instruction from the IR input.
  * \throw IrParseError If the arguments do not match the expected format.
  */
-ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) { //TODO indexed from the end
 	std::tie(this->index0, this->index1) = arguments.readRange();
 	arguments.end();
 
@@ -43,16 +43,16 @@ void ClearInstruction::build(SingleTapeMachineFactory &machineFactory, std::func
 	if(this->index0==0 && this->index1)
 		machineFactory.clearBeginning(*this->index1);
 	else
-		machineFactory.clearEnd(this->index0);
+		machineFactory.clearEnd(this->index0, this->isIndex0FromEnd);
 };
 
 void ClearInstruction::build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
 	if(this->index0==0 && this->index1)
 		machineFactory.clearBeginning(getRealTape(this->tape), *this->index1);
 	else
-		machineFactory.clearEnd(getRealTape(this->tape), this->index0);
+		machineFactory.clearEnd(getRealTape(this->tape), this->index0, this->isIndex0FromEnd);
 };
 
 void ClearInstruction::print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const {
-	stream << L"clear(" << getRealTape(this->tape) << L"[" << this->index0 << L":" << (this->index1 ? std::to_wstring(*this->index1) : L"") << L"])" << std::endl;
+	stream << L"clear(" << getRealTape(this->tape) << L"[" << (this->isIndex0FromEnd ? L"−" : L"") << this->index0 << L":" << (this->index1 ? std::to_wstring(*this->index1) : L"") << L"])" << std::endl;
 };

@@ -25,6 +25,7 @@ DEC
 
 RIGHT_SQUARE_BRACKET																																SEMICOLON/COLON																																																																						RemainingAssignment
 NUMBER
+COLON
 
 LEFT_SQUARE_BRACKET																																	ASSIGN
 

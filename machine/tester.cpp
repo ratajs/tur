@@ -1,5 +1,6 @@
 #include "./tester.hpp"
 #include <optional>
+#include <initializer_list>
 #include <deque>
 #include <algorithm>
 #include <iterator>
@@ -609,6 +610,11 @@ void Tester::testClearEnd() {
 					SingleTapeMachineFactory().clearEnd(length).extractMachine().run(tape, true);
 					this->assertValidity(tape, { L"clearEnd, single tape, validity", testContent });
 					this->assertContent(tape, std::wstring(prefix), { L"clearEnd, single tape, content", testContent });
+
+					tape.init(testContent);
+					SingleTapeMachineFactory().clearEnd(Tester::getNumbersCount(testContent) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, { L"clearEnd, indexed from end, single tape, validity", testContent });
+					this->assertContent(tape, std::wstring(prefix), { L"clearEnd, indexed from end, single tape, content", testContent });
 				}
 			);
 		}
@@ -624,6 +630,11 @@ void Tester::testClearEnd() {
 					MultiTapeMachineFactory(1).clearEnd(1, length).extractMachine().run(tape, true);
 					this->assertValidity(tape, 1, { L"clearEnd, 1 tape, tape 1, validity", testContent.first });
 					this->assertContent(tape, 1, 1, std::wstring(prefix), { L"clearEnd, 1 tape, tape 1, content", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(1).clearEnd(1, Tester::getNumbersCount(testContent.second[0]) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 1, { L"clearEnd, indexed from end, indexed from end, 1 tape, tape 1, validity", testContent.first });
+					this->assertContent(tape, 1, 1, std::wstring(prefix), { L"clearEnd, indexed from end, 1 tape, tape 1, content", testContent.first });
 				}
 			);
 		}
@@ -640,6 +651,12 @@ void Tester::testClearEnd() {
 					this->assertValidity(tape, 2, { L"clearEnd, 2 tapes, tape 1, validity", testContent.first });
 					this->assertContent(tape, 2, 1, std::wstring(prefix), { L"clearEnd, 2 tapes, tape 1, content (changed tape)", testContent.first });
 					this->assertContent(tape, 2, 2, testContent.second[1], { L"clearEnd, 2 tapes, tape 1, content (unchanged tape)", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(2).clearEnd(1, Tester::getNumbersCount(testContent.second[0]) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 2, { L"clearEnd, indexed from end, 2 tapes, tape 1, validity", testContent.first });
+					this->assertContent(tape, 2, 1, std::wstring(prefix), { L"clearEnd, indexed from end, 2 tapes, tape 1, content (changed tape)", testContent.first });
+					this->assertContent(tape, 2, 2, testContent.second[1], { L"clearEnd, indexed from end, 2 tapes, tape 1, content (unchanged tape)", testContent.first });
 				}
 			);
 
@@ -653,6 +670,11 @@ void Tester::testClearEnd() {
 					this->assertContent(tape, 2, 1, testContent.second[0], { L"clearEnd, 2 tapes, tape 2, content (unchanged tape)", testContent.first });
 					this->assertContent(tape, 2, 2, std::wstring(prefix), { L"clearEnd, 2 tapes, tape 2, content (changed tape)", testContent.first });
 
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(2).clearEnd(2, Tester::getNumbersCount(testContent.second[1]) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 2, { L"clearEnd, indexed from end, 2 tapes, tape 2, validity", testContent.first });
+					this->assertContent(tape, 2, 1, testContent.second[0], { L"clearEnd, indexed from end, 2 tapes, tape 2, content (unchanged tape)", testContent.first });
+					this->assertContent(tape, 2, 2, std::wstring(prefix), { L"clearEnd, indexed from end, 2 tapes, tape 2, content (changed tape)", testContent.first });
 				}
 			);
 		}
@@ -670,6 +692,13 @@ void Tester::testClearEnd() {
 					this->assertContent(tape, 3, 1, std::wstring(prefix), { L"clearEnd, 3 tapes, tape 1, content (changed tape)", testContent.first });
 					this->assertContent(tape, 3, 2, testContent.second[1], { L"clearEnd, 3 tapes, tape 1, content (unchanged tape)", testContent.first });
 					this->assertContent(tape, 3, 3, testContent.second[2], { L"clearEnd, 3 tapes, tape 1, content (unchanged tape)", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(3).clearEnd(1, Tester::getNumbersCount(testContent.second[0]) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 3, { L"clearEnd, indexed from end, 3 tapes, tape 1, validity", testContent.first });
+					this->assertContent(tape, 3, 1, std::wstring(prefix), { L"clearEnd, indexed from end, 3 tapes, tape 1, content (changed tape)", testContent.first });
+					this->assertContent(tape, 3, 2, testContent.second[1], { L"clearEnd, indexed from end, 3 tapes, tape 1, content (unchanged tape)", testContent.first });
+					this->assertContent(tape, 3, 3, testContent.second[2], { L"clearEnd, indexed from end, 3 tapes, tape 1, content (unchanged tape)", testContent.first });
 				}
 			);
 
@@ -683,6 +712,13 @@ void Tester::testClearEnd() {
 					this->assertContent(tape, 3, 1, testContent.second[0], { L"clearEnd, 3 tapes, tape 2, content (unchanged tape)", testContent.first });
 					this->assertContent(tape, 3, 2, std::wstring(prefix), { L"clearEnd, 3 tapes, tape 2, content (changed tape)", testContent.first });
 					this->assertContent(tape, 3, 3, testContent.second[2], { L"clearEnd, 3 tapes, tape 2, content (unchanged tape)", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(3).clearEnd(2, Tester::getNumbersCount(testContent.second[1]) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 3, { L"clearEnd, indexed from end, 3 tapes, tape 2, validity", testContent.first });
+					this->assertContent(tape, 3, 1, testContent.second[0], { L"clearEnd, indexed from end, 3 tapes, tape 2, content (unchanged tape)", testContent.first });
+					this->assertContent(tape, 3, 2, std::wstring(prefix), { L"clearEnd, indexed from end, 3 tapes, tape 2, content (changed tape)", testContent.first });
+					this->assertContent(tape, 3, 3, testContent.second[2], { L"clearEnd, indexed from end, 3 tapes, tape 2, content (unchanged tape)", testContent.first });
 				}
 			);
 
@@ -696,6 +732,13 @@ void Tester::testClearEnd() {
 					this->assertContent(tape, 3, 1, testContent.second[0], { L"clearEnd, 3 tapes, tape 3, content (unchanged tape)", testContent.first });
 					this->assertContent(tape, 3, 2, testContent.second[1], { L"clearEnd, 3 tapes, tape 3, content (unchanged tape)", testContent.first });
 					this->assertContent(tape, 3, 3, std::wstring(prefix), { L"clearEnd, 3 tapes, tape 3, content (changed tape)", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(3).clearEnd(3, Tester::getNumbersCount(testContent.second[2]) - length, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 3, { L"clearEnd, indexed from end, 3 tapes, tape 3, validity", testContent.first });
+					this->assertContent(tape, 3, 1, testContent.second[0], { L"clearEnd, indexed from end, 3 tapes, tape 3, content (unchanged tape)", testContent.first });
+					this->assertContent(tape, 3, 2, testContent.second[1], { L"clearEnd, indexed from end, 3 tapes, tape 3, content (unchanged tape)", testContent.first });
+					this->assertContent(tape, 3, 3, std::wstring(prefix), { L"clearEnd, indexed from end, 3 tapes, tape 3, content (changed tape)", testContent.first });
 				}
 			);
 		}
@@ -716,6 +759,13 @@ void Tester::testWriteNumber() {
 						this->assertValidity(tape, { L"writeNumber, single tape, validity", testContent });
 						this->assertContent(tape, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, single tape, content", testContent });
 					};
+
+					for(x = 0; x < 8; x++) {
+						tape.init(testContent);
+						SingleTapeMachineFactory().writeNumber(Tester::getNumbersCount(testContent) - length, x, true).extractMachine().run(tape, true);
+						this->assertValidity(tape, { L"writeNumber, indexed from end, single tape, validity", testContent });
+						this->assertContent(tape, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, indexed from end, single tape, content", testContent });
+					};
 				}
 			);
 		}
@@ -733,6 +783,11 @@ void Tester::testWriteNumber() {
 						MultiTapeMachineFactory(1).writeNumber(1, length, x).extractMachine().run(tape, true);
 						this->assertValidity(tape, 1, { L"writeNumber, 1 tape, tape 1, validity", testContent.first });
 						this->assertContent(tape, 1, 1, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, 1 tape, tape 1, content", testContent.first });
+
+						tape.init(testContent.first);
+						MultiTapeMachineFactory(1).writeNumber(1, Tester::getNumbersCount(testContent.second[0]) - length, x, true).extractMachine().run(tape, true);
+						this->assertValidity(tape, 1, { L"writeNumber, indexed from end, 1 tape, tape 1, validity", testContent.first });
+						this->assertContent(tape, 1, 1, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, indexed from end, 1 tape, tape 1, content", testContent.first });
 					};
 				}
 			);
@@ -758,6 +813,16 @@ void Tester::testWriteNumber() {
 									this->assertContent(tape, 2, y, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, 2 tapes, tape "+std::to_wstring(targetTape)+L", target tape, content", testContent.first });
 								else
 									this->assertContent(tape, 2, y, testContent.second[y - 1], { L"writeNumber, 2 tapes, tape "+std::to_wstring(targetTape)+L", other tape, content", testContent.first });
+							};
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(2).writeNumber(targetTape, Tester::getNumbersCount(testContent.second[targetTape - 1]) - length, x, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 2, { L"writeNumber, indexed from end, 2 tapes, tape "+std::to_wstring(targetTape)+L", validity", testContent.first });
+							for(y = 1; y <= 2; y++) {
+								if(y==targetTape)
+									this->assertContent(tape, 2, y, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, indexed from end, 2 tapes, tape "+std::to_wstring(targetTape)+L", target tape, content", testContent.first });
+								else
+									this->assertContent(tape, 2, y, testContent.second[y - 1], { L"writeNumber, indexed from end, 2 tapes, tape "+std::to_wstring(targetTape)+L", other tape, content", testContent.first });
 							};
 						};
 					}
@@ -785,6 +850,16 @@ void Tester::testWriteNumber() {
 									this->assertContent(tape, 3, y, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, 3 tapes, tape "+std::to_wstring(targetTape)+L", target tape, content", testContent.first });
 								else
 									this->assertContent(tape, 3, y, testContent.second[y - 1], { L"writeNumber, 3 tapes, tape "+std::to_wstring(targetTape)+L", other tape, content", testContent.first });
+							};
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(3).writeNumber(targetTape, Tester::getNumbersCount(testContent.second[targetTape - 1]) - length, x, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 3, { L"writeNumber, indexed from end, 3 tapes, tape "+std::to_wstring(targetTape)+L", validity", testContent.first });
+							for(y = 1; y <= 3; y++) {
+								if(y==targetTape)
+									this->assertContent(tape, 3, y, std::wstring(prefix)+(prefix.empty() ? L"" : L"0")+Tester::encode({ x }), { L"writeNumber, indexed from end, 3 tapes, tape "+std::to_wstring(targetTape)+L", target tape, content", testContent.first });
+								else
+									this->assertContent(tape, 3, y, testContent.second[y - 1], { L"writeNumber, indexed from end, 3 tapes, tape "+std::to_wstring(targetTape)+L", other tape, content", testContent.first });
 							};
 						};
 					}
@@ -885,6 +960,24 @@ void Tester::testCopy() {
 									this->assertValidity(tape, 2, { L"copy, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
 									this->assertContent(tape, 2, 1, testContent.second[0], { L"copy, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
 									this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourcePrefix), { L"copy, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
+
+									tape.init(testContent.first);
+									MultiTapeMachineFactory(2).copy(1, Tester::getNumbersCount(testContent.second[0]) - sourceOffset, 2, destinationLength, sourceLength, true).extractMachine().run(tape, true);
+									this->assertValidity(tape, 2, { L"copy, source indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
+									this->assertContent(tape, 2, 1, testContent.second[0], { L"copy, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
+									this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourcePrefix), { L"copy, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
+
+									tape.init(testContent.first);
+									MultiTapeMachineFactory(2).copy(1, sourceOffset, 2, Tester::getNumbersCount(testContent.second[1]) - destinationLength, sourceLength, false, true).extractMachine().run(tape, true);
+									this->assertValidity(tape, 2, { L"copy, destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
+									this->assertContent(tape, 2, 1, testContent.second[0], { L"copy, destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
+									this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourcePrefix), { L"copy, destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
+
+									tape.init(testContent.first);
+									MultiTapeMachineFactory(2).copy(1, Tester::getNumbersCount(testContent.second[0]) - sourceOffset, 2, Tester::getNumbersCount(testContent.second[1]) - destinationLength, sourceLength, true, true).extractMachine().run(tape, true);
+									this->assertValidity(tape, 2, { L"copy, source and destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
+									this->assertContent(tape, 2, 1, testContent.second[0], { L"copy, source and destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
+									this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourcePrefix), { L"copy, source and destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":"+std::to_wstring(sourceOffset + sourceLength)+L"] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
 								}
 							);
 						}
@@ -987,6 +1080,12 @@ void Tester::testAppend() {
 							this->assertValidity(tape, 2, { L"append, 2 tapes, 1["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 2[], validity", testContent.first });
 							this->assertContent(tape, 2, 1, testContent.second[0], { L"append, 2 tapes, 1["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 2[], content (source tape)", testContent.first });
 							this->assertContent(tape, 2, 2, std::wstring(testContent.second[1])+(testContent.second[1].empty() ? L"" : L"0")+std::wstring(prefix), { L"append, 2 tapes, 1["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 2[], content (target tape)", testContent.first });
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(2).append(1, Tester::getNumbersCount(testContent.second[0]) - offset, 2, length, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 2, { L"append, source indexed from end, 2 tapes, 1["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 2[], validity", testContent.first });
+							this->assertContent(tape, 2, 1, testContent.second[0], { L"append, source indexed from end, 2 tapes, 1["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 2[], content (source tape)", testContent.first });
+							this->assertContent(tape, 2, 2, std::wstring(testContent.second[1])+(testContent.second[1].empty() ? L"" : L"0")+std::wstring(prefix), { L"append, source indexed from end, 2 tapes, 1["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 2[], content (target tape)", testContent.first });
 						}
 					);
 				}
@@ -1006,6 +1105,12 @@ void Tester::testAppend() {
 							this->assertValidity(tape, 2, { L"append, 2 tapes, 2["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 1[], validity", testContent.first });
 							this->assertContent(tape, 2, 1, std::wstring(testContent.second[0])+(testContent.second[0].empty() ? L"" : L"0")+std::wstring(prefix), { L"append, 2 tapes, 2["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 1[], content (target tape)", testContent.first });
 							this->assertContent(tape, 2, 2, testContent.second[1], { L"append, 2 tapes, 2["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 1[], content (source tape)", testContent.first });
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(2).append(2, Tester::getNumbersCount(testContent.second[1]) - offset, 1, length, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 2, { L"append, source indexed from end, 2 tapes, 2["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 1[], validity", testContent.first });
+							this->assertContent(tape, 2, 1, std::wstring(testContent.second[0])+(testContent.second[0].empty() ? L"" : L"0")+std::wstring(prefix), { L"append, source indexed from end, 2 tapes, 2["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 1[], content (target tape)", testContent.first });
+							this->assertContent(tape, 2, 2, testContent.second[1], { L"append, source indexed from end, 2 tapes, 2["+std::to_wstring(offset)+L":"+std::to_wstring(offset + length)+L"] → 1[], content (source tape)", testContent.first });
 						}
 					);
 				}
@@ -1072,6 +1177,24 @@ void Tester::testCopyAll() {
 							this->assertValidity(tape, 2, { L"copyAll, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
 							this->assertContent(tape, 2, 1, testContent.second[0], { L"copyAll, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
 							this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourceSuffix), { L"copyAll, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(2).copyAll(1, Tester::getNumbersCount(testContent.second[0]) - sourceOffset, 2, destinationLength, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 2, { L"copyAll, source indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
+							this->assertContent(tape, 2, 1, testContent.second[0], { L"copyAll, source indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
+							this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourceSuffix), { L"copyAll, source indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(2).copyAll(1, sourceOffset, 2, Tester::getNumbersCount(testContent.second[1]) - destinationLength, false, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 2, { L"copyAll, destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
+							this->assertContent(tape, 2, 1, testContent.second[0], { L"copyAll, destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
+							this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourceSuffix), { L"copyAll, destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
+
+							tape.init(testContent.first);
+							MultiTapeMachineFactory(2).copyAll(1, Tester::getNumbersCount(testContent.second[0]) - sourceOffset, 2, Tester::getNumbersCount(testContent.second[1]) - destinationLength, true, true).extractMachine().run(tape, true);
+							this->assertValidity(tape, 2, { L"copyAll, source and destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], validity", testContent.first });
+							this->assertContent(tape, 2, 1, testContent.second[0], { L"copyAll, source and destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (source tape)", testContent.first });
+							this->assertContent(tape, 2, 2, std::wstring(destinationPrefix)+(destinationPrefix.empty() ? L"" : L"0")+std::wstring(sourceSuffix), { L"copyAll, source and destination indexed from end, 2 tapes, 1["+std::to_wstring(sourceOffset)+L":] → 2["+std::to_wstring(destinationLength)+L"], content (target tape)", testContent.first });
 						}
 					);
 				}
@@ -1146,6 +1269,12 @@ void Tester::testAppendAll() {
 					this->assertValidity(tape, 2, { L"appendAll, 2 tapes, 1["+std::to_wstring(offset)+L":] → 2[], validity", testContent.first });
 					this->assertContent(tape, 2, 1, testContent.second[0], { L"appendAll, 2 tapes, 1["+std::to_wstring(offset)+L":] → 2[], content (source tape)", testContent.first });
 					this->assertContent(tape, 2, 2, std::wstring(testContent.second[1])+(testContent.second[1].empty() ? L"" : L"0")+std::wstring(suffix), { L"appendAll, 2 tapes, 1["+std::to_wstring(offset)+L":] → 2[], content (target tape)", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(2).appendAll(1, Tester::getNumbersCount(testContent.second[0]) - offset, 2, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 2, { L"appendAll, source indexed from end, 2 tapes, 1["+std::to_wstring(offset)+L":] → 2[], validity", testContent.first });
+					this->assertContent(tape, 2, 1, testContent.second[0], { L"appendAll, source indexed from end, 2 tapes, 1["+std::to_wstring(offset)+L":] → 2[], content (source tape)", testContent.first });
+					this->assertContent(tape, 2, 2, std::wstring(testContent.second[1])+(testContent.second[1].empty() ? L"" : L"0")+std::wstring(suffix), { L"appendAll, source indexed from end, 2 tapes, 1["+std::to_wstring(offset)+L":] → 2[], content (target tape)", testContent.first });
 				}
 			);
 
@@ -1158,6 +1287,12 @@ void Tester::testAppendAll() {
 					this->assertValidity(tape, 2, { L"appendAll, 2 tapes, 2["+std::to_wstring(offset)+L":] → 1[], validity", testContent.first });
 					this->assertContent(tape, 2, 1, std::wstring(testContent.second[0])+(testContent.second[0].empty() ? L"" : L"0")+std::wstring(suffix), { L"appendAll, 2 tapes, 2["+std::to_wstring(offset)+L":] → 1[], content (target tape)", testContent.first });
 					this->assertContent(tape, 2, 2, testContent.second[1], { L"appendAll, 2 tapes, 2["+std::to_wstring(offset)+L":] → 1[], content (source tape)", testContent.first });
+
+					tape.init(testContent.first);
+					MultiTapeMachineFactory(2).appendAll(2, Tester::getNumbersCount(testContent.second[1]) - offset, 1, true).extractMachine().run(tape, true);
+					this->assertValidity(tape, 2, { L"appendAll, source indexed from end, 2 tapes, 2["+std::to_wstring(offset)+L":] → 1[], validity", testContent.first });
+					this->assertContent(tape, 2, 1, std::wstring(testContent.second[0])+(testContent.second[0].empty() ? L"" : L"0")+std::wstring(suffix), { L"appendAll, source indexed from end, 2 tapes, 2["+std::to_wstring(offset)+L":] → 1[], content (target tape)", testContent.first });
+					this->assertContent(tape, 2, 2, testContent.second[1], { L"appendAll, source indexed from end, 2 tapes, 2["+std::to_wstring(offset)+L":] → 1[], content (source tape)", testContent.first });
 				}
 			);
 		}

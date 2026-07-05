@@ -15,11 +15,12 @@
  */
 class WriteNumberInstruction: public Instruction {
 	private:
+		bool isIndexFromEnd;
 		size_t tape, number;
 		std::optional<size_t> index; // Append if {}
 
 	public:
-		WriteNumberInstruction(size_t tape, std::optional<size_t> index, size_t number);
+		WriteNumberInstruction(size_t tape, std::optional<size_t> index, size_t number, bool isIndexFromEnd = false);
 		WriteNumberInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
