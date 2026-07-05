@@ -3,7 +3,7 @@
 ε																																										ε/ELSE/ELSEIF/ENDIF/ENDWHILE/ENDLOOP/ENDFOR																																																								Program/OptionalElse
 LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/FOR/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE
 
-LEFT_SQUARE_BRACKET/IDENTIFIER																											SEMICOLON/COLON
+LEFT_SQUARE_BRACKET/IDENTIFIER																											SEMICOLON/COLON																																																																						OptionalStatement/RemainingStatements
 IF
 WHILE
 LOOP
@@ -132,6 +132,12 @@ WHILE																																								SEMICOLON/COLON																				
 LOOP																																								SEMICOLON/COLON																																																																						Statement
 
 FOR																																									SEMICOLON/COLON																																																																						Statement
+
+ε																																										SEMICOLON
+LEFT_SQUARE_BRACKET/IDENTIFIER/IF/WHILE/LOOP/FOR/BREAK/CONTINUE/EXIT/INCLUDE/REQUIRE
+
+ε																																										COLON
+SEMICOLON
 
 INCLUDE																																							SEMICOLON/COLON																																																																						Statement
 

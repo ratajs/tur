@@ -1166,22 +1166,63 @@ std::unique_ptr<Statement> Parser::parseLoopStatement() {
 std::unique_ptr<Statement> Parser::parseForStatement() {
 	bool wasInLoop;
 	std::unique_ptr<Expression> condition;
-	std::unique_ptr<Statement> initStatement, stepStatement;
-	std::vector<std::unique_ptr<Statement>> body;
+	std::unique_ptr<Statement> initStatement;
+	std::vector<std::unique_ptr<Statement>> stepStatements, body;
 
 	this->expect(Token::Type::FOR);
 	wasInLoop = std::exchange(this->isInLoop, true);
-	initStatement = this->parseStatement();
+	initStatement = this->parseOptionalStatement();
 	this->expect(Token::Type::SEMICOLON);
 	condition = this->parseLogicalExpression();
 	this->expect(Token::Type::SEMICOLON);
-	stepStatement = this->parseStatement();
+	stepStatements.push_back(this->parseStatement());
+	this->parseRemainingStatements(stepStatements);
 	this->expect(Token::Type::COLON);
 	body = this->parseStatements();
 	this->isInLoop = wasInLoop;
 	this->expect(Token::Type::ENDFOR);
 
-	return std::make_unique<ForStatement>(std::move(initStatement), std::move(condition), std::move(stepStatement), std::move(body));
+	return std::make_unique<ForStatement>(std::move(initStatement), std::move(condition), std::move(stepStatements), std::move(body));
+};
+
+std::unique_ptr<Statement> Parser::parseOptionalStatement() {
+	switch(this->getNextTokenType()) {
+		case Token::Type::SEMICOLON:
+			return {};
+
+		case Token::Type::LEFT_SQUARE_BRACKET:
+		case Token::Type::IDENTIFIER:
+		case Token::Type::IF:
+		case Token::Type::WHILE:
+		case Token::Type::LOOP:
+		case Token::Type::FOR:
+		case Token::Type::BREAK:
+		case Token::Type::CONTINUE:
+		case Token::Type::EXIT:
+		case Token::Type::INCLUDE:
+		case Token::Type::REQUIRE:
+			return this->parseStatement();
+
+		default:
+			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
+	};
+};
+
+void Parser::parseRemainingStatements(std::vector<std::unique_ptr<Statement>> &statements) {
+	switch(this->getNextTokenType()) {
+		case Token::Type::COLON:
+			return;
+
+		case Token::Type::SEMICOLON:
+			this->expect(Token::Type::SEMICOLON);
+			statements.push_back(this->parseStatement());
+			this->parseRemainingStatements(statements);
+
+			return;
+
+		default:
+			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
+	};
 };
 
 void Parser::parseIncludeStatement() {

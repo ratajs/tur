@@ -5,16 +5,13 @@ bound = input;
 
 states = [];
 
-x = 2;
-while x < bound:
+for x = 2; x < bound; x++:
 	states[] = 1;
-	x++;
-endwhile;
+endfor;
 
 primes = [];
 
-x = 2;
-while x < bound:
+for x = 2; x < bound; x++:
 	if states[0]==1:
 		primes[] = x;
 
@@ -25,24 +22,20 @@ while x < bound:
 
 			y = x;
 			y++;
-			while y < bound:
+			for ; y < bound; y++:
 				if states[0]==0 ∨ (y mod x)==0:
 					newStates[] = 0;
 				else:
 					newStates[] = 1;
 				endif;
 				states = states[1:];
-
-				y++;
-			endwhile;
+			endfor;
 
 			states = newStates…;
 		endif;
 	else:
 		states = states[1:];
 	endif;
-
-	x++;
-endwhile;
+endfor;
 
 output = primes…;

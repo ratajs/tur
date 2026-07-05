@@ -6,7 +6,7 @@
 #include "../../instructions/jumpInstruction.hpp"
 #include "../../IO/typeError.hpp"
 
-ForStatement::ForStatement(std::unique_ptr<Statement> initStatement, std::unique_ptr<Expression> condition, std::unique_ptr<Statement> stepStatement, std::vector<std::unique_ptr<Statement>> body): condition(std::move(condition)), initStatement(std::move(initStatement)), stepStatement(std::move(stepStatement)), body(std::move(body)) {
+ForStatement::ForStatement(std::unique_ptr<Statement> initStatement, std::unique_ptr<Expression> condition, std::vector<std::unique_ptr<Statement>> stepStatements, std::vector<std::unique_ptr<Statement>> body): condition(std::move(condition)), initStatement(std::move(initStatement)), stepStatements(std::move(stepStatements)), body(std::move(body)) {
 	if(!this->condition->isCondition())
 		throw TypeError(TypeError::Type::NON_CONDITION_IN_A_WHILE_STATEMENT, this->condition->location);
 };
@@ -17,7 +17,8 @@ void ForStatement::build(InstructionBuilder &builder) const {
 	beginLabel = builder.createLabel();
 	stepLabel = builder.createLabel();
 
-	this->initStatement->build(builder);
+	if(this->initStatement)
+		this->initStatement->build(builder);
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	firstInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	std::tie(trueLabel, falseLabel) = this->condition->buildCondition(builder);
@@ -29,7 +30,7 @@ void ForStatement::build(InstructionBuilder &builder) const {
 	builder.popBreakDestination();
 	builder.addInstruction(std::make_unique<JumpInstruction>(stepLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(stepLabel, JumpInstruction::Type::COME_FROM));
-	this->stepStatement->build(builder);
+	std::ranges::for_each(this->stepStatements, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
 	builder.postponeLastReference(firstInstruction, lastInstruction);

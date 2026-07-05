@@ -7,10 +7,10 @@
 class ForStatement: public Statement {
 	private:
 		std::unique_ptr<Expression> condition;
-		std::unique_ptr<Statement> initStatement, stepStatement;
-		std::vector<std::unique_ptr<Statement>> body;
+		std::unique_ptr<Statement> initStatement;
+		std::vector<std::unique_ptr<Statement>> stepStatements, body;
 
 	public:
-		ForStatement(std::unique_ptr<Statement> initStatement, std::unique_ptr<Expression> condition, std::unique_ptr<Statement> stepStatement, std::vector<std::unique_ptr<Statement>> body);
+		ForStatement(std::unique_ptr<Statement> initStatement, std::unique_ptr<Expression> condition, std::vector<std::unique_ptr<Statement>> stepStatements, std::vector<std::unique_ptr<Statement>> body);
 		void build(InstructionBuilder &builder) const override;
 };

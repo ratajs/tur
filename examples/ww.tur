@@ -10,20 +10,16 @@ endif;
 
 partB = input…;
 partA = [];
-x = (c ∶ 2);
-while x > 0:
+for x = (c ∶ 2); x > 0; x−−:
 	partA[] = partB[0];
 	partB = partB[1:];
-	x−−;
-endwhile;
-x = (c ∶ 2);
+endfor;
 output = 1;
-while x > 0:
+for x = (c ∶ 2); x > 0; x−−:
 	if partA[0]≠partB[0]:
 		output = 0;
 		break;
 	endif;
 	partA = partA[1:];
 	partB = partB[1:];
-	x−−;
-endwhile;
+endfor;

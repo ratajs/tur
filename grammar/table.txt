@@ -360,8 +360,29 @@ WhileStatement:
 LoopStatement:
 	LOOP: 132
 
+ForStatement:
+	FOR: 134
+
+OptionalStatement:
+	SEMICOLON: 136
+	LEFT_SQUARE_BRACKET: 137
+	IDENTIFIER: 137
+	IF: 137
+	WHILE: 137
+	LOOP: 137
+	FOR: 137
+	BREAK: 137
+	CONTINUE: 137
+	EXIT: 137
+	INCLUDE: 137
+	REQUIRE: 137
+
+RemainingStatements:
+	COLON: 139
+	SEMICOLON: 140
+
 IncludeStatement:
-	INCLUDE: 136
+	INCLUDE: 142
 
 RequireStatement:
-	REQUIRE: 138
+	REQUIRE: 144
