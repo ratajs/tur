@@ -211,6 +211,8 @@ output = input...; # Assign the whole content of input.
 output[10:] = f(input[5:8])[2:4]; # Any non-logical expression of any length can be assigned.
 output = output[1:5];
 output[2:] = output[1:5];
+output[:0] = 1; # Prepend the number 1.
+output[:2] = output[0]; # Replace the first two numbers with only the first one.
 ```
 
 #### Incrementing or decrementating the first number on a tape:
@@ -271,6 +273,8 @@ output = [1, 2, 3]; # output will contain those three numbers.
 output[2:] = [1, 2, 3]; # The variable can be indexed.
 output[] = [1, 2, 3]; # Appending is also possible.
 output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions can be used.
+output[:1] = []; # Delete the first number.
+output[:0] = [1, 2, input]; # Prepend 1, 2, and the first number from input (the tape will then start with 1).
 ```
 
 #### Splitting (exploding) an expression to multiple variables:
@@ -286,21 +290,21 @@ output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions ca
 In addition the source language described above, intermediate representation (IR) can also be used. The flags -i and -I are used to print the IR as output, while -l ir can be used to accept IR as input. The first line of IR states how many tapes are used by the program. It
 looks like this:
 ```
-  TAPES 3
+TAPES 3
 ```
 If this line is missing, one tape is assumed. The next lines are instructions. Each line contains the name of the instructions followed by its arguments in parentheses. Leading and trailing whitespace and comments (#) are ignored. Here is an example of a simple program:
 ```
-  TAPES 1
-  decompress(1) # Use tape 1 as input
-  compare(1[0] = 42, 2, 3) # Compare the first number on tape 1 with 42
-  jump(COMEFROM 2) # Come from the label 2 (if true)
-  writeNumber(1[0:], 1) # Write 1 on the beginning of tape 1
-  jump(GOTO 1) # Go to the label 1
-  jump(COMEFROM 3) # Jump from the label 3 (if false)
-  writeNumber(1[0:], 0) # Write 0 on the beginning of tape 1
-  jump(GOTO 1) # Go to the label 1
-  jump(COMEFROM 1) # Come from the label 1
-  compress(1) # Use tape 1 as output
+TAPES 1
+decompress(1) # Use tape 1 as input
+compare(1[0] = 42, 2, 3) # Compare the first number on tape 1 with 42
+jump(COMEFROM 2) # Come from the label 2 (if true)
+writeNumber(1[0:], 1) # Write 1 on the beginning of tape 1
+jump(GOTO 1) # Go to the label 1
+jump(COMEFROM 3) # Jump from the label 3 (if false)
+writeNumber(1[0:], 0) # Write 0 on the beginning of tape 1
+jump(GOTO 1) # Go to the label 1
+jump(COMEFROM 1) # Come from the label 1
+compress(1) # Use tape 1 as output
 ```
 The following instructions are supported:
 
@@ -312,32 +316,38 @@ This should be the last instruction of every program. It specifies which tape is
 
 #### `writeNumber`
 This instruction writes a number on a specific position on a tape. The rest of the tape is deleted. When this instruction is executed, the tape must be long enough, so that the position is not further than the end of the tape. It has two arguments separated by
-comma: destination and number. The destination has two variants:
+comma: destination and number. The destination has three variants:
 ```
-  writeNumber(2[5:], 10) # Write 10 directly after the fifth number on the tape 2
-  writeNumber(2[], 15) # Append 15 to the tape 2
+writeNumber(2[5:], 10) # Write 10 directly after the fifth number on the tape 2
+writeNumber(2[], 15) # Append 15 to the tape 2
+writeNumber(2[−2:], 20) # Replace the last two numbers on the tape 2 with 20 (Unicode minus)
 ```
 
 #### `clear`
 This instruction clears a range on a tape. The range must start with the index 0 or must be rightwise unbounded. The tape with range is the only argument.
 ```
-  clear(1[0:]) # Clear the whole tape 1
-  clear(1[0:5]) # Delete the first five numbers while keeping the rest
-  clear(1[5:]) # Delete everything after the fifth number
+clear(1[0:]) # Clear the whole tape 1
+clear(1[0:5]) # Delete the first five numbers while keeping the rest
+clear(1[5:]) # Delete everything after the fifth number
+clear(1[−1:]) # Delete the last number (Unicode minus)
+#clear(1[0:−1]) # This is not supported, you have to use REVERSE
 ```
 
 #### `copy`
 This instruction copies a range from one tape to another. The arguments are: the source tape, the source range, comma, the destination tape, the destination range. The source range is specified by the first index, followed by colon and the optional second index, all
-in square brackets. The destination range must be rightwise unbounded, it is specified by an index followed by colon, all in square brackets, or by empty sqaure brackets, which means that the data should be appended.
+in square brackets. The destination range must be rightwise unbounded, it is specified by an index followed by colon, all in square brackets, or by empty sqaure brackets, which means that the data should be appended. All indices can be negative (indexed from the
+end), but both source indices must have the same sign.
 ```
-  copy(3[0:1], 4[0:]) # Copy the first number of the tape 3 to the beginning of the tape 4, the content of the tape 4 will be lost
-  copy(3[1:], 4[]) # Copy the content of the tape 3 except for the first number to the end of the tape 4, the content of the tape 4 will not be lost
+copy(3[0:1], 4[0:]) # Copy the first number of the tape 3 to the beginning of the tape 4, the content of the tape 4 will be lost
+copy(3[1:], 4[]) # Copy the content of the tape 3 except for the first number to the end of the tape 4, the content of the tape 4 will not be lost
+copy(1[−2:−1], 2[0:]) # Copy the penultimate number from the tape 1 to the tape 2
+copy(1[−1:], 2[−1]) # Replace the last number of the tape 2 with the last number of tape 1
 ```
 
 #### `call`
 This instruction simulates a defined Turing machine on a single tape. It has two arguments separated by comma: the tape and the machine.
 ```
-  call(1, { A11LA A01N_ }) # Increment the first number on tape 1
+call(1, { A11LA A01N_ }) # Increment the first number on tape 1
 ```
 
 #### `jump`
@@ -347,25 +357,25 @@ followed by the label (without comma) is provided. A `COMEFROM` jump must follow
 #### `compare`
 This instruction compares two arguments and jumps to one of two specified labels, depending on the result of the comparison. The comparison arguments can either be constants or tapes with indices. These operators can be used: =, ≠, <, >, ≤, ≥
 ```
-  compare(1[3] > 2[0], 1, 2) # If the fourth number on tape 1 is greater than the first number on tape 2, jump to 1, else jump to 2
-  compare(1[3] < 20, 3, 4) # If the fourth number on tape 1 is less than 20, jump to 3, else jump to 4
-  compare(1 = 1, 5, 6) # This always jumps to 5
+compare(1[3] > 2[0], 1, 2) # If the fourth number on tape 1 is greater than the first number on tape 2, jump to 1, else jump to 2
+compare(1[3] < 20, 3, 4) # If the fourth number on tape 1 is less than 20, jump to 3, else jump to 4
+compare(1 = 1, 5, 6) # This always jumps to 5
 ```
 
 #### `compareTapeLength`
 This instruction compares the length of a tape with a number. These operators can be used: =, ≠, <, >, ≤, ≥
 ```
-  compareTapeLength(|1| < 2, 1, 2) # If there are fewer than 2 numbers on the tape 1, jump to 1, else jump to 2
-  compareTapeLength(|2| = 0, 3, 4) # If the tape 2 is empty, jump to 3, else jump to 4
+compareTapeLength(|1| < 2, 1, 2) # If there are fewer than 2 numbers on the tape 1, jump to 1, else jump to 2
+compareTapeLength(|2| = 0, 3, 4) # If the tape 2 is empty, jump to 3, else jump to 4
 ```
 
 #### `REVERSE`
 This is a pseudoistruction which causes the machine to work like in mirror. The tape numbers will stay, but their starts will now be ends and vice versa. This state will remain until the next `REVERSE`. It is possible to combine jumps with `REVERSE`, but it is neces‐
 sary that the reversed labels match (jumps from a reversed part of the program must lead also to a reversed part).
 ````
-  REVERSE # Start the reversed state
-  clear(1[1:]) # This clears everything but the last number
-  REVERSE # End the reversed state
+REVERSE # Start the reversed state
+clear(1[1:]) # This clears everything but the last number
+REVERSE # End the reversed state
 ````
 
 ## Examples and Tests
