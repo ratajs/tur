@@ -24,11 +24,11 @@ ClearInstruction::ClearInstruction(size_t tape, size_t index0, std::optional<siz
  * \param arguments The arguments of the instruction from the IR input.
  * \throw IrParseError If the arguments do not match the expected format.
  */
-ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) { //TODO indexed from the end
-	std::tie(this->index0, this->index1) = arguments.readRange();
+ClearInstruction::ClearInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+	std::tie(this->index0, this->index1, this->isIndex0FromEnd) = arguments.readRange(true);
 	arguments.end();
 
-	if(this->index0 > 0 && this->index1)
+	if((this->index0 > 0 && this->index1) || (this->isIndex0FromEnd && this->index1))
 		throw IrParseError(IrParseError::Type::INVALID_RANGE_FOR_CLEAR, arguments.getLocation()); //TODO more precise location?
 };
 

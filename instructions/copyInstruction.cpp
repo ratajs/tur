@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include "./clearInstruction.hpp"
 #include "../IO/unexpectedError.hpp"
+#include "../IO/irParseError.hpp"
 
 /*!
  * The constructor of CopyInstruction.
@@ -18,6 +19,7 @@ CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourc
 	areSourceIndicesFromEnd(areSourceIndicesFromEnd), isDestinationIndexFromEnd(isDestinationIndexFromEnd), source(source), destination(destination), sourceIndex0(sourceIndex0), sourceIndex1(sourceIndex1), destinationIndex(destinationIndex) {
 		if(source==destination)
 			throw UnexpectedError(L"Invalid copy (source is destination).");
+
 		if((!areSourceIndicesFromEnd && sourceIndex1 && (*sourceIndex1) <= sourceIndex0) || (areSourceIndicesFromEnd && sourceIndex1 && (*sourceIndex1) >= sourceIndex0))
 			throw UnexpectedError(L"Invalid source indices for copy.");
 	};
@@ -30,12 +32,14 @@ CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourc
  * \throw IrParseError If the arguments do not match the expected format.
  */
 CopyInstruction::CopyInstruction(IrArguments &arguments): source(arguments.readTape()) {
-//TODO add support for − and check inequalities
-	std::tie(this->sourceIndex0, this->sourceIndex1) = arguments.readRange();
+	std::tie(this->sourceIndex0, this->sourceIndex1, this->areSourceIndicesFromEnd) = arguments.readRange(true);
 	arguments.readComma();
 	this->destination = arguments.readTape();
-	this->destinationIndex = arguments.readRightwiseUnboundedRange();
+	std::tie(this->destinationIndex, this->isDestinationIndexFromEnd) = arguments.readRightwiseUnboundedRange(true).transform([](const std::pair<size_t, bool> &pair) -> std::pair<std::optional<size_t>, bool> { return pair; }).value_or({ {}, false });
 	arguments.end();
+
+	if(source==destination)
+		throw IrParseError(IrParseError::Type::SAME_TAPE_WITH_COPY, arguments.getLocation());
 };
 
 std::vector<size_t> CopyInstruction::listUsedTapes() const {

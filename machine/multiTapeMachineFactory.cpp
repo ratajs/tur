@@ -1393,14 +1393,14 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::copy(size_t tapeA, size_t begi
 	if(tapeA==tapeB)
 		throw UnexpectedError(L"tapeA and tapeB must not be the same tape.");
 
-	if(count==0)
-		throw UnexpectedError(L"count must not be 0.");
-
 	if(isBeginAFromEnd && count > beginA)
 		throw UnexpectedError(L"count must not be greater than beginA when indexing from the end.");
 
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
+
+	if(count==0)
+		return (*this);
 
 	this->invertTapeNumberIfNecessary(tapeA);
 	this->invertTapeNumberIfNecessary(tapeB);
@@ -1493,14 +1493,14 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::append(size_t tapeA, size_t be
 	if(tapeA==tapeB)
 		throw UnexpectedError(L"tapeA and tapeB must not be the same tape.");
 
-	if(count==0)
-		throw UnexpectedError(L"count must not be 0.");
-
 	if(isBeginAFromEnd && count > beginA)
 		throw UnexpectedError(L"count must not be greater than beginA when indexing from the end.");
 
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
+
+	if(count==0)
+		return (*this);
 
 	this->invertTapeNumberIfNecessary(tapeA);
 	this->invertTapeNumberIfNecessary(tapeB);

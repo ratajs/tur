@@ -1,5 +1,4 @@
 #pragma once
-#include "./instruction.hpp"
 #include <cstdlib>
 #include <memory>
 #include <optional>
@@ -8,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include "./instruction.hpp"
 #include "../machine/multiTapeMachineFactory.hpp"
 #include "../parsing/irArguments.hpp"
 

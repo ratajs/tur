@@ -105,30 +105,54 @@ size_t IrArguments::readLabel() {
 /*!
  * Expect a range in square brackets.
  * The first index is required, followed by a colon and an optional second index.
+ * The indices must always have the same signs.
+ * \param areNegativeIndicesAllowed Whether minus signs before indices are allowed.
  * \return The range (two indices, the second is optional).
  * \throw IrParseError If no range was there.
  */
-std::pair<size_t, std::optional<size_t>> IrArguments::readRange() {
+std::tuple<size_t, std::optional<size_t>, bool> IrArguments::readRange(bool areNegativeIndicesAllowed) {
 	size_t index0;
 	std::optional<size_t> index1;
 
 	this->readCharacter('[');
-	index0 = this->readNumber();
-	this->readCharacter(':');
-	if(this->iss.peek()!=']')
-		index1 = this->readNumber();
-	this->readCharacter(']');
 
-	return { index0, index1 };
+	if(this->iss.peek()==L'−') {
+		this->iss.get();
+		index0 = this->readNumber();
+		this->readCharacter(':');
+		if(this->iss.peek()!=']') {
+			this->readCharacter(L'−');
+			index1 = this->readNumber();
+		};
+		this->readCharacter(']');
+
+		if(index1 && index0 < (*index1))
+			throw IrParseError(IrParseError::Type::INVALID_RANGE, this->location); //TODO more precise location?
+
+		return { index0, index1, true };
+	}
+	else {
+		index0 = this->readNumber();
+		this->readCharacter(':');
+		if(this->iss.peek()!=']')
+			index1 = this->readNumber();
+		this->readCharacter(']');
+
+		if(index1 && index0 > (*index1))
+			throw IrParseError(IrParseError::Type::INVALID_RANGE, this->location); //TODO more precise location?
+
+		return { index0, index1, false };
+	};
 };
 
 /*!
  * Expect a rightwise unbounded range (used as a destination) in square brackets.
  * It is either an index followed by a colon or the square brackets are empty.
- * \return The range (an optional index).
+ * \param isNegativeIndexAllowed If this is true, minus before the number is allowed.
+ * \return The range, represented as an optional pair of an index and an indicator of a minus sign ([] yields std::nullopt).
  * \throw IrParseError If no such range was there.
  */
-std::optional<size_t> IrArguments::readRightwiseUnboundedRange() {
+std::optional<std::pair<size_t, bool>> IrArguments::readRightwiseUnboundedRange(bool isNegativeIndexAllowed) {
 	size_t index;
 
 	this->readCharacter('[');
@@ -137,12 +161,20 @@ std::optional<size_t> IrArguments::readRightwiseUnboundedRange() {
 
 		return {};
 	}
+	else if(isNegativeIndexAllowed && this->iss.peek()==L'−') {
+		this->iss.get();
+		index = this->readNumber();
+		this->readCharacter(':');
+		this->readCharacter(']');
+
+		return std::pair(index, true);
+	}
 	else {
 		index = this->readNumber();
 		this->readCharacter(':');
 		this->readCharacter(']');
 
-		return index;
+		return std::pair(index, false);
 	};
 };
 
@@ -194,7 +226,7 @@ Machine IrArguments::readMachine() {
  * \throw IrParseError If the arguments are not yet consumed.
  */
 void IrArguments::end() {
-	this->iss.peek(); //FIXME whitespaces before EOF
+	this->iss.peek();
 
 	if(!this->iss.eof())
 		throw IrParseError(IrParseError::Type::INVALID_ARGUMENTS, this->location);

@@ -1,4 +1,6 @@
 #include "./writeNumberInstruction.hpp"
+#include <utility>
+#include <tuple>
 #include <initializer_list>
 #include "../IO/unexpectedError.hpp"
 
@@ -22,8 +24,8 @@ WriteNumberInstruction::WriteNumberInstruction(size_t tape, std::optional<size_t
  * \param arguments The arguments of the instruction from the IR input.
  * \throw IrParseError If the arguments do not match the expected format.
  */
-WriteNumberInstruction::WriteNumberInstruction(IrArguments &arguments): tape(arguments.readTape()) { //TODO indexed from the end
-	this->index = arguments.readRightwiseUnboundedRange();
+WriteNumberInstruction::WriteNumberInstruction(IrArguments &arguments): tape(arguments.readTape()) {
+	std::tie(this->index, this->isIndexFromEnd) = arguments.readRightwiseUnboundedRange(true).transform([](const std::pair<size_t, bool> &pair) -> std::pair<std::optional<size_t>, bool> { return pair; }).value_or({ {}, false });
 
 	arguments.readComma();
 	this->number = arguments.readNumber();
