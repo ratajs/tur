@@ -177,9 +177,6 @@ clean:
 .PHONY: test
 .PHONY: clean
 
-algotest: algotest.cpp machine/tester.hpp machine/./tape.hpp \
-	machine/./machineFactory.hpp machine/././stateGenerator.hpp \
-	machine/././machine.hpp machine/./././tape.hpp IO/error.hpp
 AST/destinationBundle.o: AST/destinationBundle.cpp \
 	AST/./destinationBundle.hpp AST/././variable.hpp \
 	AST/./../parsing/location.hpp AST/../IO/typeError.hpp \
@@ -929,7 +926,11 @@ instructions/copyInstruction.o: instructions/copyInstruction.cpp \
 	instructions/./../parsing/../machine/machine.hpp \
 	instructions/./clearInstruction.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
-	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp
+	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp \
+	instructions/../IO/irParseError.hpp \
+	instructions/../IO/./errorWithLocation.hpp \
+	instructions/../IO/././error.hpp \
+	instructions/../IO/./../parsing/location.hpp
 instructions/decompressInstruction.o: \
 	instructions/decompressInstruction.cpp \
 	instructions/./decompressInstruction.hpp \
@@ -1074,13 +1075,6 @@ machine/stateGenerator.o: machine/stateGenerator.cpp \
 machine/tape.o: machine/tape.cpp machine/./tape.hpp \
 	machine/../IO/unexpectedError.hpp machine/../IO/./error.hpp \
 	machine/../IO/format.hpp
-machine/tester.o: machine/tester.cpp machine/./tester.hpp \
-	machine/././tape.hpp machine/././machineFactory.hpp \
-	machine/./././stateGenerator.hpp machine/./././machine.hpp \
-	machine/././././tape.hpp machine/./machine.hpp \
-	machine/./singleTapeMachineFactory.hpp machine/././machine.hpp \
-	machine/./multiTapeMachineFactory.hpp machine/./machineLibrary.hpp \
-	machine/../IO/unexpectedError.hpp machine/../IO/./error.hpp
 parsing/irArguments.o: parsing/irArguments.cpp parsing/./irArguments.hpp \
 	parsing/././location.hpp parsing/./../machine/machine.hpp \
 	parsing/./../machine/./tape.hpp parsing/../IO/irParseError.hpp \
