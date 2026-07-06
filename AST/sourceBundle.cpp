@@ -1,6 +1,7 @@
 #include "./sourceBundle.hpp"
 #include <utility>
 #include <algorithm>
+#include <ranges>
 #include "../IO/typeError.hpp"
 
 /*!
@@ -26,6 +27,9 @@ void SourceBundle::add(std::unique_ptr<Expression> expression) {
  * Run a closure for each expression in the bundle.
  * \param function The function to run.
  */
-void SourceBundle::forEachExpression(const std::function<void (const std::unique_ptr<Expression>&)> function) const {
-	std::ranges::for_each(this->expressions, function);
+void SourceBundle::forEachExpression(const std::function<void (const std::unique_ptr<Expression>&)> function, bool shouldInReverse) const {
+	if(shouldInReverse)
+		std::ranges::for_each(this->expressions | std::views::reverse, function);
+	else
+		std::ranges::for_each(this->expressions, function);
 };

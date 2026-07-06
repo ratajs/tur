@@ -3,6 +3,7 @@
 #include <utility>
 #include <optional>
 #include <variant>
+#include <tuple>
 #include <vector>
 #include <map>
 #include <string>
@@ -30,8 +31,8 @@ class IrArguments {
 		size_t readNumber();
 		size_t readTape();
 		size_t readLabel();
-		std::pair<size_t, std::optional<size_t>> readRange();
-		std::optional<size_t> readRightwiseUnboundedRange();
+		std::tuple<size_t, std::optional<size_t>, bool> readRange(bool areNegativeIndicesAllowed = false);
+		std::optional<std::pair<size_t, bool>> readRightwiseUnboundedRange(bool isNegativeIndexAllowed = false);
 		std::variant<std::pair<size_t, size_t>, size_t> readTapeAndIndexOrNumber();
 		Machine readMachine();
 		void end();

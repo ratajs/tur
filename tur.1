@@ -1,4 +1,4 @@
-.Dd 2026-07-05
+.Dd 2026-07-06
 .Dt TUR 1
 .Os
 .Sh NAME
@@ -320,12 +320,14 @@ f(input...); # Using ... is required.
 output = 1; # The variable output will contain a single number 1.
 output[2:] = 2; # The first two numbers will be preserved, 2 will rewrite the rest (undefined behavior for less than two numbers in output).
 output[] = 3; # Append the number 3.
-#output[4] = 4; # This is forbidden (for now), any destination slice must be rightwise unbounded. A workaround is: output[4:] = [4, output[5:]];
+#output[4] = 4; # This is forbidden (for now), any destination slice must be rightwise unbounded. A workaround is output[4:] = [4, output[5:]]; or output[:5] = [output[:4], 5];.
 output = input; # Assign the first number of input.
 output = input...; # Assign the whole content of input.
 output[10:] = f(input[5:8])[2:4]; # Any non-logical expression of any length can be assigned.
 output = output[1:5];
 output[2:] = output[1:5];
+output[:0] = 1; # Prepend the number 1.
+output[:2] = output[0]; # Replace the first two numbers with only the first one.
 .Ed
 .It Incrementing or decrementating the first number on a tape:
 .Bd -literal
@@ -381,6 +383,8 @@ output = [1, 2, 3]; # output will contain those three numbers.
 output[2:] = [1, 2, 3]; # The variable can be indexed.
 output[] = [1, 2, 3]; # Appending is also possible.
 output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions can be used.
+output[:1] = []; # Delete the first number.
+output[:0] = [1, 2, input]; # Prepend 1, 2, and the first number from input (the tape will then start with 1).
 .Ed
 .It Splitting (exploding) an expression to multiple variables:
 .Bd -literal
@@ -442,12 +446,13 @@ The only argument of this instruction is the output tape.
 This instruction writes a number on a specific position on a tape.
 The rest of the tape is deleted.
 When this instruction is executed, the tape must be long enough, so that
-the position is not further than the end of the tape.
+the position is no further than the end of the tape.
 It has two arguments separated by comma: destination and number.
-The destination has two variants:
+The destination has three variants:
 .Bd -literal
 writeNumber(2[5:], 10) # Write 10 directly after the fifth number on the tape 2
 writeNumber(2[], 15) # Append 15 to the tape 2
+writeNumber(2[\(mi2:], 20) # Replace the last two numbers on the tape 2 with 20 (Unicode minus)
 .Ed
 .It Ic clear
 This instruction clears a range on a tape.
@@ -457,6 +462,8 @@ The tape with range is the only argument.
 clear(1[0:]) # Clear the whole tape 1
 clear(1[0:5]) # Delete the first five numbers while keeping the rest
 clear(1[5:]) # Delete everything after the fifth number
+clear(1[\(mi1:]) # Delete the last number (Unicode minus)
+#clear(1[0:\(mi1]) # This is not supported, you have to use REVERSE
 .Ed
 .It Ic copy
 This instruction copies a range from one tape to another.
@@ -467,9 +474,14 @@ optional second index, all in square brackets.
 The destination range must be rightwise unbounded, it is specified
 by an index followed by colon, all in square brackets, or by empty sqaure
 brackets, which means that the data should be appended.
+All indices can be negative (indexed from the end), but both source indices
+must have the same sign.
 .Bd -literal
 copy(3[0:1], 4[0:]) # Copy the first number of the tape 3 to the beginning of the tape 4, the content of the tape 4 will be lost
 copy(3[1:], 4[]) # Copy the content of the tape 3 except for the first number to the end of the tape 4, the content of the tape 4 will not be lost
+copy(3[1:], 4[]) # Copy the content of the tape 3 except for the first number to the end of the tape 4, the content of the tape 4 will not be lost
+copy(1[\(mi2:\(mi1], 2[0:]) # Copy the penultimate number from the tape 1 to the tape 2
+copy(1[\(mi1:], 2[\(mi1]) # Replace the last number of the tape 2 with the last number of tape 1
 .Ed
 .It Ic call
 This instruction simulates a defined Turing machine on a single tape.

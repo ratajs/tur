@@ -1,8 +1,8 @@
 #pragma once
+#include "./machineFactory.hpp"
 #include <cstdlib>
 #include <optional>
 #include <string>
-#include "./machineFactory.hpp"
 #include "./machine.hpp"
 
 /*!
@@ -20,8 +20,8 @@ class SingleTapeMachineFactory: public MachineFactory {
 
 	public:
 		SingleTapeMachineFactory &clearBeginning(size_t count);
-		SingleTapeMachineFactory &clearEnd(size_t begin);
-		SingleTapeMachineFactory &writeNumber(size_t begin, size_t number);
+		SingleTapeMachineFactory &clearEnd(size_t begin, bool isBeginFromEnd = false);
+		SingleTapeMachineFactory &writeNumber(size_t begin, size_t number, bool isBeginFromEnd = false);
 		SingleTapeMachineFactory &appendNumber(size_t number);
 		SingleTapeMachineFactory &simulate(const Machine &machine);
 		SingleTapeMachineFactory &compareWithConstant(size_t index, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);

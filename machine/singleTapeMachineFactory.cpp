@@ -203,27 +203,55 @@ SingleTapeMachineFactory &SingleTapeMachineFactory::clearBeginning(size_t count)
  * This method clears numbers from the end of a tape.
  * The behavior is undefined if there is not enough numbers on the tape (less than begin).
  * \param begin From where to clear (how many numbers to keep).
+ * \param isBeginFromEnd Whether the begin is indexed from the end.
  */
-SingleTapeMachineFactory &SingleTapeMachineFactory::clearEnd(size_t begin) {
+SingleTapeMachineFactory &SingleTapeMachineFactory::clearEnd(size_t begin, bool isBeginFromEnd) {
 	size_t x;
+	std::wstring clearAllState, endState;
 
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
 
-	for(x = 0; x < begin; x++)
-		this->skipNumber({}, {});
+	if(isBeginFromEnd && begin==0)
+		return (*this);
+
+	if(isBeginFromEnd) {
+		this->findEnd({}, {});
+		this->addTransition<false, false, Machine::Direction::L>({}, {});
+		this->addTransition<false, false, Machine::Direction::L>({}, {});
+		for(x = 0; x < begin; x++) {
+			this->addTransition<true, true, Machine::Direction::L>({});
+			this->addTransition<false, false, Machine::Direction::L>({}, {});
+		};
+		clearAllState = this->addTransition<false, false, Machine::Direction::R>({}, {});
+		this->addTransition<true, true, Machine::Direction::R>(this->generator.getLastState(), {});
+		this->addTransition<false, false, Machine::Direction::R>({}, {});
+	}
+	else {
+		for(x = 0; x < begin; x++)
+			this->skipNumber({}, {});
+	};
 
 	this->addTransition<true, false, Machine::Direction::R>({});
 	this->addTransition<false, false, Machine::Direction::R>({}, {});
 	this->addTransition<true, false, Machine::Direction::R>({}, this->generator.getLastState());
 
 	if(begin==0)
-		this->addTransition<false, false, Machine::Direction::L>({}, {});
+		endState = this->addTransition<false, false, Machine::Direction::L>({}, {});
 	else {
 		this->addTransition<false, false, Machine::Direction::L>({}, {});
 		this->addTransition<false, false, Machine::Direction::L>({});
 		this->addTransition<true, true, Machine::Direction::N>({}, {});
-		this->goHome({}, {});
+		endState = this->goHome({}, {});
+	};
+
+	if(isBeginFromEnd) {
+		this->addTransition<false, false, Machine::Direction::R>(clearAllState, {});
+		this->addTransition<true, false, Machine::Direction::R>({});
+		this->addTransition<false, false, Machine::Direction::R>({}, {});
+		this->addTransition<true, false, Machine::Direction::R>({}, this->generator.getLastState());
+		this->addTransition<false, false, Machine::Direction::N>({}, {});
+		this->addTransition<false, false, Machine::Direction::N>(endState, this->generator.getLastState());
 	};
 
 	return (*this);
@@ -235,15 +263,28 @@ SingleTapeMachineFactory &SingleTapeMachineFactory::clearEnd(size_t begin) {
  * The behavior is undefined if there is not enough numbers on the tape (less than begin).
  * \param begin The target position (0 is the beginning).
  * \param number The number to be written.
+ * \param isBeginFromEnd Whether the begin is indexed from the end.
  */
-SingleTapeMachineFactory &SingleTapeMachineFactory::writeNumber(size_t begin, size_t number) {
+SingleTapeMachineFactory &SingleTapeMachineFactory::writeNumber(size_t begin, size_t number, bool isBeginFromEnd) {
 	size_t x;
 
 	if(this->isCurrentStateDisabled)
 		throw UnexpectedError(L"Current state is disabled.");
 
-	for(x = 0; x < begin; x++)
-		this->skipNumber({}, {});
+	if(isBeginFromEnd) {
+		this->findEnd({}, {});
+		this->addTransition<false, false, Machine::Direction::L>({}, {});
+		for(x = 0; x < begin; x++) {
+			this->addTransition<false, false, Machine::Direction::L>({}, {});
+			this->addTransition<true, true, Machine::Direction::L>({});
+			this->addTransition<false, false, Machine::Direction::N>({}, {});
+		};
+		this->addTransition<false, false, Machine::Direction::R>({}, {});
+	}
+	else {
+		for(x = 0; x < begin; x++)
+			this->skipNumber({}, {});
+	};
 
 	for(x = 0; x <= number; x++) {
 		this->addTransition<false, true, Machine::Direction::R>({}, {});

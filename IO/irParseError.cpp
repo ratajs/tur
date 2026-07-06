@@ -29,8 +29,14 @@ std::wstring IrParseError::getSimpleMessage() const {
 		case IrParseError::Type::INVALID_TAPE_NUMBER:
 			return L"Invalid tape number";
 
+		case IrParseError::Type::INVALID_RANGE:
+			return L"Invalid range";
+
 		case IrParseError::Type::INVALID_RANGE_FOR_CLEAR:
 			return L"Invalid range for clear";
+
+		case IrParseError::Type::SAME_TAPE_WITH_COPY:
+			return L"A copy instruction must copy from one tape to another";
 
 		case IrParseError::Type::COME_FROM_EXPECTED:
 			return L"A COMEFROM instruction expected";
