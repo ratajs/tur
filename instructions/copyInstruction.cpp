@@ -58,10 +58,16 @@ std::optional<std::list<std::unique_ptr<Instruction>>> CopyInstruction::tryToUni
 };
 
 std::unique_ptr<Instruction> CopyInstruction::tryToMerge(const Instruction &otherInstruction) const {
+	if(this->areSourceIndicesFromEnd || this->isDestinationIndexFromEnd)
+		return {}; //TODO merge for other variants as well
+
 	return otherInstruction.tryToMergeWithCopy(this->source, this->destination, this->sourceIndex0, this->sourceIndex1, this->destinationIndex);
 };
 
 std::unique_ptr<Instruction> CopyInstruction::tryToMergeWithCopy(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex) const {
+	if(this->areSourceIndicesFromEnd || this->isDestinationIndexFromEnd)
+		return {}; //TODO merge for other variants as well
+
 	// Merge if this and the previous instruction copy together a continuous slice.
 	if(this->source==source && this->destination==destination && sourceIndex1 && this->sourceIndex0==(*sourceIndex1) && (!this->destinationIndex || (destinationIndex && (*this->destinationIndex)==(*destinationIndex) + ((*sourceIndex1) - sourceIndex0))))
 		return std::make_unique<CopyInstruction>(source, destination, sourceIndex0, this->sourceIndex1, destinationIndex);
