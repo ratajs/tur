@@ -17,11 +17,15 @@
  * \param destinationIndex The index on the variable from where (to to where, if reversed) on to write. {} (std::nullopt) means appending.
  * \param isReversed Whether the implosion should rewrite the beginning, instead of the end.
  * \param bundleLocation The location of the SourceBundle (not used for now, but it would be used for type errors).
+ * \throw UnexpectedError If destinationIndex is {}, but isReversed or isDestinationIndexFromEnd is true.
  */
-ImplodeStatement::ImplodeStatement(SourceBundle source, Variable &destination, std::optional<size_t> destinationIndex, bool isReversed, Location bundleLocation):
-	isReversed(isReversed), destinationIndex(destinationIndex), destination(destination), source(std::move(source)) {
+ImplodeStatement::ImplodeStatement(SourceBundle source, Variable &destination, std::optional<size_t> destinationIndex, bool isReversed, bool isDestinationIndexFromEnd, Location bundleLocation):
+	isReversed(isReversed), isDestinationIndexFromEnd(isDestinationIndexFromEnd), destinationIndex(destinationIndex), destination(destination), source(std::move(source)) {
 		if(isReversed && !destinationIndex)
 			throw UnexpectedError(L"Reversed implosion requires a destination index.");
+
+		if(isDestinationIndexFromEnd && !destinationIndex)
+			throw UnexpectedError(L"Destination indexed from end without a destination index.");
 
 		this->source.forEachExpression(
 			[this](const std::unique_ptr<Expression> &expression) -> void {
@@ -50,10 +54,17 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 		builder.addInstruction(std::make_unique<CopyInstruction>(*this->destination.tape, backupTape, this->backupRange->index0, this->backupRange->index1, 0));
 	};
 
-	if(this->isReversed && (*this->destinationIndex)!=0)
-		builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, 0, *this->destinationIndex));
+	if(this->isReversed && ((*this->destinationIndex)!=0 || this->isDestinationIndexFromEnd)) {
+		if(this->isDestinationIndexFromEnd) {
+			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+			builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, *this->destinationIndex, std::nullopt));
+			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+		}
+		else
+			builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, 0, *this->destinationIndex));
+	};
 	if(!this->isReversed && this->destinationIndex)
-		builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, *this->destinationIndex, std::nullopt, this->isReversed));
+		builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, *this->destinationIndex, std::nullopt, this->isDestinationIndexFromEnd));
 
 	if(this->source.isEmpty())
 		return;

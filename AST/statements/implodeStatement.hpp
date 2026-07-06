@@ -14,13 +14,13 @@
  */
 class ImplodeStatement: public Statement {
 	private:
-		bool isReversed;
+		bool isReversed, isDestinationIndexFromEnd;
 		std::optional<size_t> destinationIndex; // Append if {}
 		std::optional<Expression::TapeRange> backupRange;
 		Variable &destination;
 		SourceBundle source;
 
 	public:
-		ImplodeStatement(SourceBundle source, Variable &destination, std::optional<size_t> destinationIndex, bool isReversed, Location bundleLocation);
+		ImplodeStatement(SourceBundle source, Variable &destination, std::optional<size_t> destinationIndex, bool isReversed, bool isDestinationIndexFromEnd, Location bundleLocation);
 		void build(InstructionBuilder &builder) const override;
 };

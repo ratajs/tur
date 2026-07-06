@@ -14,12 +14,12 @@
  */
 class AssignStatement: public Statement {
 	private:
-		bool isReversed;
+		bool isReversed, isDestinationIndexFromEnd;
 		std::optional<size_t> destinationIndex; // Append if {}
 		Variable &destination;
 		std::unique_ptr<Expression> source;
 
 	public:
-		AssignStatement(std::unique_ptr<Expression> source, Variable &destination, std::optional<size_t> destinationIndex, bool isReversed);
+		AssignStatement(std::unique_ptr<Expression> source, Variable &destination, std::optional<size_t> destinationIndex, bool isReversed, bool isDestinationIndexFromEnd);
 		void build(InstructionBuilder &builder) const override;
 };

@@ -24,8 +24,8 @@ RemainingAssignmentOrSimpleCall → INC
 RemainingAssignmentOrSimpleCall → DEC
 
 RemainingArrayAccessAssignment → RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
-RemainingArrayAccessAssignment → NUMBER COLON RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
-RemainingArrayAccessAssignment → COLON NUMBER RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
+RemainingArrayAccessAssignment → PossiblyNegativeNumber COLON RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
+RemainingArrayAccessAssignment → COLON PossiblyNegativeNumber RIGHT_SQUARE_BRACKET ASSIGN LogicalExpressionOrSourceBundle
 
 DestinationBundle → LEFT_SQUARE_BRACKET IDENTIFIER OptionalEllipsis RemainingDestinationBundle RIGHT_SQUARE_BRACKET
 
@@ -34,6 +34,9 @@ RemainingDestinationBundle → COMMA IDENTIFIER OptionalEllipsis RemainingDestin
 
 OptionalEllipsis →
 OptionalEllipsis → ELLIPSIS
+
+PossiblyNegativeNumber → NUMBER
+PossiblyNegativeNumber → MINUS NUMBER
 
 LogicalExpressionOrSourceBundleOrMachine → LogicalExpression
 LogicalExpressionOrSourceBundleOrMachine → SourceBundle

@@ -1,5 +1,5 @@
 #include "./parser.hpp"
-#include <utility>
+#include <tuple>
 #include <array>
 #include <ranges>
 #include <string_view>
@@ -297,10 +297,10 @@ std::unique_ptr<Statement> Parser::parseRemainingAssignmentOrSimpleCall(std::wst
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, false);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, false, false);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundleOrMachine))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, false, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundleOrMachine)), this->program.findOrAddVariable(identifier), 0, false, false, Location(itA->getLocation(), itB->getLocation()));
 
 			if(std::holds_alternative<Machine>(expressionOrSourceBundleOrMachine)) {
 				this->program.addMachine(identifier, std::move(std::get<Machine>(expressionOrSourceBundleOrMachine)), identifierLocation);
@@ -339,7 +339,8 @@ std::unique_ptr<Statement> Parser::parseRemainingAssignmentOrSimpleCall(std::wst
 };
 
 std::unique_ptr<Statement> Parser::parseRemainingArrayAccessAssignment(std::wstring identifier) {
-	size_t number;
+	bool isDestinationIndexFromEnd;
+	size_t destinationIndex;
 	std::vector<Token>::const_iterator itA, itB;
 	std::variant<std::unique_ptr<Expression>, SourceBundle> expressionOrSourceBundle;
 
@@ -351,38 +352,42 @@ std::unique_ptr<Statement> Parser::parseRemainingArrayAccessAssignment(std::wstr
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, false);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, false, false);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, false, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), std::nullopt, false, false, Location(itA->getLocation(), itB->getLocation()));
 
 			std::unreachable();
 
 		case Token::Type::NUMBER:
-			this->expect(number, Token::Type::COLON, Token::Type::RIGHT_SQUARE_BRACKET, Token::Type::ASSIGN);
+		case Token::Type::MINUS:
+			std::tie(destinationIndex, isDestinationIndexFromEnd) = this->parsePossiblyNegativeNumber();
+			this->expect(Token::Type::COLON, Token::Type::RIGHT_SQUARE_BRACKET, Token::Type::ASSIGN);
 			itA = this->it;
 			expressionOrSourceBundle = this->parseLogicalExpressionOrSourceBundle();
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, false);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), destinationIndex, false, isDestinationIndexFromEnd);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, false, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), destinationIndex, false, isDestinationIndexFromEnd, Location(itA->getLocation(), itB->getLocation()));
 
 			std::unreachable();
 
 		case Token::Type::COLON:
-			this->expect(Token::Type::COLON, number, Token::Type::RIGHT_SQUARE_BRACKET, Token::Type::ASSIGN);
+			this->expect(Token::Type::COLON);
+			std::tie(destinationIndex, isDestinationIndexFromEnd) = this->parsePossiblyNegativeNumber();
+			this->expect(Token::Type::RIGHT_SQUARE_BRACKET, Token::Type::ASSIGN);
 			itA = this->it;
 			expressionOrSourceBundle = this->parseLogicalExpressionOrSourceBundle();
 			itB = std::prev(this->it);
 
 			if(std::holds_alternative<std::unique_ptr<Expression>>(expressionOrSourceBundle))
-				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, true);
+				return std::make_unique<AssignStatement>(std::move(std::get<std::unique_ptr<Expression>>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), destinationIndex, true, isDestinationIndexFromEnd);
 
 			if(std::holds_alternative<SourceBundle>(expressionOrSourceBundle))
-				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), number, true, Location(itA->getLocation(), itB->getLocation()));
+				return std::make_unique<ImplodeStatement>(std::move(std::get<SourceBundle>(expressionOrSourceBundle)), this->program.findOrAddVariable(identifier), destinationIndex, true, isDestinationIndexFromEnd, Location(itA->getLocation(), itB->getLocation()));
 
 			std::unreachable();
 
@@ -443,6 +448,25 @@ bool Parser::parseOptionalEllipsis() {
 			this->expect(Token::Type::ELLIPSIS);
 
 			return true;
+
+		default:
+			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
+	};
+};
+
+std::pair<size_t, bool> Parser::parsePossiblyNegativeNumber() {
+	size_t number;
+
+	switch(this->getNextTokenType()) {
+		case Token::Type::NUMBER:
+			this->expect(number);
+
+			return { number, false };
+
+		case Token::Type::MINUS:
+			this->expect(Token::Type::MINUS, number);
+
+			return { number, true };
 
 		default:
 			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
