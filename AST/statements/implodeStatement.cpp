@@ -16,6 +16,7 @@
  * \param destination The variable where the joined expressions will be written.
  * \param destinationIndex The index on the variable from where (to to where, if reversed) on to write. {} (std::nullopt) means appending.
  * \param isReversed Whether the implosion should rewrite the beginning, instead of the end.
+ * \param isDestinationIndexFromEnd Whether the destination is indexed from the end (0 means the end, 1 is the place before the last number).
  * \param bundleLocation The location of the SourceBundle (not used for now, but it would be used for type errors).
  * \throw UnexpectedError If destinationIndex is {}, but isReversed or isDestinationIndexFromEnd is true.
  */
