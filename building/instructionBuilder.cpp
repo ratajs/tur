@@ -149,7 +149,7 @@ void InstructionBuilder::allowInstructionMerging() {
 size_t InstructionBuilder::addInstruction(std::unique_ptr<Instruction> instruction) {
 	std::optional<std::list<std::unique_ptr<Instruction>>> replacementInstructions;
 
-	if(this->isInstructionMergingEnabled && !this->instructions.empty() && (replacementInstructions = this->instructions.back()->tryToMerge(*instruction))) {
+	if(this->isInstructionMergingEnabled && !this->instructions.empty() && (replacementInstructions = this->instructions.back()->tryToMerge(*instruction))) { //TODO move to InstructionCollection when tape first/last reference stuff is postponed there as well
 		this->instructions.pop_back();
 		this->instructions.splice(this->instructions.end(), std::move(*replacementInstructions));
 	}

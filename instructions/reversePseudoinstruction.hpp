@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdlib>
+#include <memory>
+#include <optional>
 #include <vector>
+#include <list>
 #include <string>
 #include <iostream>
 #include <functional>
@@ -14,8 +17,8 @@
 class ReversePseudoinstruction: public Instruction {
 	public:
 		std::vector<size_t> listUsedTapes() const override;
+		std::optional<std::list<std::unique_ptr<Instruction>>> tryToMerge(const Instruction &otherInstruction) const override;
 		void build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const override;
-	//TODO merge with reverse
 };
