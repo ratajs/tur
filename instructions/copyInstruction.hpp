@@ -25,7 +25,7 @@ class CopyInstruction: public Instruction {
 		CopyInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		std::optional<std::list<std::unique_ptr<Instruction>>> tryToUnify() const override;
-		std::unique_ptr<Instruction> tryToMerge(const Instruction &otherInstruction) const override;
+		std::optional<std::list<std::unique_ptr<Instruction>>> tryToMerge(const Instruction &otherInstruction) const override;
 		void build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const override;
 		void print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const override;
 };

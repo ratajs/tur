@@ -1165,7 +1165,7 @@ std::vector<std::unique_ptr<Statement>> Parser::parseOptionalElse() {
 			trueBranch = this->parseStatements();
 			falseBranch = this->parseOptionalElse();
 
-			return std::vector<std::unique_ptr<Statement>>(std::from_range, std::array<std::unique_ptr<Statement>, 1> { std::make_unique<IfStatement>(std::move(condition), std::move(trueBranch), std::move(falseBranch)) } | std::views::as_rvalue);
+			return std::vector<std::unique_ptr<Statement>>(std::from_range, std::array { std::make_unique<IfStatement>(std::move(condition), std::move(trueBranch), std::move(falseBranch)) } | std::views::as_rvalue);
 
 		default:
 			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);

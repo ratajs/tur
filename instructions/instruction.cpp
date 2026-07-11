@@ -13,7 +13,7 @@ std::vector<size_t> Instruction::getGoToDestinations() const {
 	return {};
 };
 
-std::unique_ptr<Instruction> Instruction::tryToMerge(const Instruction &otherInstruction) const {
+std::optional<std::list<std::unique_ptr<Instruction>>> Instruction::tryToMerge(const Instruction &otherInstruction) const {
 	return {};
 };
 

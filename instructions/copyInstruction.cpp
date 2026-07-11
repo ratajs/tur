@@ -1,7 +1,9 @@
 #include "./copyInstruction.hpp"
 #include <utility>
 #include <tuple>
+#include <array>
 #include <initializer_list>
+#include <ranges>
 #include "./clearInstruction.hpp"
 #include "../IO/unexpectedError.hpp"
 #include "../IO/irParseError.hpp"
@@ -64,7 +66,7 @@ std::optional<std::list<std::unique_ptr<Instruction>>> CopyInstruction::tryToUni
 	return { std::move(instructions) };
 };
 
-std::unique_ptr<Instruction> CopyInstruction::tryToMerge(const Instruction &otherInstruction) const {
+std::optional<std::list<std::unique_ptr<Instruction>>> CopyInstruction::tryToMerge(const Instruction &otherInstruction) const {
 	const CopyInstruction *copyInstruction;
 
 	copyInstruction = dynamic_cast<const CopyInstruction*>(&otherInstruction);
@@ -76,8 +78,15 @@ std::unique_ptr<Instruction> CopyInstruction::tryToMerge(const Instruction &othe
 		return {}; //TODO merge for other variants as well
 
 	//TODO reversed order of ranges?
-	if(copyInstruction->source==this->source && copyInstruction->destination==this->destination && this->sourceIndex1 && copyInstruction->sourceIndex0==(*this->sourceIndex1) && (!copyInstruction->destinationIndex || (this->destinationIndex && (*copyInstruction->destinationIndex)==(*this->destinationIndex) + ((*this->sourceIndex1) - this->sourceIndex0))))
-		return std::make_unique<CopyInstruction>(this->source, this->destination, this->sourceIndex0, copyInstruction->sourceIndex1, this->destinationIndex);
+	if(
+		copyInstruction->source==this->source && copyInstruction->destination==this->destination &&
+		this->sourceIndex1 && copyInstruction->sourceIndex0==(*this->sourceIndex1) && (
+			!copyInstruction->destinationIndex || (
+				this->destinationIndex && (*copyInstruction->destinationIndex)==(*this->destinationIndex) + ((*this->sourceIndex1) - this->sourceIndex0)
+			)
+		)
+	)
+		return std::list<std::unique_ptr<Instruction>>(std::from_range, std::array { std::make_unique<CopyInstruction>(this->source, this->destination, this->sourceIndex0, copyInstruction->sourceIndex1, this->destinationIndex) } | std::views::as_rvalue);
 
 	return {};
 };

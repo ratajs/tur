@@ -1,10 +1,15 @@
 #include "./instructionCollection.hpp"
+#include <cstdlib>
 #include <utility>
+#include <memory>
 #include <optional>
+#include <vector>
+#include <list>
 #include <queue>
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <iostream>
 #include <functional>
 #include "../IO/unexpectedError.hpp"
 

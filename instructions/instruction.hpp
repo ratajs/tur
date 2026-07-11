@@ -53,12 +53,12 @@ class Instruction {
 		virtual std::optional<std::list<std::unique_ptr<Instruction>>> tryToUnify() const;
 
 		/*!
-		 * If this virtual method is implemented and returns an instruction, this and an other instruction can be merged into one.
-		 * The default implementation always returns {} (nullptr), which means that no unification should happen.
+		 * If this virtual method is implemented and returns a list of instructions, this and an other instruction can be merged/simplified.
+		 * The default implementation always returns {} (std::nullopt), which means that no change should happen.
 		 * \param otherInstruction The second instruction which comes directly after this.
-		 * \return The merged instruction. Or {} (nullptr) if no merge should happen.
+		 * \return The merged/simplified instructions. Or {} (std::nullopt) if no merge should happen.
 		 */
-		virtual std::unique_ptr<Instruction> tryToMerge(const Instruction &otherInstruction) const;
+		virtual std::optional<std::list<std::unique_ptr<Instruction>>> tryToMerge(const Instruction &otherInstruction) const;
 
 		/*!
 		 * This virtual method should build the instruction using the SingleTapeMachineFactory.
