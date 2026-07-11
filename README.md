@@ -200,7 +200,7 @@ require g; # More requirements require more -m options.
 f(input...); # Using ... is required.
 ```
 
-#### Assignment of an expression to a variable, possibly at a given index:
+#### Assignment of an expression to a variable, possibly at a given index, replacing all the content following (or preceding) the position:
 ```
 output = 1; # The variable output will contain a single number 1.
 output[2:] = 2; # The first two numbers will be preserved, 2 will rewrite the rest (undefined behavior for less than two numbers in output).
@@ -213,6 +213,8 @@ output = output[1:5];
 output[2:] = output[1:5];
 output[:0] = 1; # Prepend the number 1.
 output[:2] = output[0]; # Replace the first two numbers with only the first one.
+output[-1:] = 2; # Replace the last number with 1.
+output[:-2] = input...; # Replace everything except the last two numbers with input.
 ```
 
 #### Incrementing or decrementating the first number on a tape:
@@ -275,6 +277,8 @@ output[] = [1, 2, 3]; # Appending is also possible.
 output = [f(input)..., 10, input[2:5], output]; # Any non-logical expressions can be used.
 output[:1] = []; # Delete the first number.
 output[:0] = [1, 2, input]; # Prepend 1, 2, and the first number from input (the tape will then start with 1).
+output[-3:] = [1, 2, 3]; # Replace the last three numbers with 1 2 3.
+output[:-1] = [input, 0, output]; # Replace everything except the last number with input[0] 0 output[0].
 ```
 
 #### Splitting (exploding) an expression to multiple variables:

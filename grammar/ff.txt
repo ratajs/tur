@@ -24,7 +24,7 @@ INC
 DEC
 
 RIGHT_SQUARE_BRACKET																																SEMICOLON/COLON																																																																						RemainingAssignment
-NUMBER
+NUMBER/MINUS
 COLON
 
 LEFT_SQUARE_BRACKET																																	ASSIGN
@@ -34,6 +34,9 @@ COMMA
 
 ε																																										COMMA/RIGHT_SQUARE_BRACKET																																																																RemainingDestinationBundle
 ELLIPSIS
+
+NUMBER																																							COLON/RIGHT_SQUARE_BRACKET
+MINUS
 
 NEG/IDENTIFIER/LEFT_PARENTHESIS/NUMBER/COUNT																				SEMICOLON/COLON																																																																						RemainingAssignment
 LEFT_SQUARE_BRACKET

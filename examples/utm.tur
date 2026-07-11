@@ -5,22 +5,6 @@
 # The blank symbol is 0.
 # Output: output of the given machine with the given input
 
-pop = {
-	A 1 1 R A
-	A 0 0 R B
-	B 1 1 R A
-	B 0 0 L C
-	C 0 0 L C
-	C 1 0 L D
-	D 1 0 L D
-	D 0 0 L E
-	E 0 0 R F
-	F 0 0 R _
-	E 1 1 L G
-	G 1 1 L G
-	G 0 0 L E
-};
-
 getLast = {
 	A 1 1 R A
 	A 0 0 R B
@@ -88,12 +72,12 @@ endloop;
 # output = [];
 # while (ρ leftTape) > 0:
 #		output[] = getLast(leftTape...);
-#		pop(leftTape...);
+#		leftTape[−1:] = [];
 #	endwhile;
 # output[] = rightTape...;
 
 # To only display the part of the tape starting from the current position and without trailing zeros:
 output = rightTape...;
 while (ρ output) > 1 ∧ getLast(output...)==0:
-	pop(output...);
+	output[−1:] = [];
 endwhile;

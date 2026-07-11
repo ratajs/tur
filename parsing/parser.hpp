@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+#include <utility>
 #include <memory>
 #include <optional>
 #include <variant>
@@ -49,6 +50,7 @@ class Parser {
 		DestinationBundle parseDestinationBundle();
 		void parseRemainingDestinationBundle(DestinationBundle &destinationBundle);
 		bool parseOptionalEllipsis();
+		std::pair<size_t, bool> parsePossiblyNegativeNumber();
 		std::variant<std::unique_ptr<Expression>, SourceBundle, Machine> parseLogicalExpressionOrSourceBundleOrMachine();
 		std::variant<std::unique_ptr<Expression>, SourceBundle> parseLogicalExpressionOrSourceBundle();
 		SourceBundle parseSourceBundle();

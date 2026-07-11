@@ -22,6 +22,9 @@ CopyInstruction::CopyInstruction(size_t source, size_t destination, size_t sourc
 
 		if((!areSourceIndicesFromEnd && sourceIndex1 && (*sourceIndex1) <= sourceIndex0) || (areSourceIndicesFromEnd && sourceIndex1 && (*sourceIndex1) >= sourceIndex0))
 			throw UnexpectedError(L"Invalid source indices for copy.");
+
+		if(isDestinationIndexFromEnd && !destinationIndex)
+			throw UnexpectedError(L"Destination indexed from end without a destination index.");
 	};
 
 /*!
