@@ -17,10 +17,6 @@ std::unique_ptr<Instruction> Instruction::tryToMerge(const Instruction &otherIns
 	return {};
 };
 
-std::unique_ptr<Instruction> Instruction::tryToMergeWithCopy(size_t source, size_t destination, size_t sourceIndex0, std::optional<size_t> sourceIndex1, std::optional<size_t> destinationIndex) const {
-	return {};
-};
-
 std::optional<std::list<std::unique_ptr<Instruction>>> Instruction::tryToUnify() const {
 	return {};
 };

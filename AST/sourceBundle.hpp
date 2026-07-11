@@ -15,5 +15,5 @@ class SourceBundle {
 	public:
 		bool isEmpty() const;
 		void add(std::unique_ptr<Expression> expression);
-		void forEachExpression(const std::function<void (const std::unique_ptr<Expression>&)> function, bool shouldInReverse = false) const; //TODO replace with a custom std::range
+		void forEachExpression(const std::function<void (const std::unique_ptr<Expression>&)> function, bool shouldInReverse = false) const;
 };
