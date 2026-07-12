@@ -4,10 +4,13 @@
 #include <tuple>
 #include <algorithm>
 #include <iterator>
+#include <string>
 #include "../../instructions/writeNumberInstruction.hpp"
 #include "../../instructions/copyInstruction.hpp"
 #include "../../instructions/callInstruction.hpp"
 #include "../../instructions/clearInstruction.hpp"
+#include "../../instructions/reversePseudoinstruction.hpp"
+#include "../../IO/unexpectedError.hpp"
 #include "../../IO/typeError.hpp"
 
 /*!
@@ -32,26 +35,42 @@ Expression::Type CallExpression::getType() const {
 
 Expression::Result CallExpression::build(InstructionBuilder &builder) const {
 	size_t tape, argumentTape;
-	std::optional<size_t> firstIndex1;
 	Expression::TapeRange tapeRange;
 	std::vector<std::unique_ptr<Expression>>::const_iterator it;
 
 	if(!this->arguments.empty() && !this->arguments.front()->isConstant() && this->arguments.front()->isTapeTemporary()) { // Reusing the tape of the first argument is possible
 		std::tie(tape, tapeRange) = this->arguments.front()->buildTape(builder);
-		if(tapeRange.index0 > 0)
+		if(tapeRange.index0 > 0 && !tapeRange.isIndex0FromEnd)
 			builder.addInstruction(std::make_unique<ClearInstruction>(tape, 0, tapeRange.index0));
+		if(tapeRange.isIndex0FromEnd) {
+			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+			builder.addInstruction(std::make_unique<ClearInstruction>(tape, tapeRange.index0, std::nullopt));
+			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+		};
 
-		if(this->arguments.size()==1 && tapeRange.index1)
-			builder.addInstruction(std::make_unique<ClearInstruction>(tape, *tapeRange.index1, std::nullopt));
-
-		firstIndex1 = tapeRange.index1;
+		if(!tapeRange.isIndex1FromEnd) {
+			if(!tapeRange.isIndex1FromEnd)
+				builder.addInstruction(std::make_unique<ClearInstruction>(tape, tapeRange.index1 - tapeRange.index0, std::nullopt));
+			else
+				throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
+		}
+		if(tapeRange.isIndex1FromEnd && tapeRange.index1 > 0)
+			builder.addInstruction(std::make_unique<ClearInstruction>(tape, tapeRange.index1, std::nullopt, true));
 
 		for(it = std::next(this->arguments.begin()); it!=this->arguments.end(); it++) {
 			if((*it)->isConstant())
-				builder.addInstruction(std::make_unique<WriteNumberInstruction>(tape, (it==std::next(this->arguments.begin())) ? firstIndex1 : std::nullopt, (*it)->buildConstant(builder)));
+				builder.addInstruction(std::make_unique<WriteNumberInstruction>(tape, std::nullopt, (*it)->buildConstant(builder)));
 			else {
 				std::tie(argumentTape, tapeRange) = (*it)->buildTape(builder);
-				builder.addInstruction(std::make_unique<CopyInstruction>(argumentTape, tape, tapeRange.index0, tapeRange.index1, (it==std::next(this->arguments.begin())) ? firstIndex1 : std::nullopt));
+				if(tapeRange.isIndex0FromEnd==tapeRange.isIndex1FromEnd) // [x:y], [−x:−y]
+					builder.addInstruction(std::make_unique<CopyInstruction>(argumentTape, tape, tapeRange.index0, tapeRange.index1, std::nullopt, tapeRange.isIndex0FromEnd));
+				else if(tapeRange.isIndex1FromEnd) { // [x:−y]
+					builder.addInstruction(std::make_unique<CopyInstruction>(argumentTape, tape, tapeRange.index0, std::nullopt, std::nullopt));
+					if(tapeRange.index1 > 0)
+						builder.addInstruction(std::make_unique<ClearInstruction>(tape, tapeRange.index1, std::nullopt, true));
+				}
+				else // [−x:y]
+					throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
 			};
 		};
 	}
@@ -64,14 +83,22 @@ Expression::Result CallExpression::build(InstructionBuilder &builder) const {
 				builder.addInstruction(std::make_unique<WriteNumberInstruction>(tape, (it==this->arguments.begin()) ? std::optional<size_t>(0) : std::nullopt, (*it)->buildConstant(builder)));
 			else {
 				std::tie(argumentTape, tapeRange) = (*it)->buildTape(builder);
-				builder.addInstruction(std::make_unique<CopyInstruction>(argumentTape, tape, tapeRange.index0, tapeRange.index1, (it==this->arguments.begin()) ? std::optional<size_t>(0) : std::nullopt));
+				if(tapeRange.isIndex0FromEnd==tapeRange.isIndex1FromEnd)
+					builder.addInstruction(std::make_unique<CopyInstruction>(argumentTape, tape, tapeRange.index0, tapeRange.index1, (it==this->arguments.begin()) ? std::optional<size_t>(0) : std::nullopt));
+				else if(tapeRange.isIndex1FromEnd) {
+					builder.addInstruction(std::make_unique<CopyInstruction>(argumentTape, tape, tapeRange.index0, std::nullopt, (it==this->arguments.begin()) ? std::optional<size_t>(0) : std::nullopt));
+					if(tapeRange.index1 > 0)
+						builder.addInstruction(std::make_unique<ClearInstruction>(tape, tapeRange.index1, std::nullopt, true));
+				}
+				else
+					throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
 			};
 		};
 	};
 
 	builder.addInstruction(std::make_unique<CallInstruction>(tape, this->machine));
 
-	return Expression::Result::createTapeRange(tape, Expression::TapeRange(0, 1));
+	return Expression::Result::createTapeRange(tape, Expression::TapeRange(0, 1, false, false));
 };
 
 std::optional<Expression::TapeRange> CallExpression::getArrayAccesRange() const {

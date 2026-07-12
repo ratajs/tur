@@ -111,13 +111,15 @@ OptionalEllipsisOrArrayAccess → ELLIPSIS
 OptionalEllipsisOrArrayAccess → LEFT_SQUARE_BRACKET ArrayAccess
 
 ArrayAccess → NUMBER RemainingArrayAccess
-ArrayAccess → COLON OptionalNumber RIGHT_SQUARE_BRACKET
+ArrayAccess → MINUS NUMBER RemainingArrayAccess
+ArrayAccess → COLON OptionalPossiblyNegativeNumber RIGHT_SQUARE_BRACKET
 
 RemainingArrayAccess → RIGHT_SQUARE_BRACKET
-RemainingArrayAccess → COLON OptionalNumber RIGHT_SQUARE_BRACKET
+RemainingArrayAccess → COLON OptionalPossiblyNegativeNumber RIGHT_SQUARE_BRACKET
 
-OptionalNumber →
-OptionalNumber → NUMBER
+OptionalPossiblyNegativeNumber →
+OptionalPossiblyNegativeNumber → NUMBER
+OptionalPossiblyNegativeNumber → MINUS NUMBER
 
 LogicalExpressions →
 LogicalExpressions → LogicalExpression RemainingLogicalExpressions

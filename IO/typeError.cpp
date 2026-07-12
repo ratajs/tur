@@ -65,6 +65,12 @@ std::wstring TypeError::getSimpleMessage() const {
 		case TypeError::Type::INVALID_ARRAY_ACCESS_INDICES:
 			return L"Invalid indices for array access.";
 
+		case TypeError::Type::NEGATIVE_INDEX_IN_EXPLOSION_SOURCE:
+			return L"Negative index in explosion source.";
+
+		case TypeError::Type::COMPARING_INDICES_WITH_DIFFERENT_SIGNS:
+			return L"Comparing indices with different signs.";
+
 		default:
 			std::unreachable();
 	};

@@ -74,8 +74,8 @@ class Parser {
 		std::unique_ptr<Expression> parseOptionalCall(std::wstring identifier, Location identifierLocation);
 		std::unique_ptr<Expression> parseOptionalEllipsisOrArrayAccess(std::unique_ptr<Expression>);
 		std::unique_ptr<Expression> parseArrayAccess(std::unique_ptr<Expression>);
-		std::unique_ptr<Expression> parseRemainingArrayAccess(std::unique_ptr<Expression> expression, size_t indexA);
-		std::optional<size_t> parseOptionalNumber();
+		std::unique_ptr<Expression> parseRemainingArrayAccess(std::unique_ptr<Expression> expression, size_t index0, bool isIndex0FromEnd);
+		std::optional<std::pair<size_t, bool>> parseOptionalPossiblyNegativeNumber();
 		std::vector<std::unique_ptr<Expression>> parseLogicalExpressions();
 		void parseRemainingLogicalExpressions(std::vector<std::unique_ptr<Expression>> &expressions);
 		std::unique_ptr<Statement> parseIfStatement();

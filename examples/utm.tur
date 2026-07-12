@@ -5,22 +5,6 @@
 # The blank symbol is 0.
 # Output: output of the given machine with the given input
 
-getLast = {
-	A 1 1 R A
-	A 0 0 R B
-	B 1 1 R A
-	B 0 0 L C
-	C 0 0 L C
-	C 1 1 L D
-	D 1 1 L D
-	D 0 0 L E
-	E 0 0 R F
-	F 0 0 R _
-	E 1 0 L G
-	G 1 0 L G
-	G 0 0 L E
-};
-
 [transitionsCount, input...] = input...;
 
 machine = [];
@@ -71,13 +55,13 @@ endloop;
 # To display the whole used part of the tape:
 # output = [];
 # while (ρ leftTape) > 0:
-#		output[] = getLast(leftTape...);
+#		output[] = leftTape[−1];
 #		leftTape[−1:] = [];
 #	endwhile;
 # output[] = rightTape...;
 
 # To only display the part of the tape starting from the current position and without trailing zeros:
 output = rightTape...;
-while (ρ output) > 1 ∧ getLast(output...)==0:
+while (ρ output) > 1 ∧ output[−1]==0:
 	output[−1:] = [];
 endwhile;

@@ -7,11 +7,13 @@
  * \param location The location of the expression in code.
  * \param expression The inner expression, it must not be indexed (no explicit array access, expressions which only yield one number, like count or arithmetics are also invalid).
  * \param index0 The index where the range starts (inclusive).
- * \param index1 The index where the range starts (exclusive). {} (std::nullopt) means that the range is rightwise unbounded.
+ * \param index1 The index where the range starts (exclusive).
+ * \param isIndex0FromEnd Whether index0 is index from the end (1 starts with the last number).
+ * \param isIndex1FromEnd Whether index1 is index from the end.
  * \throw TypeError If the range end is not after the range start, the inner expression if not of type TAPE_RANGE or if it is already indexed.
  */
-ArrayAccessExpression::ArrayAccessExpression(const Location &location, std::unique_ptr<Expression> expression, size_t index0, std::optional<size_t> index1):
-	Expression(location), index0(index0), index1(index1), expression(std::move(expression)) {
+ArrayAccessExpression::ArrayAccessExpression(const Location &location, std::unique_ptr<Expression> expression, size_t index0, size_t index1, bool isIndex0FromEnd, bool isIndex1FromEnd):
+	Expression(location), isIndex0FromEnd(isIndex0FromEnd), isIndex1FromEnd(isIndex1FromEnd), index0(index0), index1(index1), expression(std::move(expression)) {
 		this->validate();
 	};
 
@@ -25,8 +27,8 @@ ArrayAccessExpression::ArrayAccessExpression(const Location &location, std::uniq
  * \param index1 The index where the range starts (exclusive). {} (std::nullopt) means that the range is rightwise unbounded.
  * \throw TypeError If the range end is not after the range start, the inner expression if not of type TAPE_RANGE or if it is already indexed.
  */
-ArrayAccessExpression::ArrayAccessExpression(std::unique_ptr<Expression> expression, const Location &endLocation, size_t index0, std::optional<size_t> index1):
-	Expression({ expression->location, endLocation }), index0(index0), index1(index1), expression(std::move(expression)) {
+ArrayAccessExpression::ArrayAccessExpression(std::unique_ptr<Expression> expression, const Location &endLocation, size_t index0, size_t index1, bool isIndex0FromEnd, bool isIndex1FromEnd):
+	Expression({ expression->location, endLocation }), isIndex0FromEnd(isIndex0FromEnd), isIndex1FromEnd(isIndex1FromEnd), index0(index0), index1(index1), expression(std::move(expression)) {
 		this->validate();
 	};
 
@@ -35,7 +37,13 @@ ArrayAccessExpression::ArrayAccessExpression(std::unique_ptr<Expression> express
  * \throw TypeError If the range end is not after the range start, the inner expression if not of type TAPE_RANGE or if it is already indexed.
  */
 void ArrayAccessExpression::validate() const {
-	if(this->index1 && (*this->index1) <= index0)
+	if((!this->isIndex1FromEnd && this->index1==0) || (this->isIndex0FromEnd && this->index0==0)) // There cannot be a single number
+		throw TypeError(TypeError::Type::INVALID_ARRAY_ACCESS_INDICES, this->location);
+
+	if((!this->isIndex0FromEnd && !this->isIndex1FromEnd && this->index1 <= this->index0) || (this->isIndex0FromEnd && this->isIndex1FromEnd && this->index1 >= this->index0)) // Wrong order
+		throw TypeError(TypeError::Type::INVALID_ARRAY_ACCESS_INDICES, this->location);
+
+	if(this->isIndex0FromEnd && !this->isIndex1FromEnd) // [−x:y]
 		throw TypeError(TypeError::Type::INVALID_ARRAY_ACCESS_INDICES, this->location);
 
 	if(this->expression->isConstant())
@@ -53,7 +61,7 @@ Expression::Type ArrayAccessExpression::getType() const {
 };
 
 Expression::Result ArrayAccessExpression::build(InstructionBuilder &builder) const {
-	return Expression::Result::createTapeRange(this->expression->buildTape(builder).first, Expression::TapeRange(this->index0, this->index1));
+	return Expression::Result::createTapeRange(this->expression->buildTape(builder).first, Expression::TapeRange(this->index0, this->index1, this->isIndex0FromEnd, this->isIndex1FromEnd));
 };
 
 std::optional<std::reference_wrapper<const Variable>> ArrayAccessExpression::getVariable() const {
@@ -61,7 +69,7 @@ std::optional<std::reference_wrapper<const Variable>> ArrayAccessExpression::get
 };
 
 std::optional<Expression::TapeRange> ArrayAccessExpression::getArrayAccesRange() const {
-	return Expression::TapeRange(this->index0, this->index1);
+	return Expression::TapeRange(this->index0, this->index1, this->isIndex0FromEnd, this->isIndex1FromEnd);
 };
 
 bool ArrayAccessExpression::isTapeTemporary() const {

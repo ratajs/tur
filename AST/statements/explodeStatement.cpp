@@ -26,10 +26,9 @@ ExplodeStatement::ExplodeStatement(std::unique_ptr<Expression> source, Destinati
 
 	if(this->source->getArrayAccessLength() && (*this->source->getArrayAccessLength())!=0)
 		throw TypeError(TypeError::Type::BOUNDED_EXPRESSION_AN_EXPLOSION_STATEMENT, this->source->location);
-	/*
-	if(this->destination.hasNonFinalEllipsis())
-		throw TypeError(TypeError::Type::NON_FINAL_ELLIPSIS_IN_A_DESTINATION_BUNDLE, bundleLocation);
-	*/
+
+	if(this->source->getArrayAccesRange() && (this->source->getArrayAccesRange()->isIndex0FromEnd || !(this->source->getArrayAccesRange()->isIndex1FromEnd && this->source->getArrayAccesRange()->index1==0)))
+		throw TypeError(TypeError::Type::NEGATIVE_INDEX_IN_EXPLOSION_SOURCE, this->source->location);
 };
 
 void ExplodeStatement::build(InstructionBuilder &builder) const {

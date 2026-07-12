@@ -12,6 +12,7 @@
 #include "../../instructions/jumpInstruction.hpp"
 #include "../../instructions/compareInstruction.hpp"
 #include "../../instructions/compareTapeLengthInstruction.hpp"
+#include "../../instructions/reversePseudoinstruction.hpp"
 #include "../../machine/machineLibrary.hpp"
 #include "../../IO/typeError.hpp"
 
@@ -73,6 +74,14 @@ void BinaryExpression::validate() const {
 
 			if(this->expressionB->getArrayAccessLength()!=0 && this->expressionB->getArrayAccessLength()!=1)
 				throw TypeError(TypeError::Type::LONG_ARRAY_ACCESS_IN_AN_ARITHMETIC_OPERATION, this->expressionB->location);
+
+			if(this->isCondition()) {
+				if(this->expressionA->getArrayAccesRange() && this->expressionA->getArrayAccesRange()->isIndex0FromEnd && !this->expressionB->isConstant() && !(this->expressionB->getArrayAccesRange() && this->expressionB->getArrayAccesRange()->isIndex1FromEnd))
+					throw TypeError(TypeError::Type::COMPARING_INDICES_WITH_DIFFERENT_SIGNS, { this->expressionA->location, this->expressionB->location });
+
+				if(this->expressionB->getArrayAccesRange() && this->expressionB->getArrayAccesRange()->isIndex1FromEnd && !this->expressionA->isConstant() && !(this->expressionA->getArrayAccesRange() && this->expressionA->getArrayAccesRange()->isIndex0FromEnd))
+					throw TypeError(TypeError::Type::COMPARING_INDICES_WITH_DIFFERENT_SIGNS, { this->expressionA->location, this->expressionB->location });
+			};
 
 			break;
 
@@ -269,7 +278,9 @@ Expression::Result BinaryExpression::buildCondition(InstructionBuilder &builder)
  * \param trueLabel Label used to signal a positive outcome.
  * \param falseLabel Label used to signal a negative outcome.
  */
-void BinaryExpression::buildComparison(InstructionBuilder &builder, size_t trueLabel, size_t falseLabel) const {
+void BinaryExpression::buildComparison(InstructionBuilder &builder, size_t realTrueLabel, size_t realFalseLabel) const {
+	bool isReversed = false;
+	size_t trueLabel, falseLabel;
 	std::variant<std::pair<size_t, size_t>, size_t> argumentA, argumentB;
 	Expression::TapeRange range;
 
@@ -278,15 +289,37 @@ void BinaryExpression::buildComparison(InstructionBuilder &builder, size_t trueL
 	else {
 		argumentA = std::pair<size_t, size_t>();
 		std::tie(std::get<std::pair<size_t, size_t>>(argumentA).first, range) = this->expressionA->buildTape(builder);
-		std::get<std::pair<size_t, size_t>>(argumentA).second = range.index0;
+		if(range.isIndex1FromEnd) {
+			isReversed = true;
+			std::get<std::pair<size_t, size_t>>(argumentA).second = range.index1;
+		}
+		else
+			std::get<std::pair<size_t, size_t>>(argumentA).second = range.index0;
 	};
+
 	if(this->expressionB->isConstant())
 		argumentB = this->expressionB->buildConstant(builder);
 	else {
 		argumentB = std::pair<size_t, size_t>();
 		std::tie(std::get<std::pair<size_t, size_t>>(argumentB).first, range) = this->expressionB->buildTape(builder);
-		std::get<std::pair<size_t, size_t>>(argumentB).second = range.index0;
+		if(range.isIndex1FromEnd) {
+			isReversed = true;
+			std::get<std::pair<size_t, size_t>>(argumentB).second = range.index1;
+		}
+		else
+			std::get<std::pair<size_t, size_t>>(argumentB).second = range.index0;
 	};
+
+	if(isReversed) {
+		trueLabel = builder.createLabel();
+		falseLabel = builder.createLabel();
+		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+	}
+	else {
+		trueLabel = realTrueLabel;
+		falseLabel = realFalseLabel;
+	};
+
 	switch(this->type) {
 		case BinaryExpression::Type::EQ:
 			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::EQ));
@@ -320,6 +353,18 @@ void BinaryExpression::buildComparison(InstructionBuilder &builder, size_t trueL
 
 		default:
 			std::unreachable();
+	};
+
+	if(isReversed) {
+		builder.addInstruction(std::make_unique<JumpInstruction>(trueLabel, JumpInstruction::Type::COME_FROM));
+		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+		builder.addInstruction(std::make_unique<JumpInstruction>(realTrueLabel, JumpInstruction::Type::GO_TO));
+
+		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+
+		builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
+		builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+		builder.addInstruction(std::make_unique<JumpInstruction>(realFalseLabel, JumpInstruction::Type::GO_TO));
 	};
 };
 
@@ -447,8 +492,13 @@ Expression::Result BinaryExpression::build(InstructionBuilder &builder) const {
 
 	if(this->expressionA->getType()==Expression::Type::TAPE_RANGE && this->expressionA->isTapeTemporary()) {
 		std::tie(tape, range) = this->expressionA->buildTape(builder);
-		if(range.index0 > 0)
+		if(range.index0 > 0 && !range.isIndex0FromEnd)
 			builder.addInstruction(std::make_unique<ClearInstruction>(tape, 0, range.index0));
+		if(range.isIndex0FromEnd) {
+			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+			builder.addInstruction(std::make_unique<ClearInstruction>(tape, range.index0, std::nullopt));
+			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+		};
 		newTape = tape;
 	}
 	else {
@@ -457,7 +507,7 @@ Expression::Result BinaryExpression::build(InstructionBuilder &builder) const {
 			builder.addInstruction(std::make_unique<WriteNumberInstruction>(newTape, 0, this->expressionA->buildConstant(builder)));
 		else {
 			std::tie(tape, range) = this->expressionA->buildTape(builder);
-			builder.addInstruction(std::make_unique<CopyInstruction>(tape, newTape, range.index0, range.index0 + 1, 0));
+			builder.addInstruction(std::make_unique<CopyInstruction>(tape, newTape, range.index0, range.index1, 0, range.isIndex0FromEnd));
 		};
 	};
 
@@ -465,12 +515,12 @@ Expression::Result BinaryExpression::build(InstructionBuilder &builder) const {
 		builder.addInstruction(std::make_unique<WriteNumberInstruction>(newTape, 1, this->expressionB->buildConstant(builder)));
 	else {
 		std::tie(tape, range) = this->expressionB->buildTape(builder);
-		builder.addInstruction(std::make_unique<CopyInstruction>(tape, newTape, range.index0, range.index0 + 1, 1));
+		builder.addInstruction(std::make_unique<CopyInstruction>(tape, newTape, range.index0, range.index1, 1, range.isIndex0FromEnd));
 	};
 
 	builder.addInstruction(std::make_unique<CallInstruction>(newTape, this->getMachine()));
 
-	return Expression::Result::createTapeRange(newTape, Expression::TapeRange(0, 1));
+	return Expression::Result::createTapeRange(newTape, Expression::TapeRange(0, 1, false, false));
 };
 
 std::optional<Expression::TapeRange> BinaryExpression::getArrayAccesRange() const {
@@ -482,7 +532,7 @@ std::optional<Expression::TapeRange> BinaryExpression::getArrayAccesRange() cons
 		case BinaryExpression::Type::MOD:
 		case BinaryExpression::Type::MIN:
 		case BinaryExpression::Type::MAX:
-			return Expression::TapeRange(0, 1);
+			return Expression::TapeRange(0, 1, false, false);
 
 		case BinaryExpression::Type::EQ:
 		case BinaryExpression::Type::NE:

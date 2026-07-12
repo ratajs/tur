@@ -48,15 +48,40 @@ void AssignStatement::build(InstructionBuilder &builder) const {
 	else if(this->source->getVariable() && (&this->source->getVariable()->get())==(&this->destination)) { // The same variable used both in source and destination
 		if(!this->isReversed && !this->isDestinationIndexFromEnd && destinationIndex==0) { // Assigning to the beginning, so just cleaning is enough
 			std::tie(sourceTape, sourceRange) = this->source->buildTape(builder);
-			if(sourceRange.index0 > 0)
+
+			if(!sourceRange.isIndex0FromEnd && sourceRange.index0 > 0)
 				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 0, sourceRange.index0));
-			if(sourceRange.index1)
-				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, (*sourceRange.index1) - sourceRange.index0, std::nullopt));
+
+			if(sourceRange.isIndex0FromEnd) {
+				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, sourceRange.index0, std::nullopt, true));
+				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+			};
+
+			if(!sourceRange.isIndex1FromEnd) {
+				if(!sourceRange.isIndex0FromEnd)
+					builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, sourceRange.index1 - sourceRange.index0, std::nullopt));
+				else
+					throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
+			};
+
+			if(sourceRange.isIndex1FromEnd && sourceRange.index1 > 0)
+				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, sourceRange.index1, std::nullopt, true));
 		}
 		else { // An extra tape is necessary
 			std::tie(sourceTape, sourceRange) = this->source->buildTape(builder);
 			tmpTape = builder.createTape();
-			builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, tmpTape, sourceRange.index0, sourceRange.index1, 0));
+
+			if(sourceRange.isIndex0FromEnd==sourceRange.isIndex1FromEnd)
+				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, tmpTape, sourceRange.index0, sourceRange.index1, 0, sourceRange.isIndex0FromEnd));
+			else if(sourceRange.isIndex1FromEnd) {
+				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, tmpTape, sourceRange.index0, std::nullopt, 0));
+				if(sourceRange.index1 > 0)
+					builder.addInstruction(std::make_unique<ClearInstruction>(tmpTape, sourceRange.index1, std::nullopt, true));
+			}
+			else
+				throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
+
 			if(this->isReversed) {
 				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
 				builder.addInstruction(std::make_unique<CopyInstruction>(tmpTape, *this->destination.tape, 0, std::nullopt, *this->destinationIndex, false, !this->isDestinationIndexFromEnd));
@@ -68,20 +93,32 @@ void AssignStatement::build(InstructionBuilder &builder) const {
 	}
 	else {
 		std::tie(sourceTape, sourceRange) = this->source->buildTape(builder);
+
 		if(this->isReversed) {
 			builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
-			if(sourceRange.index1) {
-				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, *sourceRange.index1, sourceRange.index0, *this->destinationIndex, true, !this->isDestinationIndexFromEnd));
+			if(sourceRange.isIndex0FromEnd==sourceRange.isIndex1FromEnd) {
+				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, sourceRange.index1, sourceRange.index0, *this->destinationIndex, !sourceRange.isIndex0FromEnd, !this->isDestinationIndexFromEnd));
 				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
 			}
-			else {
-				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, 0, std::nullopt, this->destinationIndex, false, !this->isDestinationIndexFromEnd));
+			else if(sourceRange.isIndex1FromEnd) {
+				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, sourceRange.index1, std::nullopt, this->destinationIndex, false, !this->isDestinationIndexFromEnd));
 				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
 				if(sourceRange.index0 > 0)
 					builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, 0, sourceRange.index0));
-			};
+			}
+			else
+				throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
 		}
-		else
-			builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, sourceRange.index0, sourceRange.index1, this->destinationIndex, false, this->isDestinationIndexFromEnd));
+		else {
+			if(sourceRange.isIndex0FromEnd==sourceRange.isIndex1FromEnd)
+				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, sourceRange.index0, sourceRange.index1, this->destinationIndex, sourceRange.isIndex0FromEnd, this->isDestinationIndexFromEnd));
+			else if(sourceRange.isIndex1FromEnd) {
+				builder.addInstruction(std::make_unique<CopyInstruction>(sourceTape, *this->destination.tape, sourceRange.index0, std::nullopt, this->destinationIndex, false, this->isDestinationIndexFromEnd));
+				if(sourceRange.index1 > 0)
+					builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, sourceRange.index1, std::nullopt, true));
+			}
+			else
+				throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
+		};
 	};
 };

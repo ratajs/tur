@@ -1013,7 +1013,7 @@ std::unique_ptr<Expression> Parser::parseOptionalEllipsisOrArrayAccess(std::uniq
 		case Token::Type::ELLIPSIS:
 			this->expect(Token::Type::ELLIPSIS);
 
-			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), 0, std::nullopt);
+			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), 0, 0, false, true);
 
 		case Token::Type::LEFT_SQUARE_BRACKET:
 			this->expect(Token::Type::LEFT_SQUARE_BRACKET);
@@ -1026,49 +1026,55 @@ std::unique_ptr<Expression> Parser::parseOptionalEllipsisOrArrayAccess(std::uniq
 };
 
 std::unique_ptr<Expression> Parser::parseArrayAccess(std::unique_ptr<Expression> expression) {
-	size_t indexA;
-	std::optional<size_t> indexB;
+	bool isIndex1FromEnd;
+	size_t index0, index1;
 
 	switch(this->getNextTokenType()) {
 		case Token::Type::NUMBER:
-			this->expect(indexA);
+			this->expect(index0);
 
-			return this->parseRemainingArrayAccess(std::move(expression), indexA);
+			return this->parseRemainingArrayAccess(std::move(expression), index0, false);
+
+		case Token::Type::MINUS:
+			this->expect(Token::Type::MINUS, index0);
+
+			return this->parseRemainingArrayAccess(std::move(expression), index0, true);
 
 		case Token::Type::COLON:
 			this->expect(Token::Type::COLON);
-			indexB = this->parseOptionalNumber();
+			std::tie(index1, isIndex1FromEnd) = this->parseOptionalPossiblyNegativeNumber().value_or({ 0, true });
 			this->expect(Token::Type::RIGHT_SQUARE_BRACKET);
 
-			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), 0, indexB);
+			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), 0, index1, false, isIndex1FromEnd);
 
 		default:
 			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
 	};
 };
 
-std::unique_ptr<Expression> Parser::parseRemainingArrayAccess(std::unique_ptr<Expression> expression, size_t indexA) {
-	std::optional<size_t> indexB;
+std::unique_ptr<Expression> Parser::parseRemainingArrayAccess(std::unique_ptr<Expression> expression, size_t index0, bool isIndex0FromEnd) {
+	bool isIndex1FromEnd;
+	size_t index1;
 
 	switch(this->getNextTokenType()) {
 		case Token::Type::RIGHT_SQUARE_BRACKET:
 			this->expect(Token::Type::RIGHT_SQUARE_BRACKET);
 
-			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), indexA, indexA + 1);
+			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), index0, isIndex0FromEnd ? (index0 - 1) : (index0 + 1), isIndex0FromEnd, isIndex0FromEnd); //FIXME var[−0]
 
 		case Token::Type::COLON:
 			this->expect(Token::Type::COLON);
-			indexB = this->parseOptionalNumber();
+			std::tie(index1, isIndex1FromEnd) = this->parseOptionalPossiblyNegativeNumber().value_or({ 0, true });
 			this->expect(Token::Type::RIGHT_SQUARE_BRACKET);
 
-			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), indexA, indexB);
+			return std::make_unique<ArrayAccessExpression>(std::move(expression), this->getLastTokenLocation(), index0, index1, isIndex0FromEnd, isIndex1FromEnd);
 
 		default:
 			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
 	};
 };
 
-std::optional<size_t> Parser::parseOptionalNumber() {
+std::optional<std::pair<size_t, bool>> Parser::parseOptionalPossiblyNegativeNumber() {
 	size_t number;
 
 	switch(this->getNextTokenType()) {
@@ -1079,7 +1085,12 @@ std::optional<size_t> Parser::parseOptionalNumber() {
 		case Token::Type::NUMBER:
 			this->expect(number);
 
-			return number;
+			return std::pair(number, false);
+
+		case Token::Type::MINUS:
+			this->expect(Token::Type::MINUS, number);
+
+			return std::pair(number, true);
 
 		default:
 			throw ParseError(ParseError::Type::UNEXPECTED_TOKEN, this->it);
