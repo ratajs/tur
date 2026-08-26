@@ -82,7 +82,7 @@ std::optional<std::list<std::unique_ptr<Instruction>>> CopyInstruction::tryToMer
 	if(!copyInstruction) // Another type of instruction
 		return {};
 
-	if(this->areSourceIndicesFromEnd || this->isDestinationIndexFromEnd)
+	if(this->areSourceIndicesFromEnd || this->isDestinationIndexFromEnd || copyInstruction->areSourceIndicesFromEnd || copyInstruction->isDestinationIndexFromEnd)
 		return {}; //TODO merge for other variants as well
 
 	//TODO reversed order of ranges?
