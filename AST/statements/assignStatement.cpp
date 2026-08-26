@@ -54,7 +54,7 @@ void AssignStatement::build(InstructionBuilder &builder) const {
 
 			if(sourceRange.isIndex0FromEnd) {
 				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
-				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, sourceRange.index0, std::nullopt, true));
+				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, sourceRange.index0, std::nullopt, false));
 				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
 			};
 
@@ -65,8 +65,11 @@ void AssignStatement::build(InstructionBuilder &builder) const {
 					throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
 			};
 
-			if(sourceRange.isIndex1FromEnd && sourceRange.index1 > 0)
-				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, sourceRange.index1, std::nullopt, true));
+			if(sourceRange.isIndex1FromEnd && sourceRange.index1 > 0) {
+				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+				builder.addInstruction(std::make_unique<ClearInstruction>(sourceTape, 0, sourceRange.index1, false));
+				builder.addInstruction(std::make_unique<ReversePseudoinstruction>());
+			};
 		}
 		else { // An extra tape is necessary
 			std::tie(sourceTape, sourceRange) = this->source->buildTape(builder);
