@@ -251,7 +251,7 @@ SingleTapeMachineFactory &SingleTapeMachineFactory::clearEnd(size_t begin, bool 
 		this->addTransition<false, false, Machine::Direction::R>({}, {});
 		this->addTransition<true, false, Machine::Direction::R>({}, this->generator.getLastState());
 		this->addTransition<false, false, Machine::Direction::N>({}, {});
-		this->addTransition<false, false, Machine::Direction::N>(endState, this->generator.getLastState());
+		this->addTransition<Machine::Direction::N>(endState, this->generator.getCurrentState());
 	};
 
 	return (*this);
