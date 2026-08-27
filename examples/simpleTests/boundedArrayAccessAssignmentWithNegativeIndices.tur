@@ -1,0 +1,4 @@
+a = input[−5:];
+output = a[−4:−1];
+output = output[−3:−1];
+output = output[−2:−0];

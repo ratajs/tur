@@ -107,18 +107,25 @@ EXAMPLES = \
 	examples/BFS.tm \
 	examples/simpleTests/simpleAssignment.tm \
 	examples/simpleTests/boundedArrayAccessAssignment.tm \
+	examples/simpleTests/boundedArrayAccessAssignmentWithNegativeIndices.tm \
 	examples/simpleTests/unboundedArrayAccessAssignment.tm \
+	examples/simpleTests/unboundedArrayAccessAssignmentWithNegativeIndices.tm \
 	examples/simpleTests/assignmentToArrayAccess.tm \
+	examples/simpleTests/assignmentToArrayAccessWithNegativeSourceIndices.tm \
 	examples/simpleTests/arithmeticOperations.tm \
+	examples/simpleTests/arithmeticOperationsWithNegativeIndices.tm \
 	examples/simpleTests/implosion.tm \
 	examples/simpleTests/explosion.tm \
 	examples/simpleTests/explosionWithSourceVariable.tm \
 	examples/simpleTests/explosionWithNonFinalEllipsis.tm \
 	examples/simpleTests/reversedAssignment.tm \
+	examples/simpleTests/reversedAssignmentWithNegativeSourceIndices.tm \
 	examples/simpleTests/reversedImplosion.tm \
 	examples/simpleTests/assignmentIndexedFromEnd.tm \
+	examples/simpleTests/assignmentIndexedFromEndWithNegativeSourceIndices.tm \
 	examples/simpleTests/implosionIndexedFromEnd.tm \
 	examples/simpleTests/reversedAssignmentIndexedFromEnd.tm \
+	examples/simpleTests/reversedAssignmentIndexedFromEndWithNegativeSourceIndices.tm \
 	examples/simpleTests/reversedImplosionIndexedFromEnd.tm \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
