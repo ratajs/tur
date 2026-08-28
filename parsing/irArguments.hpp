@@ -33,7 +33,7 @@ class IrArguments {
 		size_t readLabel();
 		std::tuple<size_t, std::optional<size_t>, bool> readRange(bool areNegativeIndicesAllowed = false);
 		std::optional<std::pair<size_t, bool>> readRightwiseUnboundedRange(bool isNegativeIndexAllowed = false);
-		std::variant<std::pair<size_t, size_t>, size_t> readTapeAndIndexOrNumber();
+		std::variant<std::tuple<size_t, size_t, bool>, size_t> readTapeAndIndexOrNumber(bool isNegativeIndexAllowed = false);
 		Machine readMachine();
 		void end();
 		Location getLocation() const;

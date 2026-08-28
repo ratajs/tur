@@ -1,0 +1,219 @@
+output = [];
+
+a = input...;
+
+if input[0]==a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] > a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≥ a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]!=a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1]==a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] < a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] > a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] ≤ a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] ≥ a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1]!=a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]==a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] < a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] > a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≤ a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0] ≥ a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[0]!=a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2]==a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] < a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] > a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] ≤ a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] ≥ a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2]!=a[0]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1]==a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] < a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] > a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] ≤ a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1] ≥ a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−1]!=a[−2]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2]==a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] < a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] > a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] ≤ a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2] ≥ a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;
+
+if input[−2]!=a[−1]:
+	output[] = 1;
+else:
+	output[] = 0;
+endif;

@@ -32,6 +32,9 @@ std::wstring IrParseError::getSimpleMessage() const {
 		case IrParseError::Type::INVALID_RANGE:
 			return L"Invalid range";
 
+		case IrParseError::Type::INVALID_INDEX:
+			return L"Invalid index";
+
 		case IrParseError::Type::INVALID_RANGE_FOR_CLEAR:
 			return L"Invalid range for clear";
 

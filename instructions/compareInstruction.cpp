@@ -1,5 +1,6 @@
 #include "./compareInstruction.hpp"
 #include <optional>
+#include <tuple>
 #include <initializer_list>
 #include "../IO/unexpectedError.hpp"
 
@@ -10,9 +11,24 @@
  * \param trueLabel The label for the positive outcome.
  * \param trueLabel The label for the negative outcome.
  * \param type The binary logical operator to use.
+ * \param isIndexBFromEnd Whether the index of the second number is indexed from the end (it must only be true if both arguments are tapes with indices).
+ * \throw UnexpectedError If isIndexBFromEnd is true, but one of the arguments is a constant.
  */
-CompareInstruction::CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type):
-	type(type), trueLabel(trueLabel), falseLabel(falseLabel), argumentA(argumentA), argumentB(argumentB) {};
+CompareInstruction::CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type, bool isIndexBFromEnd):
+	isArgumentAConstant(std::holds_alternative<size_t>(argumentA)), isArgumentBConstant(std::holds_alternative<size_t>(argumentB)), isIndexBFromEnd(isIndexBFromEnd), type(type), trueLabel(trueLabel), falseLabel(falseLabel) {
+		if(isIndexBFromEnd && (this->isArgumentAConstant || this->isArgumentBConstant))
+			throw UnexpectedError(L"isIndexBFromEnd is true, but one of the arguments of a comparison is a constant.");
+
+		if(isArgumentAConstant)
+			this->numberA = std::get<size_t>(argumentA);
+		else
+			std::tie(this->tapeA, this->indexA) = std::get<std::pair<size_t, size_t>>(argumentA);
+
+		if(isArgumentBConstant)
+			this->numberB = std::get<size_t>(argumentB);
+		else
+			std::tie(this->tapeB, this->indexB) = std::get<std::pair<size_t, size_t>>(argumentB);
+	};
 
 /*!
  * An alternative constructor of CompareInstruction.
@@ -23,7 +39,16 @@ CompareInstruction::CompareInstruction(std::variant<std::pair<size_t, size_t>, s
  * \param arguments The arguments of the instruction from the IR input.
  * \throw IrParseError If the arguments do not match the expected format.
  */
-CompareInstruction::CompareInstruction(IrArguments &arguments): argumentA(arguments.readTapeAndIndexOrNumber()) {
+CompareInstruction::CompareInstruction(IrArguments &arguments) {
+	std::variant<std::tuple<size_t, size_t, bool>, size_t> argument;
+
+	argument = arguments.readTapeAndIndexOrNumber();
+	this->isArgumentAConstant = std::holds_alternative<size_t>(argument);
+	if(this->isArgumentAConstant)
+		this->numberA = std::get<size_t>(argument);
+	else
+		std::tie(this->tapeA, this->indexA, std::ignore) = std::get<std::tuple<size_t, size_t, bool>>(argument);
+
 	switch(arguments.readString({ L"=", L"≠", L"<", L"≤", L">", L"≥" })) {
 		case 0:
 			this->type = CompareInstruction::Type::EQ;
@@ -56,7 +81,16 @@ CompareInstruction::CompareInstruction(IrArguments &arguments): argumentA(argume
 			break;
 	};
 
-	this->argumentB = arguments.readTapeAndIndexOrNumber();
+	argument = arguments.readTapeAndIndexOrNumber(true);
+	this->isArgumentBConstant = std::holds_alternative<size_t>(argument);
+	if(this->isArgumentBConstant)
+		this->numberB = std::get<size_t>(argument);
+	else
+		std::tie(this->tapeB, this->indexB, this->isIndexBFromEnd) = std::get<std::tuple<size_t, size_t, bool>>(argument);
+
+	if(this->isIndexBFromEnd)
+		this->indexB--; // Index from zero instead of from 1
+
 	arguments.readComma();
 	this->trueLabel = arguments.readLabel();
 	arguments.readComma();
@@ -97,22 +131,22 @@ CompareInstruction::Type CompareInstruction::getInvertedType() const {
 bool CompareInstruction::isConstantConditionSatisfied() const {
 	switch(this->type) {
 		case CompareInstruction::Type::EQ:
-			return (std::get<size_t>(this->argumentA)==std::get<size_t>(this->argumentB));
+			return (this->numberA==this->numberB);
 
 		case CompareInstruction::Type::NE:
-			return (std::get<size_t>(this->argumentA)!=std::get<size_t>(this->argumentB));
+			return (this->numberA!=this->numberB);
 
 		case CompareInstruction::Type::LT:
-			return (std::get<size_t>(this->argumentA) < std::get<size_t>(this->argumentB));
+			return (this->numberA < this->numberB);
 
 		case CompareInstruction::Type::LTE:
-			return (std::get<size_t>(this->argumentA) <= std::get<size_t>(this->argumentB));
+			return (this->numberA <= this->numberB);
 
 		case CompareInstruction::Type::GT:
-			return (std::get<size_t>(this->argumentA) > std::get<size_t>(this->argumentB));
+			return (this->numberA > this->numberB);
 
 		case CompareInstruction::Type::GTE:
-			return (std::get<size_t>(this->argumentA) >= std::get<size_t>(this->argumentB));
+			return (this->numberA >= this->numberB);
 
 		default:
 			std::unreachable();
@@ -220,32 +254,32 @@ void CompareInstruction::buildSemiConstantComparison(MultiTapeMachineFactory &ma
 void CompareInstruction::buildTapeComparison(SingleTapeMachineFactory &machineFactory, size_t indexA, size_t indexB, const std::wstring &trueState, const std::wstring &falseState) const {
 	switch(this->type) {
 		case CompareInstruction::Type::EQ:
-			machineFactory.compare(indexA, indexB, falseState, trueState, falseState);
+			machineFactory.compare(indexA, indexB, falseState, trueState, falseState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::NE:
-			machineFactory.compare(indexA, indexB, trueState, falseState, trueState);
+			machineFactory.compare(indexA, indexB, trueState, falseState, trueState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::LT:
-			machineFactory.compare(indexA, indexB, trueState, falseState, falseState);
+			machineFactory.compare(indexA, indexB, trueState, falseState, falseState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::LTE:
-			machineFactory.compare(indexA, indexB, trueState, trueState, falseState);
+			machineFactory.compare(indexA, indexB, trueState, trueState, falseState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::GT:
-			machineFactory.compare(indexA, indexB, falseState, falseState, trueState);
+			machineFactory.compare(indexA, indexB, falseState, falseState, trueState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::GTE:
-			machineFactory.compare(indexA, indexB, falseState, trueState, trueState);
+			machineFactory.compare(indexA, indexB, falseState, trueState, trueState, this->isIndexBFromEnd);
 
 			break;
 	};
@@ -265,32 +299,32 @@ void CompareInstruction::buildTapeComparison(SingleTapeMachineFactory &machineFa
 void CompareInstruction::buildTapeComparison(MultiTapeMachineFactory &machineFactory, size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, const std::wstring &trueState, const std::wstring &falseState) const {
 	switch(this->type) {
 		case CompareInstruction::Type::EQ:
-			machineFactory.compare(tapeA, indexA, tapeB, indexB, falseState, trueState, falseState);
+			machineFactory.compare(tapeA, indexA, tapeB, indexB, falseState, trueState, falseState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::NE:
-			machineFactory.compare(tapeA, indexA, tapeB, indexB, trueState, falseState, trueState);
+			machineFactory.compare(tapeA, indexA, tapeB, indexB, trueState, falseState, trueState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::LT:
-			machineFactory.compare(tapeA, indexA, tapeB, indexB, trueState, falseState, falseState);
+			machineFactory.compare(tapeA, indexA, tapeB, indexB, trueState, falseState, falseState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::LTE:
-			machineFactory.compare(tapeA, indexA, tapeB, indexB, trueState, trueState, falseState);
+			machineFactory.compare(tapeA, indexA, tapeB, indexB, trueState, trueState, falseState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::GT:
-			machineFactory.compare(tapeA, indexA, tapeB, indexB, falseState, falseState, trueState);
+			machineFactory.compare(tapeA, indexA, tapeB, indexB, falseState, falseState, trueState, this->isIndexBFromEnd);
 
 			break;
 
 		case CompareInstruction::Type::GTE:
-			machineFactory.compare(tapeA, indexA, tapeB, indexB, falseState, trueState, trueState);
+			machineFactory.compare(tapeA, indexA, tapeB, indexB, falseState, trueState, trueState, this->isIndexBFromEnd);
 
 			break;
 	};
@@ -299,10 +333,10 @@ void CompareInstruction::buildTapeComparison(MultiTapeMachineFactory &machineFac
 std::vector<size_t> CompareInstruction::listUsedTapes() const {
 	std::vector<size_t> tapes;
 
-	if(std::holds_alternative<std::pair<size_t, size_t>>(this->argumentA))
-		tapes.push_back(std::get<std::pair<size_t, size_t>>(this->argumentA).first);
-	if(std::holds_alternative<std::pair<size_t, size_t>>(this->argumentB))
-		tapes.push_back(std::get<std::pair<size_t, size_t>>(this->argumentB).first);
+	if(!this->isArgumentAConstant)
+		tapes.push_back(this->tapeA);
+	if(!this->isArgumentBConstant)
+		tapes.push_back(this->tapeB);
 
 	return tapes;
 };
@@ -316,38 +350,38 @@ std::vector<size_t> CompareInstruction::getGoToDestinations() const {
 };
 
 void CompareInstruction::build(SingleTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
-	if((std::holds_alternative<std::pair<size_t, size_t>>(this->argumentA) && getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentA).first)!=1) || (std::holds_alternative<std::pair<size_t, size_t>>(this->argumentB) && getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentB).first)!=1))
+	if((!this->isArgumentAConstant && getRealTape(this->tapeA)!=1) || (!this->isArgumentBConstant && getRealTape(this->tapeB)!=1))
 		throw UnexpectedError(L"Other real tape than 1 appeared in a single tape machine instruction.");
 
-	if(std::holds_alternative<size_t>(this->argumentA) && std::holds_alternative<size_t>(this->argumentB))
+	if(this->isArgumentAConstant && this->isArgumentBConstant)
 		machineFactory.addNTransition({}, this->isConstantConditionSatisfied() ? getState(this->trueLabel) : getState(this->falseLabel));
-	else if(std::holds_alternative<size_t>(this->argumentB))
-		this->buildSemiConstantComparison(machineFactory, std::get<std::pair<size_t, size_t>>(this->argumentA).second, std::get<size_t>(this->argumentB), getState(this->trueLabel), getState(this->falseLabel));
-	else if(std::holds_alternative<size_t>(this->argumentA))
-		this->buildSemiConstantComparison(machineFactory, std::get<std::pair<size_t, size_t>>(this->argumentB).second, std::get<size_t>(this->argumentA), getState(this->trueLabel), getState(this->falseLabel), true);
+	else if(this->isArgumentBConstant)
+		this->buildSemiConstantComparison(machineFactory, this->indexA, this->numberB, getState(this->trueLabel), getState(this->falseLabel));
+	else if(this->isArgumentAConstant)
+		this->buildSemiConstantComparison(machineFactory, this->tapeB, this->numberA, getState(this->trueLabel), getState(this->falseLabel), true);
 	else
-		this->buildTapeComparison(machineFactory, std::get<std::pair<size_t, size_t>>(this->argumentA).second, std::get<std::pair<size_t, size_t>>(this->argumentB).second, getState(this->trueLabel), getState(this->falseLabel));
+		this->buildTapeComparison(machineFactory, this->indexA, this->indexB, getState(this->trueLabel), getState(this->falseLabel));
 };
 
 void CompareInstruction::build(MultiTapeMachineFactory &machineFactory, std::function<size_t (size_t)> getRealTape, std::function<const std::wstring &(size_t)> getState) const {
-	if(std::holds_alternative<size_t>(this->argumentA) && std::holds_alternative<size_t>(this->argumentB))
+	if(this->isArgumentAConstant && this->isArgumentBConstant)
 		machineFactory.addNTransition({}, this->isConstantConditionSatisfied() ? getState(this->trueLabel) : getState(this->falseLabel));
-	else if(std::holds_alternative<size_t>(this->argumentB))
-		this->buildSemiConstantComparison(machineFactory, getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentA).first), std::get<std::pair<size_t, size_t>>(this->argumentA).second, std::get<size_t>(this->argumentB), getState(this->trueLabel), getState(this->falseLabel));
-	else if(std::holds_alternative<size_t>(this->argumentA))
-		this->buildSemiConstantComparison(machineFactory, getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentB).first), std::get<std::pair<size_t, size_t>>(this->argumentB).second, std::get<size_t>(this->argumentA), getState(this->trueLabel), getState(this->falseLabel), true);
+	else if(this->isArgumentBConstant)
+		this->buildSemiConstantComparison(machineFactory, getRealTape(this->tapeA), this->indexA, this->numberB, getState(this->trueLabel), getState(this->falseLabel));
+	else if(this->isArgumentAConstant)
+		this->buildSemiConstantComparison(machineFactory, getRealTape(this->tapeB), this->indexB, this->numberA, getState(this->trueLabel), getState(this->falseLabel), true);
 	else
-		this->buildTapeComparison(machineFactory, getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentA).first), std::get<std::pair<size_t, size_t>>(this->argumentA).second, getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentB).first), std::get<std::pair<size_t, size_t>>(this->argumentB).second, getState(this->trueLabel), getState(this->falseLabel));
+		this->buildTapeComparison(machineFactory, getRealTape(this->tapeA), this->indexA, getRealTape(this->tapeB), this->indexB, getState(this->trueLabel), getState(this->falseLabel));
 };
 
 void CompareInstruction::print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const {
 	stream << L"compare(";
-	if(std::holds_alternative<size_t>(this->argumentA))
-		stream << std::get<size_t>(this->argumentA);
+	if(this->isArgumentAConstant)
+		stream << this->numberA;
 	else {
 		stream <<
-			getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentA).first) <<
-			L"[" << std::get<std::pair<size_t, size_t>>(this->argumentA).second << L"]";
+			getRealTape(this->tapeA) <<
+			L"[" << this->indexA << L"]";
 	};
 	switch(this->type) {
 		case CompareInstruction::Type::EQ:
@@ -379,14 +413,13 @@ void CompareInstruction::print(std::wostream &stream, std::function<size_t (size
 			stream << L" ≥ ";
 
 			break;
-
 	};
-	if(std::holds_alternative<size_t>(this->argumentB))
-		stream << std::get<size_t>(this->argumentB);
+	if(this->isArgumentBConstant)
+		stream << this->numberB;
 	else {
 		stream <<
-			getRealTape(std::get<std::pair<size_t, size_t>>(this->argumentB).first) <<
-			L"[" << std::get<std::pair<size_t, size_t>>(this->argumentB).second << L"]";
+			getRealTape(this->tapeB) <<
+			L"[" << (this->isIndexBFromEnd ? L"−" : L"") << (this->isIndexBFromEnd ? (this->indexB + 1) : this->indexB) << L"]";
 	};
 	stream << L", " << this->trueLabel << L", " << this->falseLabel << L")" << std::endl;
 };

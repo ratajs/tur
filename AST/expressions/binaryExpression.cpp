@@ -75,14 +75,6 @@ void BinaryExpression::validate() const {
 			if(this->expressionB->getArrayAccessLength()!=0 && this->expressionB->getArrayAccessLength()!=1)
 				throw TypeError(TypeError::Type::LONG_ARRAY_ACCESS_IN_AN_ARITHMETIC_OPERATION, this->expressionB->location);
 
-			if(this->isCondition()) {
-				if(this->expressionA->getArrayAccesRange() && this->expressionA->getArrayAccesRange()->isIndex0FromEnd && !this->expressionB->isConstant() && !(this->expressionB->getArrayAccesRange() && this->expressionB->getArrayAccesRange()->isIndex1FromEnd))
-					throw TypeError(TypeError::Type::COMPARING_INDICES_WITH_DIFFERENT_SIGNS, { this->expressionA->location, this->expressionB->location });
-
-				if(this->expressionB->getArrayAccesRange() && this->expressionB->getArrayAccesRange()->isIndex1FromEnd && !this->expressionA->isConstant() && !(this->expressionA->getArrayAccesRange() && this->expressionA->getArrayAccesRange()->isIndex0FromEnd))
-					throw TypeError(TypeError::Type::COMPARING_INDICES_WITH_DIFFERENT_SIGNS, { this->expressionA->location, this->expressionB->location });
-			};
-
 			break;
 
 		case BinaryExpression::Type::AND:
@@ -279,35 +271,67 @@ Expression::Result BinaryExpression::buildCondition(InstructionBuilder &builder)
  * \param falseLabel Label used to signal a negative outcome.
  */
 void BinaryExpression::buildComparison(InstructionBuilder &builder, size_t realTrueLabel, size_t realFalseLabel) const {
-	bool isReversed = false;
+	bool isReversed = false, isIndexBFromEnd = false;
 	size_t trueLabel, falseLabel;
 	std::variant<std::pair<size_t, size_t>, size_t> argumentA, argumentB;
-	Expression::TapeRange range;
+	Expression::TapeRange rangeA, rangeB;
 
 	if(this->expressionA->isConstant())
 		argumentA = this->expressionA->buildConstant(builder);
 	else {
 		argumentA = std::pair<size_t, size_t>();
-		std::tie(std::get<std::pair<size_t, size_t>>(argumentA).first, range) = this->expressionA->buildTape(builder);
-		if(range.isIndex1FromEnd) {
-			isReversed = true;
-			std::get<std::pair<size_t, size_t>>(argumentA).second = range.index1;
-		}
-		else
-			std::get<std::pair<size_t, size_t>>(argumentA).second = range.index0;
+		std::tie(std::get<std::pair<size_t, size_t>>(argumentA).first, rangeA) = this->expressionA->buildTape(builder);
 	};
 
 	if(this->expressionB->isConstant())
 		argumentB = this->expressionB->buildConstant(builder);
 	else {
 		argumentB = std::pair<size_t, size_t>();
-		std::tie(std::get<std::pair<size_t, size_t>>(argumentB).first, range) = this->expressionB->buildTape(builder);
-		if(range.isIndex1FromEnd) {
+		std::tie(std::get<std::pair<size_t, size_t>>(argumentB).first, rangeB) = this->expressionB->buildTape(builder);
+
+		std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index1;
+		std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index0;
+	};
+
+	if(!this->expressionA->isConstant() && !this->expressionB->isConstant()) {
+		if(!rangeA.isIndex1FromEnd && !rangeB.isIndex1FromEnd) { // Both from beginning
+			std::get<std::pair<size_t, size_t>>(argumentA).second = rangeA.index0;
+			std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index0;
+		}
+		else if(!rangeA.isIndex1FromEnd && rangeB.isIndex1FromEnd) { // A from beginning, B from end
+			std::get<std::pair<size_t, size_t>>(argumentA).second = rangeA.index0;
+			std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index1;
+			isIndexBFromEnd = true;
+		}
+		else if(rangeA.isIndex1FromEnd && rangeB.isIndex1FromEnd) { // Both from end
+			std::get<std::pair<size_t, size_t>>(argumentA).second = rangeA.index1;
+			std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index1;
 			isReversed = true;
-			std::get<std::pair<size_t, size_t>>(argumentB).second = range.index1;
+		}
+		else { // A from end, B from beginning
+			std::get<std::pair<size_t, size_t>>(argumentA).second = rangeA.index1;
+			std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index0;
+			isReversed = true;
+			isIndexBFromEnd = true;
+		};
+	};
+
+	if(!this->expressionA->isConstant() && this->expressionB->isConstant()) {
+		if(rangeA.isIndex1FromEnd) {
+			std::get<std::pair<size_t, size_t>>(argumentA).second = rangeA.index1;
+			isReversed = true;
 		}
 		else
-			std::get<std::pair<size_t, size_t>>(argumentB).second = range.index0;
+			std::get<std::pair<size_t, size_t>>(argumentA).second = rangeA.index0;
+	};
+
+	if(this->expressionA->isConstant() && !this->expressionB->isConstant()) {
+		if(rangeB.isIndex1FromEnd) {
+			std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index1;
+			isReversed = true;
+		}
+		else
+			std::get<std::pair<size_t, size_t>>(argumentB).second = rangeB.index0;
 	};
 
 	if(isReversed) {
@@ -322,32 +346,32 @@ void BinaryExpression::buildComparison(InstructionBuilder &builder, size_t realT
 
 	switch(this->type) {
 		case BinaryExpression::Type::EQ:
-			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::EQ));
+			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::EQ, isIndexBFromEnd));
 
 			break;
 
 		case BinaryExpression::Type::NE:
-			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::NE));
+			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::NE, isIndexBFromEnd));
 
 			break;
 
 		case BinaryExpression::Type::LTE:
-			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::LTE));
+			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::LTE, isIndexBFromEnd));
 
 			break;
 
 		case BinaryExpression::Type::LT:
-			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::LT));
+			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::LT, isIndexBFromEnd));
 
 			break;
 
 		case BinaryExpression::Type::GTE:
-			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::GTE));
+			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::GTE, isIndexBFromEnd));
 
 			break;
 
 		case BinaryExpression::Type::GT:
-			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::GT));
+			builder.addInstruction(std::make_unique<CompareInstruction>(argumentA, argumentB, trueLabel, falseLabel, CompareInstruction::Type::GT, isIndexBFromEnd));
 
 			break;
 

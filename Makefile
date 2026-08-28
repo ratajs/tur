@@ -130,6 +130,8 @@ EXAMPLES = \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/branchingWithElseif.tm \
+	examples/simpleTests/negativeIndicesInConditionsWithTheSameVariable.tm \
+	examples/simpleTests/negativeIndicesInConditionsWithDifferentVariables.tm \
 	examples/simpleTests/while.tm \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \
@@ -255,6 +257,7 @@ AST/expressions/binaryExpression.o: AST/expressions/binaryExpression.cpp \
 	AST/expressions/../../instructions/jumpInstruction.hpp \
 	AST/expressions/../../instructions/compareInstruction.hpp \
 	AST/expressions/../../instructions/compareTapeLengthInstruction.hpp \
+	AST/expressions/../../instructions/reversePseudoinstruction.hpp \
 	AST/expressions/../../machine/machineLibrary.hpp \
 	AST/expressions/../../machine/./machine.hpp \
 	AST/expressions/../../IO/typeError.hpp \
@@ -293,6 +296,9 @@ AST/expressions/callExpression.o: AST/expressions/callExpression.cpp \
 	AST/expressions/../../instructions/callInstruction.hpp \
 	AST/expressions/../../instructions/../machine/machine.hpp \
 	AST/expressions/../../instructions/clearInstruction.hpp \
+	AST/expressions/../../instructions/reversePseudoinstruction.hpp \
+	AST/expressions/../../IO/unexpectedError.hpp \
+	AST/expressions/../../IO/./error.hpp \
 	AST/expressions/../../IO/typeError.hpp \
 	AST/expressions/../../IO/./errorWithLocation.hpp \
 	AST/expressions/../../IO/././error.hpp \
@@ -940,6 +946,7 @@ instructions/copyInstruction.o: instructions/copyInstruction.cpp \
 	instructions/./../parsing/../machine/machine.hpp \
 	instructions/./clearInstruction.hpp \
 	instructions/./../machine/singleTapeMachineFactory.hpp \
+	instructions/./reversePseudoinstruction.hpp \
 	instructions/../IO/unexpectedError.hpp instructions/../IO/./error.hpp \
 	instructions/../IO/irParseError.hpp \
 	instructions/../IO/./errorWithLocation.hpp \
@@ -1060,7 +1067,7 @@ IO/typeError.o: IO/typeError.cpp IO/./typeError.hpp \
 	IO/././../parsing/location.hpp IO/./../parsing/location.hpp \
 	IO/./format.hpp
 IO/unexpectedError.o: IO/unexpectedError.cpp IO/./unexpectedError.hpp \
-	IO/././error.hpp
+	IO/././error.hpp IO/./format.hpp
 IO/warning.o: IO/warning.cpp IO/./warning.hpp IO/./format.hpp
 machine/machine.o: machine/machine.cpp machine/./machine.hpp \
 	machine/././tape.hpp machine/../IO/unexpectedError.hpp \

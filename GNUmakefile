@@ -130,6 +130,8 @@ EXAMPLES = \
 	examples/simpleTests/branchingWithoutElse.tm \
 	examples/simpleTests/branchingWithElse.tm \
 	examples/simpleTests/branchingWithElseif.tm \
+	examples/simpleTests/negativeIndicesInConditionsWithTheSameVariable.tm \
+	examples/simpleTests/negativeIndicesInConditionsWithDifferentVariables.tm \
 	examples/simpleTests/while.tm \
 	examples/simpleTests/break.tm \
 	examples/simpleTests/continue.tm \

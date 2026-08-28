@@ -1329,7 +1329,7 @@ void Tester::testAppendAll() {
 	);
 };
 
-void Tester::testCompare() {
+void Tester::testCompare() { //TODO indexB from end
 	std::ranges::for_each(Tester::TEST_CONTENTS,
 		[this](const std::wstring &testContent) -> void {
 			size_t x, y;
