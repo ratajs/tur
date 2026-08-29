@@ -127,8 +127,8 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 						builder.addInstruction(std::make_unique<CopyInstruction>(backupTape, *this->destination.tape, sourceRange.index0 - this->backupRange->index0, sourceRange.index1 - this->backupRange->index0, std::nullopt));
 					else if(!sourceRange.isIndex0FromEnd && sourceRange.isIndex1FromEnd) {
 						builder.addInstruction(std::make_unique<CopyInstruction>(backupTape, *this->destination.tape, sourceRange.index0 - this->backupRange->index0, std::nullopt, std::nullopt));
-						if(sourceRange.index1 > 0)
-							builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, sourceRange.index1, std::nullopt, true));
+						if(sourceRange.index1 - this->backupRange->index1 > 0)
+							builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, sourceRange.index1 - this->backupRange->index1, std::nullopt, true));
 					}
 					else if(sourceRange.isIndex0FromEnd && sourceRange.isIndex1FromEnd)
 						builder.addInstruction(std::make_unique<CopyInstruction>(backupTape, *this->destination.tape, sourceRange.index0 - this->backupRange->index1, sourceRange.index1 - this->backupRange->index1, std::nullopt, true));
