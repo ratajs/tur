@@ -56,3 +56,5 @@ void ClearInstruction::build(MultiTapeMachineFactory &machineFactory, std::funct
 void ClearInstruction::print(std::wostream &stream, std::function<size_t (size_t)> getRealTape) const {
 	stream << L"clear(" << getRealTape(this->tape) << L"[" << (this->isIndex0FromEnd ? L"−" : L"") << this->index0 << L":" << (this->index1 ? std::to_wstring(*this->index1) : L"") << L"])" << std::endl;
 };
+
+//TODO merge with appending

@@ -23,11 +23,11 @@ Expression::Result CountExpression::build(InstructionBuilder &builder) const {
 	builder.addInstruction(std::make_unique<CopyInstruction>(*this->variable.tape, tape, 0, std::nullopt, 0));
 	builder.addInstruction(std::make_unique<CallInstruction>(tape, MachineLibrary::COUNT));
 
-	return Expression::Result::createTapeRange(tape, Expression::TapeRange(0, 1));
+	return Expression::Result::createTapeRange(tape, Expression::TapeRange(0, 1, false, false));
 };
 
 std::optional<Expression::TapeRange> CountExpression::getArrayAccesRange() const {
-	return Expression::TapeRange(0, 1);
+	return Expression::TapeRange(0, 1, false, false);
 };
 
 std::optional<std::reference_wrapper<const Variable>> CountExpression::getMeasuredVariable() const {

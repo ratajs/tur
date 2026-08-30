@@ -1,0 +1,7 @@
+input[2:] = input[:−1];
+output = input[:−0];
+output[] = input[−3:−1];
+output[] = input[1:−1];
+a = output[−4:];
+a = a[−3:−1];
+output[] = a[−2:];

@@ -43,13 +43,15 @@ Expression::Result Expression::Result::createCondition(size_t trueLabel, size_t 
 /*!
  * The default constructor constructs a range which only includes the first number.
  */
-Expression::TapeRange::TapeRange(): index0(0), index1(1) {};
+Expression::TapeRange::TapeRange(): isIndex0FromEnd(false), isIndex1FromEnd(false), index0(0), index1(1) {};
 
 /*!
 	\param index0 The starting index of the range.
-	\param index1 The end index of the range, {} means that the range is rightwise unbounded.
+	\param index1 The end index of the range.
+	\param isIndex0FromEnd Whether the starting index is indexed from the end.
+	\param isIndex1FromEnd Whether the end index is indexed from the end.
  */
-Expression::TapeRange::TapeRange(size_t index0, std::optional<size_t> index1): index0(index0), index1(index1) {};
+Expression::TapeRange::TapeRange(size_t index0, size_t index1, bool isIndex0FromEnd, bool isIndex1FromEnd): isIndex0FromEnd(isIndex0FromEnd), isIndex1FromEnd(isIndex1FromEnd), index0(index0), index1(index1) {};
 
 /*!
  * A delegate constructor to save the location of the expression.
@@ -111,7 +113,7 @@ std::pair<size_t, size_t> Expression::buildCondition(InstructionBuilder &builder
 
 /*!
  * Computes the length of the array access from the result of getArrayAccesRange.
- * \return 0, if getArrayAccesRange returns {}, {} if the range is unbounded rightwise, the length (difference between indices) otherwise.
+ * \return 0, if getArrayAccesRange returns {}, {} if the range is length is unbounded, the length (difference between indices) otherwise.
  */
 std::optional<size_t> Expression::getArrayAccessLength() const {
 	std::optional<Expression::TapeRange> range;
@@ -121,13 +123,13 @@ std::optional<size_t> Expression::getArrayAccessLength() const {
 	if(!range)
 		return 0;
 
-	if(!range->index1)
+	if(range->isIndex0FromEnd!=range->isIndex1FromEnd)
 		return {};
 
-	if((*range->index1) <= range->index0)
+	if((!range->isIndex0FromEnd && range->index1 <= range->index0) || (range->isIndex0FromEnd && range->index1 >= range->index0))
 		throw UnexpectedError(L"Invalid range to assess length.");
 
-	return ((*range->index1) - range->index0);
+	return ((range->isIndex0FromEnd ? range->index0 : range->index1) - (range->isIndex0FromEnd ? range->index1 : range->index0));
 };
 
 bool Expression::isTapeTemporary() const {

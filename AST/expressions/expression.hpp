@@ -22,13 +22,13 @@ class Expression {
 		};
 
 		/*!
-		 * This structure holds the start index of the range (inclusive) and optionally, the end index of the range (exclusive; {} means that the range is unbounded rightwise).
+		 * This structure holds the start index of the range (inclusive), the end index of the range (exclusive) and whether those indices are indexed from the end (if so, starting with 1 means starting with the last number).
 		 */
 		struct TapeRange {
-			size_t index0;
-			std::optional<size_t> index1;
+			bool isIndex0FromEnd, isIndex1FromEnd;
+			size_t index0, index1;
 			TapeRange();
-			TapeRange(size_t index0, std::optional<size_t> index1);
+			TapeRange(size_t index0, size_t index1, bool isIndex0FromEnd, bool isIndex1FromEnd);
 		};
 
 		/*!

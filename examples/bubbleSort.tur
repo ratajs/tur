@@ -1,21 +1,6 @@
 # Input: any valid list of numbers
 # Output: the sorted input list
 
-subtract = { # Subtracting for the first number greater than the second
-	A11RA
-	A00RB
-	B00RB
-	B10RC
-	C00LD
-	D00LD
-	D11LE
-	E11LE
-	E00R_
-	C11LF
-	F00LF
-	F10RB
-};
-
 numbers = input...;
 
 loop:
@@ -27,13 +12,9 @@ loop:
 			numbers = numbers[1:]; # Remove the first number that was appended to newNumbers
 		else: # The two next numbers are not in order
 			newNumbers[] = numbers[1]; # Append the second number of the pair
-			status = numbers[0:2]; # Repurpose temporarily this variable to avoid a new tape for a new variable
-			subtract(status...); # Get the difference between the two numbers; status = status[0] - status[1] would create one more tape, optimizations would not prevent it because of the loops
-			numbers = numbers[1:]; # Remove the first number
-			while status > 0: # The first number of the pair should be kept, not the second, change the number
-				numbers++;
-				status--;
-			endwhile;
+			status = numbers[0]; # Repurpose temporarily this variable to avoid a new tape for a new variable
+			numbers[:2] = []; # Delete the pair
+			numbers[:0] = status; # Return the second number from the pair
 			status = 1; # Remember that something was swapped
 		endif;
 	endwhile;

@@ -180,23 +180,32 @@ std::optional<std::pair<size_t, bool>> IrArguments::readRightwiseUnboundedRange(
 
 /*!
  * Expect either a tape with an index in square brackets or a number.
+ * \param isNegativeIndexAllowed Whether the index can be negative (−0 is invalid).
  * \return The read value (either tape and index or the immediate value).
  * \throw IrParseError If no such value was there.
  */
-std::variant<std::pair<size_t, size_t>, size_t> IrArguments::readTapeAndIndexOrNumber() {
+std::variant<std::tuple<size_t, size_t, bool>, size_t> IrArguments::readTapeAndIndexOrNumber(bool isNegativeIndexAllowed) {
+	bool isIndexFromEnd = false;
 	size_t firstNumber, index;
 
 	firstNumber = this->readNumber();
 
 	if(this->iss.peek()=='[') {
 		this->iss.get();
+		if(isNegativeIndexAllowed && this->iss.peek()==L'−') {
+			isIndexFromEnd = true;
+			this->iss.get();
+		};
 		index = this->readNumber();
 		this->readCharacter(']');
 
 		if(firstNumber==0 || firstNumber > this->tapesCount)
 			throw IrParseError(IrParseError::Type::INVALID_TAPE_NUMBER, this->location); //TODO more precise location?
 
-		return std::pair(firstNumber - 1, index);
+		if(isIndexFromEnd && index==0)
+			throw IrParseError(IrParseError::Type::INVALID_INDEX, this->location); //TODO more precise location?
+
+		return std::tuple(firstNumber - 1, index, isIndexFromEnd);
 	};
 
 	return firstNumber;

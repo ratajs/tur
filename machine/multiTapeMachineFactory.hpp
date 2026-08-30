@@ -56,8 +56,8 @@ class MultiTapeMachineFactory: public MachineFactory {
 		MultiTapeMachineFactory &append(size_t tapeA, size_t beginA, size_t tapeB, size_t count, bool isBeginAFromEnd = false);
 		MultiTapeMachineFactory &simulate(size_t tape, const Machine &machine);
 		MultiTapeMachineFactory &compareWithConstant(size_t tape, size_t index, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
-		MultiTapeMachineFactory &compare(size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
-		MultiTapeMachineFactory &compare(size_t tape, size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
+		MultiTapeMachineFactory &compare(size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState, bool isIndexBFromEnd = false);
+		MultiTapeMachineFactory &compare(size_t tape, size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState, bool isIndexBFromEnd = false);
 		MultiTapeMachineFactory &compareTapeLength(size_t tape, size_t number, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState);
 		MultiTapeMachineFactory &reverse();
 };

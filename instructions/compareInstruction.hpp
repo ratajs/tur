@@ -23,9 +23,9 @@ class CompareInstruction: public Instruction {
 		};
 
 	private:
+		bool isArgumentAConstant, isArgumentBConstant, isIndexBFromEnd;
 		CompareInstruction::Type type;
-		size_t trueLabel, falseLabel;
-		std::variant<std::pair<size_t, size_t>, size_t> argumentA, argumentB;
+		size_t numberA, numberB, tapeA, tapeB, indexA, indexB, trueLabel, falseLabel;
 
 		CompareInstruction::Type getInvertedType() const;
 		bool isConstantConditionSatisfied() const;
@@ -35,7 +35,7 @@ class CompareInstruction: public Instruction {
 		void buildTapeComparison(MultiTapeMachineFactory &machineFactory, size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, const std::wstring &trueState, const std::wstring &falseState) const;
 
 	public:
-		CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type);
+		CompareInstruction(std::variant<std::pair<size_t, size_t>, size_t> argumentA, std::variant<std::pair<size_t, size_t>, size_t> argumentB, size_t trueLabel, size_t falseLabel, CompareInstruction::Type type, bool isIndexBFromEnd = false);
 		CompareInstruction(IrArguments &arguments);
 		std::vector<size_t> listUsedTapes() const override;
 		bool isGoToInstruction() const override;

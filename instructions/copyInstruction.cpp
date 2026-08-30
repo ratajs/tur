@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <ranges>
 #include "./clearInstruction.hpp"
+#include "./reversePseudoinstruction.hpp"
 #include "../IO/unexpectedError.hpp"
 #include "../IO/irParseError.hpp"
 
@@ -54,14 +55,21 @@ std::vector<size_t> CopyInstruction::listUsedTapes() const {
 std::optional<std::list<std::unique_ptr<Instruction>>> CopyInstruction::tryToUnify() const {
 	std::list<std::unique_ptr<Instruction>> instructions;
 
-	if(this->destinationIndex!=0)
+	if(this->isDestinationIndexFromEnd || this->destinationIndex!=0)
 		return {};
 
-	if(this->sourceIndex0!=0)
+	if(!this->areSourceIndicesFromEnd && this->sourceIndex0!=0)
 		instructions.push_back(std::make_unique<ClearInstruction>(this->source, 0, this->sourceIndex0));
+	else if(this->areSourceIndicesFromEnd) {
+		instructions.push_back(std::make_unique<ReversePseudoinstruction>());
+		instructions.push_back(std::make_unique<ClearInstruction>(this->source, this->sourceIndex0, std::nullopt));
+		instructions.push_back(std::make_unique<ReversePseudoinstruction>());
+	};
 
-	if(this->sourceIndex1)
+	if(this->sourceIndex1 && !this->areSourceIndicesFromEnd)
 		instructions.push_back(std::make_unique<ClearInstruction>(this->source, (*this->sourceIndex1) - this->sourceIndex0, std::nullopt));
+	if(this->sourceIndex1 && this->areSourceIndicesFromEnd)
+		instructions.push_back(std::make_unique<ClearInstruction>(this->source, (*this->sourceIndex1), std::nullopt, true));
 
 	return { std::move(instructions) };
 };
@@ -74,7 +82,7 @@ std::optional<std::list<std::unique_ptr<Instruction>>> CopyInstruction::tryToMer
 	if(!copyInstruction) // Another type of instruction
 		return {};
 
-	if(this->areSourceIndicesFromEnd || this->isDestinationIndexFromEnd)
+	if(this->areSourceIndicesFromEnd || this->isDestinationIndexFromEnd || copyInstruction->areSourceIndicesFromEnd || copyInstruction->isDestinationIndexFromEnd)
 		return {}; //TODO merge for other variants as well
 
 	//TODO reversed order of ranges?

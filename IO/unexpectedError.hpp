@@ -1,6 +1,7 @@
 #pragma once
 #include <optional>
 #include <string>
+#include <source_location>
 #include "./error.hpp"
 
 /*!
@@ -9,9 +10,10 @@
 class UnexpectedError: public Error {
 	private:
 		std::wstring message;
+		std::source_location location;
 
 	public:
-		UnexpectedError(std::wstring message);
+		UnexpectedError(std::wstring message, std::source_location location = std::source_location::current());
 		std::optional<std::wstring> getTitle() const override;
 		std::wstring getMessage() const override;
 };

@@ -7,7 +7,6 @@
 #include <map>
 #include <algorithm>
 #include <functional>
-#include <functional>
 #include "./stateGenerator.hpp"
 #include "./singleTapeMachineFactory.hpp"
 #include "../IO/unexpectedError.hpp"
@@ -1725,22 +1724,28 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compareWithConstant(size_t tap
  * \param tapeB The tape on which the second number is.
  * \param indexA Index of the first number.
  * \param indexB Index of the second number.
+ * \param isIndexBFromEnd Whether the second number is indexed from the end (the last number is 0).
  * \param lessThanState The end state if tapeA[indexA] < tapeB[indexB].
  * \param equalState The end state if tapeA[indexA] = tapeB[indexB].
  * \param greaterThanState The end state if tapeA[indexA] > tapeB[indexB].
  */
-MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState) {
+MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t indexA, size_t tapeB, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState, bool isIndexBFromEnd) {
 	size_t tapesCount, x;
 	std::wstring comparingState, skippingZerosStateA, skippingZerosStateB, lessThanOrEqualEndingState, lessThanOrEqualFillingZerosStateA, lessThanOrEqualFillingZerosStateB, greaterThanFillingZerosStateA, greaterThanFillingZerosStateB, lessThanEndingState, equalEndingState, greaterThanEndingState;
 
 	if(tapeA==tapeB) // Use a specialized method for comparing numbers on the same tape
-		return this->compare(tapeA, indexA, indexB, std::move(lessThanState), std::move(equalState), std::move(greaterThanState));
+		return this->compare(tapeA, indexA, indexB, std::move(lessThanState), std::move(equalState), std::move(greaterThanState), isIndexBFromEnd);
 
 	if(tapeA==0 || tapeA > this->tapesCount)
 		throw UnexpectedError(L"Invalid tapeA.");
 
 	if(tapeB==0 || tapeB > this->tapesCount)
 		throw UnexpectedError(L"Invalid tapeB.");
+
+	/*
+	if(isIndexBFromEnd && indexB==0)
+		throw UnexpectedError(L"Invalid indexB (0 with indexing from end).");
+	*/
 
 	if(!this->extraStates.contains(lessThanState) || !this->extraStates.contains(equalState) || !this->extraStates.contains(greaterThanState))
 		throw UnexpectedError(L"States given to the machine factory must be extra states.");
@@ -1752,14 +1757,24 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 	this->invertTapeNumberIfNecessary(tapeA);
 	this->invertTapeNumberIfNecessary(tapeB);
 
+	if(isIndexBFromEnd) {
+		tapeB = (this->tapesCount - tapeB + 1);
+	//indexB--;
+	};
+
 	// The beginning of the compared numbers is going to be gradually replaced with zeros to keep track of the comparison.
 	// Usually, they can be reconstructed using the end of the preceding number, but if the number is the first one on the tape, it is not possible.
 	// So, if this is the case, a dummy number (a 0, so a single one) will be prepended to the tape.
 
 	if(indexA==0)
 		this->addDummyZero(tapeA, {}, {});
-	if(indexB==0)
+	if(indexB==0) {
+		if(isIndexBFromEnd)
+			this->reverse();
 		this->addDummyZero(tapeB, {}, {});
+		if(isIndexBFromEnd)
+			this->reverse();
+	};
 
 	comparingState = this->generator.getCurrentState();
 
@@ -1784,6 +1799,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 		this->addTransition<Machine::Direction::L>({}, {});
 	this->goHome({}, {});
 
+	if(isIndexBFromEnd)
+		this->reverse(); // The tapeB should be read in the reverse order
+
 	this->findTape(tapeB, {}, {}, false);
 
 	for(x = 0; x < std::max<size_t>(indexB, 1); x++)
@@ -1800,7 +1818,12 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 	this->addTransition<true, true, Machine::Direction::L>(this->generator.getLastState(), {});
 	for(x = (tapeB - 1); x > 0; x--)
 		this->addTransition<Machine::Direction::L>({}, {});
-	this->goHome({}, comparingState);
+	this->goHome({}, {});
+
+	if(isIndexBFromEnd)
+		this->reverse(); // End of the reverse order for tapeB
+
+	this->addTransition<true, true, Machine::Direction::N>({}, comparingState);
 
 	// This is the end of the iteration.
 	// Let us sort out the ending states.
@@ -1817,6 +1840,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 	for(x = (tapeA - 1); x > 0; x--)
 		this->addTransition<Machine::Direction::L>({}, {});
 	this->goHome({}, {});
+
+	if(isIndexBFromEnd)
+		this->reverse();
 
 	this->findTape(tapeB, {}, {});
 	for(x = 0; x < std::max<size_t>(indexB, 1); x++)
@@ -1837,22 +1863,38 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 		this->addTransition<Machine::Direction::L>({}, {});
 	this->goHome({}, {});
 
-	if(indexA==0)
-		this->removeDummyZero(tapeA, {}, {});
 	if(indexB==0)
 		this->removeDummyZero(tapeB, {}, {});
+
+	if(isIndexBFromEnd)
+		this->reverse();
+
+	if(indexA==0)
+		this->removeDummyZero(tapeA, {}, {});
+
 	this->addTransition<true, true, Machine::Direction::N>({}, equalState);
+
+	if(isIndexBFromEnd)
+		this->isReversed = (!this->isReversed);
 
 	this->addTransition<true, true, Machine::Direction::L>(lessThanEndingState, {});
 	for(x = (tapeB - 1); x > 0; x--)
 		this->addTransition<Machine::Direction::L>({}, {});
 	this->goHome({}, {});
 
-	if(indexA==0)
-		this->removeDummyZero(tapeA, {}, {});
 	if(indexB==0)
 		this->removeDummyZero(tapeB, {}, {});
+
+	if(isIndexBFromEnd)
+		this->reverse();
+
+	if(indexA==0)
+		this->removeDummyZero(tapeA, {}, {});
+
 	this->addTransition<true, true, Machine::Direction::N>({}, lessThanState);
+
+	if(isIndexBFromEnd)
+		this->isReversed = (!this->isReversed); // If in greaterThanState, the machine is at the other end of the tape
 
 	this->addSuperTransition<false, false, Machine::Direction::L>(greaterThanEndingState, {});
 
@@ -1867,6 +1909,9 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 		this->addTransition<Machine::Direction::L>({}, {});
 	this->goHome({}, {});
 
+	if(isIndexBFromEnd)
+		this->reverse();
+
 	this->findTape(tapeA, {}, {});
 	for(x = 0; x < std::max<size_t>(indexA, 1); x++)
 		this->skipNumber({}, {});
@@ -1878,10 +1923,18 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
 		this->addTransition<Machine::Direction::L>({}, {});
 
 	this->goHome({}, {});
+
 	if(indexA==0)
 		this->removeDummyZero(tapeA, {}, {});
-	if(indexB==0)
+
+	if(indexB==0) {
+		if(isIndexBFromEnd)
+			this->reverse();
 		this->removeDummyZero(tapeB, {}, {});
+		if(isIndexBFromEnd)
+			this->reverse();
+	};
+
 	this->addTransition<true, true, Machine::Direction::N>({}, greaterThanState);
 
 	this->isCurrentStateDisabled = true; // Prevent the next method from using the current state as the start state
@@ -1902,7 +1955,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tapeA, size_t i
  * \param equalState The end state if tape[indexA] = tape[indexB].
  * \param greaterThanState The end state if tape[indexA] > tape[indexB].
  */
-MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tape, size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState) {
+MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tape, size_t indexA, size_t indexB, std::wstring lessThanState, std::wstring equalState, std::wstring greaterThanState, bool isIndexBFromEnd) {
 	bool isInitialStateAssigned = false;
 	size_t tapesCount;
 	std::vector<std::wstring> singleTapeMachineExtraStates;
@@ -1922,7 +1975,7 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tape, size_t in
 	// If the indices are equal, then the numbers are equal as well.
 	// The machine will just jump to equalState in that case.
 
-	if(indexA==indexB) {
+	if(!isIndexBFromEnd && indexA==indexB) {
 		this->addTransition<true, true, Machine::Direction::N>({}, equalState);
 		this->isCurrentStateDisabled = true; // Prevent the next called method from using the current state as the start state
 
@@ -1939,10 +1992,13 @@ MultiTapeMachineFactory &MultiTapeMachineFactory::compare(size_t tape, size_t in
 	// This does practically the same as MultiTapeMachineFactory::adopt(), but cares about the three end states.
 
 	singleTapeMachineExtraStates = singleTapeMachineFactory.createExtraStates(3);
-	singleTapeMachineFactory.compare(indexA, indexB, singleTapeMachineExtraStates[0], singleTapeMachineExtraStates[1], singleTapeMachineExtraStates[2]);
+	singleTapeMachineFactory.compare(indexA, indexB, singleTapeMachineExtraStates[0], singleTapeMachineExtraStates[1], singleTapeMachineExtraStates[2], isIndexBFromEnd);
 	singleTapeMachineFactory.extractMachine().forEachTransition(
 		[this, &newStatesByOldStates, &isInitialStateAssigned, tapesCount](const std::wstring &state, bool symbol, bool newSymbol, Machine::Direction direction, const std::wstring &newState) -> void {
 			size_t x;
+
+			if(this->isReversed)
+				direction = ((direction==Machine::Direction::L) ? Machine::Direction::R : ((direction==Machine::Direction::R) ? Machine::Direction::L : Machine::Direction::N));;
 
 			if(!std::exchange(isInitialStateAssigned, true)) // This is the first adopted transition, so it begins the start state of the single-tape machine and should be connected to the current state of the multi-tape machine
 				newStatesByOldStates.emplace(state, this->generator.getCurrentState());
