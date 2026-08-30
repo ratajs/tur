@@ -1329,7 +1329,7 @@ void Tester::testAppendAll() {
 	);
 };
 
-void Tester::testCompare() { //TODO indexB from end
+void Tester::testCompare() {
 	std::ranges::for_each(Tester::TEST_CONTENTS,
 		[this](const std::wstring &testContent) -> void {
 			size_t x, y;
@@ -1350,6 +1350,16 @@ void Tester::testCompare() { //TODO indexB from end
 							(numbers[x]==numbers[y]) ? equalState : greaterThanState
 						)
 					), { L"compare, 1 tape, state", testContent });
+
+					tape.init(testContent);
+					Tester::prepareMachineForComparison(SingleTapeMachineFactory(), lessThanState, equalState, greaterThanState).compare(x, numbers.size() - y - 1, lessThanState, equalState, greaterThanState, true).extractMachine().run(tape, true, state);
+					this->assertValidity(tape, { L"compare, single tape, indexed from end, validity", testContent });
+					this->assertContent(tape, testContent, { L"compare, 1 tape, indexed from end, content", testContent });
+					this->assertState(state, (
+						(numbers[x] < numbers[y]) ? lessThanState : (
+							(numbers[x]==numbers[y]) ? equalState : greaterThanState
+						)
+					), { L"compare, 1 tape, indexed from end, state", testContent });
 				};
 			};
 		}
@@ -1375,6 +1385,16 @@ void Tester::testCompare() { //TODO indexB from end
 							(numbers[x]==numbers[y]) ? equalState : greaterThanState
 						)
 					), { L"compare, 1 tape, state", testContent.first });
+
+					tape.init(testContent.first);
+					Tester::prepareMachineForComparison(MultiTapeMachineFactory(1), lessThanState, equalState, greaterThanState).compare(1, x, numbers.size() - y - 1, lessThanState, equalState, greaterThanState, true).extractMachine().run(tape, true, state);
+					this->assertValidity(tape, 1, { L"compare, 1 tape, indexed from end, validity", testContent.first });
+					this->assertContent(tape, 1, 1, testContent.second[0], { L"compare, 1 tape, indexed from end, content", testContent.first });
+					this->assertState(state, (
+						(numbers[x] < numbers[y]) ? lessThanState : (
+							(numbers[x]==numbers[y]) ? equalState : greaterThanState
+						)
+					), { L"compare, 1 tape, indexed from end, state", testContent.first });
 				};
 			};
 		}
@@ -1403,6 +1423,17 @@ void Tester::testCompare() { //TODO indexB from end
 									(numbers[x - 1][y]==numbers[z - 1][w]) ? equalState : greaterThanState
 								)
 							), { L"compare, 2 tapes, state", testContent.first });
+
+							tape.init(testContent.first);
+							Tester::prepareMachineForComparison(MultiTapeMachineFactory(2), lessThanState, equalState, greaterThanState).compare(x, y, z, numbers[z - 1].size() - w - 1, lessThanState, equalState, greaterThanState, true).extractMachine().run(tape, true, state);
+							this->assertValidity(tape, 2, { L"compare, 2 tapes, indexed from end, validity", testContent.first });
+							this->assertContent(tape, 2, 1, testContent.second[0], { L"compare, 2 tapes, indexed from end, content", testContent.first });
+							this->assertContent(tape, 2, 2, testContent.second[1], { L"compare, 2 tapes, indexed from end, content", testContent.first });
+							this->assertState(state, (
+								(numbers[x - 1][y] < numbers[z - 1][w]) ? lessThanState : (
+									(numbers[x - 1][y]==numbers[z - 1][w]) ? equalState : greaterThanState
+								)
+							), { L"compare, 2 tapes, indexed from end, state", testContent.first });
 						};
 					};
 				};
@@ -1432,6 +1463,18 @@ void Tester::testCompare() { //TODO indexB from end
 							(numbers[0][x]==numbers[1][y]) ? equalState : greaterThanState
 						)
 					), { L"compare, 3 tapes, state", testContent.first });
+
+					tape.init(testContent.first);
+					Tester::prepareMachineForComparison(MultiTapeMachineFactory(3), lessThanState, equalState, greaterThanState).compare(1, x, 2, numbers[1].size() - y - 1, lessThanState, equalState, greaterThanState, true).extractMachine().run(tape, true, state);
+					this->assertValidity(tape, 3, { L"compare, 3 tapes, indexed from end, validity", testContent.first });
+					this->assertContent(tape, 3, 1, testContent.second[0], { L"compare, 3 tapes, indexed from end, content", testContent.first });
+					this->assertContent(tape, 3, 2, testContent.second[1], { L"compare, 3 tapes, indexed from end, content", testContent.first });
+					this->assertContent(tape, 3, 3, testContent.second[2], { L"compare, 3 tapes, indexed from end, content", testContent.first });
+					this->assertState(state, (
+						(numbers[0][x] < numbers[1][y]) ? lessThanState : (
+							(numbers[0][x]==numbers[1][y]) ? equalState : greaterThanState
+						)
+					), { L"compare, 3 tapes, indexed from end, state", testContent.first });
 				};
 			};
 
@@ -1448,6 +1491,18 @@ void Tester::testCompare() { //TODO indexB from end
 							(numbers[2][x]==numbers[0][y]) ? equalState : greaterThanState
 						)
 					), { L"compare, 3 tapes, state", testContent.first });
+
+					tape.init(testContent.first);
+					Tester::prepareMachineForComparison(MultiTapeMachineFactory(3), lessThanState, equalState, greaterThanState).compare(3, x, 1, numbers[0].size() - y - 1, lessThanState, equalState, greaterThanState, true).extractMachine().run(tape, true, state);
+					this->assertValidity(tape, 3, { L"compare, 3 tapes, indexed from end, validity", testContent.first });
+					this->assertContent(tape, 3, 1, testContent.second[0], { L"compare, 3 tape, indexed from ends, content", testContent.first });
+					this->assertContent(tape, 3, 2, testContent.second[1], { L"compare, 3 tape, indexed from ends, content", testContent.first });
+					this->assertContent(tape, 3, 3, testContent.second[2], { L"compare, 3 tape, indexed from ends, content", testContent.first });
+					this->assertState(state, (
+						(numbers[2][x] < numbers[0][y]) ? lessThanState : (
+							(numbers[2][x]==numbers[0][y]) ? equalState : greaterThanState
+						)
+					), { L"compare, 3 tape, indexed from ends, state", testContent.first });
 				};
 			};
 		}
