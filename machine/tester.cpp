@@ -4,6 +4,7 @@
 #include <deque>
 #include <algorithm>
 #include <iterator>
+#include <thread>
 #include "./machine.hpp"
 #include "./singleTapeMachineFactory.hpp"
 #include "./multiTapeMachineFactory.hpp"
@@ -209,12 +210,17 @@ template<MachineFactory_MachineFactory Factory>
 
 bool Tester::assertValidity(const Tape &tape, const Tester::Fail &fail) {
 	size_t firstOnePosition, x;
+	std::unique_lock<std::mutex> failsLock;
+
+	failsLock = { this->failsMutex, std::defer_lock };
 
 	firstOnePosition = (std::ranges::find(tape.getContent(), true) - tape.getContent().begin());
 
 	if(tape.getContent()[tape.getPosition()]==false) {
 		if(firstOnePosition!=tape.getContent().size()) {
+			failsLock.lock();
 			this->fails.push_back(fail);
+			failsLock.unlock();
 
 			return false;
 		};
@@ -223,7 +229,9 @@ bool Tester::assertValidity(const Tape &tape, const Tester::Fail &fail) {
 	};
 
 	if(firstOnePosition!=tape.getPosition()) {
+		failsLock.lock();
 		this->fails.push_back(fail);
+		failsLock.unlock();
 
 		return false;
 	};
@@ -235,7 +243,9 @@ bool Tester::assertValidity(const Tape &tape, const Tester::Fail &fail) {
 
 	for(x++; x < tape.getContent().size(); x++) {
 		if(tape.getContent()[x]==true) {
+			failsLock.lock();
 			this->fails.push_back(fail);
+			failsLock.unlock();
 
 			return false;
 		};
@@ -246,11 +256,16 @@ bool Tester::assertValidity(const Tape &tape, const Tester::Fail &fail) {
 
 bool Tester::assertValidity(const Tape &tape, size_t tapesCount, const Tester::Fail &fail) {
 	size_t firstOnePosition, x, y;
+	std::unique_lock<std::mutex> failsLock;
+
+	failsLock = { this->failsMutex, std::defer_lock };
 
 	firstOnePosition = (std::ranges::find(tape.getContent(), true) - tape.getContent().begin());
 
 	if(firstOnePosition!=tape.getPosition()) {
+		failsLock.lock();
 		this->fails.push_back(fail);
+		failsLock.unlock();
 
 		return false;
 	};
@@ -264,7 +279,9 @@ bool Tester::assertValidity(const Tape &tape, size_t tapesCount, const Tester::F
 
 	for(x+= tapesCount; x < tape.getContent().size(); x+= tapesCount) {
 		if(tape.getContent()[x]==true) {
+			failsLock.lock();
 			this->fails.push_back(fail);
+			failsLock.unlock();
 
 			return false;
 		};
@@ -286,7 +303,9 @@ bool Tester::assertValidity(const Tape &tape, size_t tapesCount, const Tester::F
 
 		for(y+= tapesCount; y < tape.getContent().size(); y+= tapesCount) {
 			if(tape.getContent()[y]==true) {
+				failsLock.lock();
 				this->fails.push_back(fail);
+				failsLock.unlock();
 
 				return false;
 			};
@@ -299,17 +318,24 @@ bool Tester::assertValidity(const Tape &tape, size_t tapesCount, const Tester::F
 bool Tester::assertContent(const Tape &tape, const std::vector<bool> &content, const Tester::Fail &fail) {
 	size_t x;
 	std::vector<bool>::const_iterator it;
+	std::unique_lock<std::mutex> failsLock;
+
+	failsLock = { this->failsMutex, std::defer_lock };
 
 	for(x = tape.getPosition(), it = content.begin(); x < tape.getContent().size() && it < content.end(); x++, it++) {
 		if(tape.getContent()[x]!=(*it)) {
+			failsLock.lock();
 			this->fails.push_back(fail);
+			failsLock.unlock();
 
 			return false;
 		};
 	};
 
 	if(it!=content.end() || (x < tape.getContent().size() && tape.getContent()[x]==true) || (x + 1 < tape.getContent().size() && tape.getContent()[x + 1]==true)) {
+		failsLock.lock();
 		this->fails.push_back(fail);
+		failsLock.unlock();
 
 		return false;
 	};
@@ -341,6 +367,9 @@ bool Tester::assertContent(const Tape &tape, const std::wstring &contentString, 
 bool Tester::assertContent(const Tape &tape, size_t tapesCount, size_t tapeNumber, const std::vector<bool> &content, const Tester::Fail &fail) {
 	size_t x;
 	std::vector<bool>::const_iterator it;
+	std::unique_lock<std::mutex> failsLock;
+
+	failsLock = { this->failsMutex, std::defer_lock };
 
 	tapesCount++;
 
@@ -351,14 +380,18 @@ bool Tester::assertContent(const Tape &tape, size_t tapesCount, size_t tapeNumbe
 
 	for(it = content.begin(); x < tape.getContent().size() && it < content.end(); x+= tapesCount, it++) {
 		if(tape.getContent()[x]!=(*it)) {
+			failsLock.lock();
 			this->fails.push_back(fail);
+			failsLock.unlock();
 
 			return false;
 		};
 	};
 
 	if(it!=content.end() || (x < tape.getContent().size() && tape.getContent()[x]==true) || (x + tapesCount < tape.getContent().size() && tape.getContent()[x + tapesCount]==true)) {
+		failsLock.lock();
 		this->fails.push_back(fail);
+		failsLock.unlock();
 
 		return false;
 	};
@@ -388,8 +421,14 @@ bool Tester::assertContent(const Tape &tape, size_t tapesCount, size_t tapeNumbe
 };
 
 bool Tester::assertState(const std::wstring &expectedState, const std::wstring &state, const Fail &fail) {
+	std::unique_lock<std::mutex> failsLock;
+
+	failsLock = { this->failsMutex, std::defer_lock };
+
 	if(expectedState!=state) {
+		failsLock.lock();
 		this->fails.push_back(fail);
+		failsLock.unlock();
 
 		return false;
 	};
@@ -1835,27 +1874,31 @@ void Tester::testCount() {
 };
 
 void Tester::runAllTests() {
-	this->testDecompressCompress();
-	this->testCompress();
-	this->testClearBeginning();
-	this->testClearEnd();
-	this->testWriteNumber();
-	this->testAppendNumber();
-	this->testCopy();
-	this->testAppend();
-	this->testCopyAll();
-	this->testAppendAll();
-	this->testCompare();
-	this->testCompareWithConstant();
-	this->testCompareTapeLength();
-	this->testAdd();
-	this->testSub();
-	this->testMul();
-	this->testDiv();
-	this->testMod();
-	this->testMin();
-	this->testMax();
-	this->testCount();
+	std::ranges::for_each(std::array {
+		std::thread([this]() -> void { this->testDecompressCompress(); }),
+		std::thread([this]() -> void { this->testCompress(); }),
+		std::thread([this]() -> void { this->testClearBeginning(); }),
+		std::thread([this]() -> void { this->testClearEnd(); }),
+		std::thread([this]() -> void { this->testWriteNumber(); }),
+		std::thread([this]() -> void { this->testAppendNumber(); }),
+		std::thread([this]() -> void { this->testCopy(); }),
+		std::thread([this]() -> void { this->testAppend(); }),
+		std::thread([this]() -> void { this->testCopyAll(); }),
+		std::thread([this]() -> void { this->testAppendAll(); }),
+		std::thread([this]() -> void { this->testCompare(); }),
+		std::thread([this]() -> void { this->testCompareWithConstant(); }),
+		std::thread([this]() -> void { this->testCompareTapeLength(); }),
+		std::thread([this]() -> void { this->testAdd(); }),
+		std::thread([this]() -> void { this->testSub(); }),
+		std::thread([this]() -> void { this->testMul(); }),
+		std::thread([this]() -> void { this->testDiv(); }),
+		std::thread([this]() -> void { this->testMod(); }),
+		std::thread([this]() -> void { this->testMin(); }),
+		std::thread([this]() -> void { this->testMax(); }),
+		std::thread([this]() -> void { this->testCount(); })
+	}, [](std::thread &thread) -> void {
+		thread.join();
+	});
 };
 
 const std::vector<Tester::Fail> &Tester::getFails() {

@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <functional>
+#include <mutex>
 #include "./tape.hpp"
 #include "./machineFactory.hpp"
 
@@ -31,6 +32,7 @@ class Tester {
 
 	private:
 		std::vector<Tester::Fail> fails;
+		std::mutex failsMutex;
 
 		bool assertValidity(const Tape &tape, const Fail &fail);
 		bool assertValidity(const Tape &tape, size_t tapesCount, const Fail &fail);
