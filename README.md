@@ -121,6 +121,12 @@ input[:2] # Also first two numbers
 input[0:] # All numbers
 input[:] # Also all numbers
 input... # Also all numbers (either three dots or the Unicode ellipsis, both is supported)
+input[-1] # The last number (both hyphen-minus and Unicode minus is supported)
+input[-2] # The second number from end
+input[-3:] # Last three numbers
+input[-3:-0] # Also last three numbers
+input[-3:-1] # The third and second number from end
+input[1:-1] # The whole variable except for the first and last number (it must contain at least two numbers)
 ```
 
 #### The result of a machine on a given input (any non-logical expressions); the result can be sliced:
@@ -284,9 +290,10 @@ output[:-1] = [input, 0, output]; # Replace everything except the last number wi
 #### Splitting (exploding) an expression to multiple variables:
 ```
 [a, b, c] = input; # First number goes to a, second number goes to b, third number goes to c (undefined behavior for less than 3 numbers in input).
-[a, b...] = input; # First number goes to a, the reset goes to b (undefined behavior for empty input). Only the last variable can have the ellipsis.
+[a, b...] = input; # First number goes to a, the reset goes to b (undefined behavior for empty input).
+[a, b..., c, d] = input; # First number goes to a, last two numbers go to c and d, the rest goes to b (undefined behavior for less than 3 numbers in input).
 [a, b] = input...; # The ellipsis can be there, but it is optional.
-[a, b] = a[1:]; # Other indexation than ellipsis is possible, but it has to be rightwise unbounded.
+[a, b] = a[1:]; # Other indexation than ellipsis is possible, but it has to be rightwise unbounded and without negative indices.
 [a, b] = f(a, b)...; # Any expression which can yield more numbers is possible as the right side. The ellipsis is optional here as well.
 ```
 
