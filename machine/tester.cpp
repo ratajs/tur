@@ -1896,9 +1896,7 @@ void Tester::runAllTests() {
 		std::thread([this]() -> void { this->testMin(); }),
 		std::thread([this]() -> void { this->testMax(); }),
 		std::thread([this]() -> void { this->testCount(); })
-	}, [](std::thread &thread) -> void {
-		thread.join();
-	});
+	}, &std::thread::join);
 };
 
 const std::vector<Tester::Fail> &Tester::getFails() {
