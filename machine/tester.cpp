@@ -1875,27 +1875,27 @@ void Tester::testCount() {
 
 void Tester::runAllTests() {
 	std::ranges::for_each(std::array {
-		std::thread([this]() -> void { this->testDecompressCompress(); }),
-		std::thread([this]() -> void { this->testCompress(); }),
-		std::thread([this]() -> void { this->testClearBeginning(); }),
-		std::thread([this]() -> void { this->testClearEnd(); }),
-		std::thread([this]() -> void { this->testWriteNumber(); }),
-		std::thread([this]() -> void { this->testAppendNumber(); }),
-		std::thread([this]() -> void { this->testCopy(); }),
-		std::thread([this]() -> void { this->testAppend(); }),
-		std::thread([this]() -> void { this->testCopyAll(); }),
-		std::thread([this]() -> void { this->testAppendAll(); }),
-		std::thread([this]() -> void { this->testCompare(); }),
-		std::thread([this]() -> void { this->testCompareWithConstant(); }),
-		std::thread([this]() -> void { this->testCompareTapeLength(); }),
-		std::thread([this]() -> void { this->testAdd(); }),
-		std::thread([this]() -> void { this->testSub(); }),
-		std::thread([this]() -> void { this->testMul(); }),
-		std::thread([this]() -> void { this->testDiv(); }),
-		std::thread([this]() -> void { this->testMod(); }),
-		std::thread([this]() -> void { this->testMin(); }),
-		std::thread([this]() -> void { this->testMax(); }),
-		std::thread([this]() -> void { this->testCount(); })
+		std::thread(std::bind_front(&Tester::testDecompressCompress, this)),
+		std::thread(std::bind_front(&Tester::testCompress, this)),
+		std::thread(std::bind_front(&Tester::testClearBeginning, this)),
+		std::thread(std::bind_front(&Tester::testClearEnd, this)),
+		std::thread(std::bind_front(&Tester::testWriteNumber, this)),
+		std::thread(std::bind_front(&Tester::testAppendNumber, this)),
+		std::thread(std::bind_front(&Tester::testCopy, this)),
+		std::thread(std::bind_front(&Tester::testAppend, this)),
+		std::thread(std::bind_front(&Tester::testCopyAll, this)),
+		std::thread(std::bind_front(&Tester::testAppendAll, this)),
+		std::thread(std::bind_front(&Tester::testCompare, this)),
+		std::thread(std::bind_front(&Tester::testCompareWithConstant, this)),
+		std::thread(std::bind_front(&Tester::testCompareTapeLength, this)),
+		std::thread(std::bind_front(&Tester::testAdd, this)),
+		std::thread(std::bind_front(&Tester::testSub, this)),
+		std::thread(std::bind_front(&Tester::testMul, this)),
+		std::thread(std::bind_front(&Tester::testDiv, this)),
+		std::thread(std::bind_front(&Tester::testMod, this)),
+		std::thread(std::bind_front(&Tester::testMin, this)),
+		std::thread(std::bind_front(&Tester::testMax, this)),
+		std::thread(std::bind_front(&Tester::testCount, this))
 	}, &std::thread::join);
 };
 
