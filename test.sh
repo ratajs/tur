@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# No not run this script directly, use make test instead.
+# Do not run this script directly, use make test instead.
 
 BINARY=$(dirname "$0")/tur
 
