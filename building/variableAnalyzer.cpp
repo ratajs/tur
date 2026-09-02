@@ -13,17 +13,13 @@
 void VariableAnalyzer::endBranch(VariableAnalyzer::Branching &branching, VariableAnalyzer::Scope &&previousBranch) {
 	if(branching.isInFirstBranch) {
 		branching.scope.initializedVariables = std::move(previousBranch.initializedVariables);
-		branching.scope.initializedVariables = std::move(previousBranch.uninitializedVariables);
+		branching.scope.uninitializedVariables = std::move(previousBranch.uninitializedVariables);
+		branching.isInFirstBranch = false;
 
 		return;
 	};
 
-	// Variables initialized in all previous branches, but not this one. ⇒ Unitialized.
-	std::ranges::set_difference(
-		branching.scope.initializedVariables,
-		previousBranch.initializedVariables,
-		std::inserter(branching.scope.uninitializedVariables, branching.scope.uninitializedVariables.end())
-	);
+	// Variables initialized in all previous branches, but not this one. ⇒ Not initialized.
 	std::erase_if(branching.scope.initializedVariables,
 		[&previousBranch](const Variable *variable) -> bool {
 			return (!previousBranch.initializedVariables.contains(variable));
@@ -34,8 +30,6 @@ void VariableAnalyzer::endBranch(VariableAnalyzer::Branching &branching, Variabl
 
 	// Used uninitialized in this branch.
 	std::ranges::copy(previousBranch.uninitializedVariables, std::inserter(branching.scope.uninitializedVariables, branching.scope.uninitializedVariables.end()));
-
-	branching.isInFirstBranch = false;
 };
 
 /*!
@@ -153,5 +147,6 @@ void VariableAnalyzer::reportVariableUsage(const Variable &variable) {
  * \param variable The variable.
  */
 void VariableAnalyzer::reportVariableAssignment(const Variable &variable) {
-	std::get<VariableAnalyzer::Scope>(this->stack.top()).initializedVariables.insert(&variable);
+	if(!std::get<VariableAnalyzer::Scope>(this->stack.top()).uninitializedVariables.contains(&variable))
+		std::get<VariableAnalyzer::Scope>(this->stack.top()).initializedVariables.insert(&variable);
 };
