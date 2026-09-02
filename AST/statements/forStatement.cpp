@@ -1,6 +1,7 @@
 #include "./forStatement.hpp"
 #include <cstdlib>
 #include <utility>
+#include <optional>
 #include <tuple>
 #include <algorithm>
 #include "../../instructions/jumpInstruction.hpp"
@@ -20,15 +21,16 @@ ForStatement::ForStatement(std::unique_ptr<Statement> initStatement, std::unique
 };
 
 void ForStatement::build(InstructionBuilder &builder) const {
-	size_t trueLabel, falseLabel, beginLabel, stepLabel, firstInstruction, lastInstruction;
+	size_t trueLabel, falseLabel, beginLabel, stepLabel, lastInstruction;
 
 	beginLabel = builder.createLabel();
 	stepLabel = builder.createLabel();
 
 	if(this->initStatement)
 		this->initStatement->build(builder);
+	builder.getVariableAnalyzer().startLoop();
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
-	firstInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
+	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	std::tie(trueLabel, falseLabel) = this->condition->buildCondition(builder);
 	builder.addInstruction(std::make_unique<JumpInstruction>(trueLabel, JumpInstruction::Type::COME_FROM));
 	builder.pushContinueDestination(stepLabel);
@@ -41,5 +43,9 @@ void ForStatement::build(InstructionBuilder &builder) const {
 	std::ranges::for_each(this->stepStatements, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
-	builder.postponeLastReference(firstInstruction, lastInstruction);
+	std::ranges::for_each(builder.getVariableAnalyzer().endLoop(),
+		[&builder, lastInstruction](const Variable *variable) -> void {
+			builder.postponeLastReference(*variable->tape, lastInstruction);
+		}
+	);
 };

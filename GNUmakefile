@@ -60,6 +60,7 @@ OBJS = \
 	building/instructionBuilder.o \
 	building/instructionCollection.o \
 	building/tapeReference.o \
+	building/variableAnalyzer.o \
 	building/machineBuilder.o \
 	instructions/instruction.o \
 	instructions/decompressInstruction.o \

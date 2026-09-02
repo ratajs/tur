@@ -41,6 +41,8 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 	index = 0;
 	this->destination.forEachVariableFromStartUntilEllipsis(
 		[this, &builder, sourceTape, &sourceRange, &index, &clearSourceVariableL](const Variable &variable, bool hasEllipsis) -> void {
+			builder.getVariableAnalyzer().reportVariableAssignment(variable);
+
 			if(this->source->getVariable() && (&this->source->getVariable()->get())==(&variable)) { // Source variable, no copying
 				clearSourceVariableL = ([&builder, sourceTape, &sourceRange, index, hasEllipsis]() -> void {
 					if(sourceRange.index0 + index > 0)
@@ -65,6 +67,8 @@ void ExplodeStatement::build(InstructionBuilder &builder) const {
 		index = 0;
 		this->destination.forEachVariableFromEndUntilEllipsis(
 			[this, &builder, sourceTape, &index, &clearSourceVariableR](const Variable &variable, bool hasEllipsis) -> void {
+				builder.getVariableAnalyzer().reportVariableAssignment(variable);
+
 				if(hasEllipsis) {
 					builder.addInstruction(std::make_unique<ClearInstruction>(*variable.tape, 0, index));
 

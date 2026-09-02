@@ -167,4 +167,8 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 			};
 		}, this->isReversed
 	);
+
+	if(this->destinationIndex!=0)
+		builder.getVariableAnalyzer().reportVariableUsage(this->destination);
+	builder.getVariableAnalyzer().reportVariableAssignment(this->destination);
 };

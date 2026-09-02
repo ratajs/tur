@@ -186,26 +186,15 @@ size_t InstructionBuilder::addInstruction(std::unique_ptr<Instruction> instructi
 };
 
 /*!
- * Rewrite the last references of tapes used by instructions in a particular range.
+ * Rewrite the last references of a specific tape.
  * The new last reference will be the end of the range.
  * The last reference is the index of the last instruction which is expected to change it.
  * Used if jumping up takes place, which causes that a tape can be accessed after the last instruction which uses it is executed.
- * \param firstReference The beginning of the range (inclusive).
+ * \param tape The tape the last reference of which should be postponed.
  * \param lastReference The end of the range and the new last reference.
  */
-void InstructionBuilder::postponeLastReference(size_t firstInstruction, size_t lastInstruction) {
-	if(lastInstruction <= firstInstruction || lastInstruction >= this->instructions.size())
-		throw UnexpectedError(L"Invalid instruction indices.");
-
-	std::ranges::for_each(this->tapesByLastReference.begin() + firstInstruction, this->tapesByLastReference.begin() + lastInstruction,
-		[this, lastInstruction](const std::set<size_t> &tapes) -> void {
-			std::ranges::for_each(tapes,
-				[this, lastInstruction](size_t tape) -> void {
-					this->tapes[tape].lastReference = lastInstruction;
-				}
-			);
-		}
-	);
+void InstructionBuilder::postponeLastReference(size_t tape, size_t lastInstruction) {
+	this->tapes[tape].lastReference = lastInstruction;
 };
 
 /*!
@@ -225,4 +214,11 @@ InstructionCollection InstructionBuilder::extractInstructions() {
 	(*this) = {};
 
 	return { std::move(instructions), std::move(tapes), labelsCount };
+};
+
+/*!
+ * \return The variableAnalyzer stored in the instructionBuilder.
+ */
+VariableAnalyzer &InstructionBuilder::getVariableAnalyzer() {
+	return this->variableAnalyzer;
 };

@@ -98,10 +98,12 @@ void Program::build(InstructionBuilder &builder) {
 		}
 	);
 	builder.addInstruction(std::make_unique<DecompressInstruction>(*this->variables.at(L"input")->tape));
+	builder.getVariableAnalyzer().reportVariableAssignment(*this->variables.at(L"input"));
 	std::ranges::for_each(this->statements, [&builder](std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::COME_FROM));
 	builder.addInstruction(std::make_unique<CompressInstruction>(*this->variables.at(L"output")->tape));
+	builder.getVariableAnalyzer().reportVariableUsage(*this->variables.at(L"output"));
 };
 
 /*!

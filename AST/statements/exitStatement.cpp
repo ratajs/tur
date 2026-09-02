@@ -9,5 +9,6 @@ void ExitStatement::build(InstructionBuilder &builder) const {
 		throw UnexpectedError(L"The exit destination is not set.");
 
 	builder.addInstruction(std::make_unique<JumpInstruction>(builder.getExitDestination(), JumpInstruction::Type::GO_TO));
+//builder.getVariableAnalyzer().reportVariableAssignment(); //TODO output variable
 	builder.addInstruction(std::make_unique<JumpInstruction>(builder.createLabel(), JumpInstruction::Type::COME_FROM)); // Unreachable label
 };

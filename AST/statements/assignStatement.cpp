@@ -124,4 +124,8 @@ void AssignStatement::build(InstructionBuilder &builder) const {
 				throw UnexpectedError(L"Tape indices of type [−x:y] encountered.");
 		};
 	};
+
+	if(this->destinationIndex!=0)
+		builder.getVariableAnalyzer().reportVariableUsage(this->destination);
+	builder.getVariableAnalyzer().reportVariableAssignment(this->destination);
 };
