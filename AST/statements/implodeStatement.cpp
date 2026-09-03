@@ -90,8 +90,8 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 
 	if(this->source.isEmpty()) {
 		if(this->destinationIndex!=0)
-			builder.getVariableAnalyzer().reportVariableUsage(this->destination);
-		builder.getVariableAnalyzer().reportVariableAssignment(this->destination);
+			builder.tapeInitializationAnalyzer.reportTapeUsage(*this->destination.tape);
+		builder.tapeInitializationAnalyzer.reportTapeInitialization(*this->destination.tape);
 
 		return;
 	};
@@ -174,6 +174,6 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 	);
 
 	if(this->destinationIndex!=0)
-		builder.getVariableAnalyzer().reportVariableUsage(this->destination);
-	builder.getVariableAnalyzer().reportVariableAssignment(this->destination);
+		builder.tapeInitializationAnalyzer.reportTapeUsage(*this->destination.tape);
+	builder.tapeInitializationAnalyzer.reportTapeInitialization(*this->destination.tape);
 };

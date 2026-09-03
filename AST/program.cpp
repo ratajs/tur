@@ -99,15 +99,15 @@ void Program::build(InstructionBuilder &builder, std::back_insert_iterator<std::
 		}
 	);
 	builder.addInstruction(std::make_unique<DecompressInstruction>(*this->variables.at(L"input")->tape));
-	builder.getVariableAnalyzer().reportVariableAssignment(*this->variables.at(L"input"));
+	builder.tapeInitializationAnalyzer.reportTapeInitialization(*this->variables.at(L"input")->tape);
 	std::ranges::for_each(this->statements, [&builder](std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::COME_FROM));
 	builder.addInstruction(std::make_unique<CompressInstruction>(*this->variables.at(L"output")->tape));
-	builder.getVariableAnalyzer().reportVariableUsage(*this->variables.at(L"output"));
+	builder.tapeInitializationAnalyzer.reportTapeUsage(*this->variables.at(L"output")->tape);
 	std::ranges::for_each(this->variables,
 		[&builder, &warningIt](const std::pair<const std::wstring, std::unique_ptr<Variable>> &variable) -> void {
-			if(builder.getVariableAnalyzer().getUnitialized().contains(&*variable.second))
+			if(builder.tapeInitializationAnalyzer.getUnitialized().contains(*variable.second->tape))
 				warningIt = std::make_unique<GeneralWarning>(L"This variable might have been used potentially uninitialized: "+Format::blue(variable.first));
 		}
 	);

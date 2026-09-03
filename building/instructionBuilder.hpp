@@ -9,7 +9,7 @@
 #include "./tapeReference.hpp"
 #include "../instructions/instruction.hpp"
 #include "./instructionCollection.hpp"
-#include "./variableAnalyzer.hpp"
+#include "./tapeInitializationAnalyzer.hpp"
 
 /*!
  * This class holds a sequence of instructions together with extra data, like number of tapes and labels.
@@ -27,9 +27,10 @@ class InstructionBuilder {
 		std::stack<size_t> breakStack, continueStack;
 		std::list<std::unique_ptr<Instruction>> instructions;
 		std::vector<std::set<size_t>> tapesByLastReference;
-		VariableAnalyzer variableAnalyzer; //TODO consider making public
 
 	public:
+		TapeInitializationAnalyzer tapeInitializationAnalyzer;
+
 		size_t createTape();
 		size_t createLabel();
 		bool isExitDestinationSet() const;
@@ -48,5 +49,5 @@ class InstructionBuilder {
 		size_t addInstruction(std::unique_ptr<Instruction> instruction);
 		void postponeLastReference(size_t tape, size_t lastInstruction);
 		InstructionCollection extractInstructions();
-		VariableAnalyzer &getVariableAnalyzer();
+		TapeInitializationAnalyzer &getTapeInitializationAnalyzer();
 };

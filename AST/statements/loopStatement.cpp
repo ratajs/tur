@@ -1,7 +1,6 @@
 #include "./loopStatement.hpp"
 #include <cstdlib>
 #include <utility>
-#include <optional>
 #include <algorithm>
 #include "../../instructions/jumpInstruction.hpp"
 
@@ -17,7 +16,7 @@ void LoopStatement::build(InstructionBuilder &builder) const {
 	beginLabel = builder.createLabel();
 	endLabel = builder.createLabel();
 
-	builder.getVariableAnalyzer().startLoop();
+	builder.tapeInitializationAnalyzer.startLoop();
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	builder.pushContinueDestination(beginLabel);
@@ -27,10 +26,10 @@ void LoopStatement::build(InstructionBuilder &builder) const {
 	builder.popBreakDestination();
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(endLabel, JumpInstruction::Type::COME_FROM));
-	std::ranges::for_each(builder.getVariableAnalyzer().getUnitialized(),
-		[&builder, lastInstruction](const Variable *variable) -> void {
-			builder.postponeLastReference(*variable->tape, lastInstruction);
+	std::ranges::for_each(builder.tapeInitializationAnalyzer.getUnitialized(),
+		[&builder, lastInstruction](size_t tape) -> void {
+			builder.postponeLastReference(tape, lastInstruction);
 		}
 	);
-	builder.getVariableAnalyzer().endLoop();
+	builder.tapeInitializationAnalyzer.endLoop();
 };

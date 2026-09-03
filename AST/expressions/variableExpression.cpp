@@ -12,7 +12,7 @@ Expression::Type VariableExpression::getType() const {
 };
 
 Expression::Result VariableExpression::build(InstructionBuilder &builder) const {
-	builder.getVariableAnalyzer().reportVariableUsage(this->variable);
+	builder.tapeInitializationAnalyzer.reportTapeUsage(*this->variable.tape);
 
 	return Expression::Result::createTapeRange(*this->variable.tape, Expression::TapeRange(0, 1, false, false));
 };

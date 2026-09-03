@@ -26,13 +26,13 @@ void IfStatement::build(InstructionBuilder &builder) const {
 
 	std::tie(trueLabel, falseLabel) = this->condition->buildCondition(builder);
 	builder.addInstruction(std::make_unique<JumpInstruction>(trueLabel, JumpInstruction::Type::COME_FROM));
-	builder.getVariableAnalyzer().startBranching();
+	builder.tapeInitializationAnalyzer.startBranching();
 	std::ranges::for_each(this->trueBranch, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	builder.addInstruction(std::make_unique<JumpInstruction>(endLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
-	builder.getVariableAnalyzer().switchBranch();
+	builder.tapeInitializationAnalyzer.switchBranch();
 	std::ranges::for_each(this->falseBranch, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	builder.addInstruction(std::make_unique<JumpInstruction>(endLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(endLabel, JumpInstruction::Type::COME_FROM));
-	builder.getVariableAnalyzer().endBranching();
+	builder.tapeInitializationAnalyzer.endBranching();
 };

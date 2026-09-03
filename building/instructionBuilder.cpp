@@ -215,10 +215,3 @@ InstructionCollection InstructionBuilder::extractInstructions() {
 
 	return { std::move(instructions), std::move(tapes), labelsCount };
 };
-
-/*!
- * \return The variableAnalyzer stored in the instructionBuilder.
- */
-VariableAnalyzer &InstructionBuilder::getVariableAnalyzer() {
-	return this->variableAnalyzer;
-};

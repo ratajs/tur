@@ -11,6 +11,6 @@
 CallStatement::CallStatement(const Machine &machine, Variable &variable): variable(variable), machine(machine) {};
 
 void CallStatement::build(InstructionBuilder &builder) const {
-	builder.getVariableAnalyzer().reportVariableUsage(this->variable);
+	builder.tapeInitializationAnalyzer.reportTapeUsage(*this->variable.tape);
 	builder.addInstruction(std::make_unique<CallInstruction>(*this->variable.tape, this->machine));
 };

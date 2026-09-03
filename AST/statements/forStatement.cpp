@@ -1,7 +1,6 @@
 #include "./forStatement.hpp"
 #include <cstdlib>
 #include <utility>
-#include <optional>
 #include <tuple>
 #include <algorithm>
 #include "../../instructions/jumpInstruction.hpp"
@@ -28,7 +27,7 @@ void ForStatement::build(InstructionBuilder &builder) const {
 
 	if(this->initStatement)
 		this->initStatement->build(builder);
-	builder.getVariableAnalyzer().startLoop();
+	builder.tapeInitializationAnalyzer.startLoop();
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	std::tie(trueLabel, falseLabel) = this->condition->buildCondition(builder);
@@ -43,10 +42,10 @@ void ForStatement::build(InstructionBuilder &builder) const {
 	std::ranges::for_each(this->stepStatements, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
-	std::ranges::for_each(builder.getVariableAnalyzer().getUnitialized(),
-		[&builder, lastInstruction](const Variable *variable) -> void {
-			builder.postponeLastReference(*variable->tape, lastInstruction);
+	std::ranges::for_each(builder.tapeInitializationAnalyzer.getUnitialized(),
+		[&builder, lastInstruction](size_t tape) -> void {
+			builder.postponeLastReference(tape, lastInstruction);
 		}
 	);
-	builder.getVariableAnalyzer().endLoop();
+	builder.tapeInitializationAnalyzer.endLoop();
 };
