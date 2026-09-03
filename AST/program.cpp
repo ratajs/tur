@@ -107,7 +107,7 @@ void Program::build(InstructionBuilder &builder, std::back_insert_iterator<std::
 	builder.getVariableAnalyzer().reportVariableUsage(*this->variables.at(L"output"));
 	std::ranges::for_each(this->variables,
 		[&builder, &warningIt](const std::pair<const std::wstring, std::unique_ptr<Variable>> &variable) -> void {
-			if(builder.getVariableAnalyzer().isUsedUninitialized(*variable.second))
+			if(builder.getVariableAnalyzer().getUnitialized().contains(&*variable.second))
 				warningIt = std::make_unique<GeneralWarning>(L"This variable might have been used potentially uninitialized: "+Format::blue(variable.first));
 		}
 	);

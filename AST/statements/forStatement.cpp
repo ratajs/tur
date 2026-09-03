@@ -43,9 +43,10 @@ void ForStatement::build(InstructionBuilder &builder) const {
 	std::ranges::for_each(this->stepStatements, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
-	std::ranges::for_each(builder.getVariableAnalyzer().endLoop(),
+	std::ranges::for_each(builder.getVariableAnalyzer().getUnitialized(),
 		[&builder, lastInstruction](const Variable *variable) -> void {
 			builder.postponeLastReference(*variable->tape, lastInstruction);
 		}
 	);
+	builder.getVariableAnalyzer().endLoop();
 };

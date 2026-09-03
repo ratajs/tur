@@ -27,9 +27,10 @@ void LoopStatement::build(InstructionBuilder &builder) const {
 	builder.popBreakDestination();
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(endLabel, JumpInstruction::Type::COME_FROM));
-	std::ranges::for_each(builder.getVariableAnalyzer().endLoop(),
+	std::ranges::for_each(builder.getVariableAnalyzer().getUnitialized(),
 		[&builder, lastInstruction](const Variable *variable) -> void {
 			builder.postponeLastReference(*variable->tape, lastInstruction);
 		}
 	);
+	builder.getVariableAnalyzer().endLoop();
 };

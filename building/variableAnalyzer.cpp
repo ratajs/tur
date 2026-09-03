@@ -114,10 +114,9 @@ void VariableAnalyzer::startLoop() {
 
 /*!
  * This methods ends a loop.
- * \return A set of variables which were used in the loop without being initialized (i.e. their contents can come from a previous iteration or from before the loop).
  * \throw UnexpectedError If the top of the scope stack does not match with a started loop.
  */
-std::set<const Variable*> VariableAnalyzer::endLoop() {
+void VariableAnalyzer::endLoop() {
 	VariableAnalyzer::Scope innerScope;
 
 	if(
@@ -129,8 +128,6 @@ std::set<const Variable*> VariableAnalyzer::endLoop() {
 		throw UnexpectedError(L"Unexpected stack contents in Variable::endLoop().");
 
 	VariableAnalyzer::endScope(std::get<VariableAnalyzer::Scope>(this->stack.top()), innerScope, false);
-
-	return innerScope.uninitializedVariables;
 };
 
 /*!
@@ -152,10 +149,10 @@ void VariableAnalyzer::reportVariableAssignment(const Variable &variable) {
 };
 
 /*!
- * This method checks whether the given variable is used without initializing in the current scope (potentially initializing it before).
- * \param variable The variable.
- * \return Whether it is in the current list of variables used without initializing.
+ * This method is used to list variables with contents that could originate from before this block.
+ * When in branching, the current branch is used.
+ * \return The current list of variables used without initializing in the current scope (possibly initialized before).
  */
-bool VariableAnalyzer::isUsedUninitialized(const Variable &variable) const {
-	return std::get<VariableAnalyzer::Scope>(this->stack.top()).uninitializedVariables.contains(&variable);
+const std::set<const Variable*> &VariableAnalyzer::getUnitialized() const {
+	return std::get<VariableAnalyzer::Scope>(this->stack.top()).uninitializedVariables;
 };

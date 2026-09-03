@@ -35,8 +35,8 @@ class VariableAnalyzer {
 		void switchBranch();
 		void endBranching();
 		void startLoop();
-		std::set<const Variable*> endLoop();
+		void endLoop();
 		void reportVariableUsage(const Variable &variable);
 		void reportVariableAssignment(const Variable &variable);
-		bool isUsedUninitialized(const Variable &variable) const;
+		const std::set<const Variable*> &getUnitialized() const;
 };
