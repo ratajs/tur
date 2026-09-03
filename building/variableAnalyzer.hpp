@@ -4,6 +4,8 @@
 #include <stack>
 #include "../AST/variable.hpp"
 
+//TODO maybe change it to analyze tapes instead of variables, as it works on a lower level
+
 /*!
  * This class analyzes which variables are initialized (completelly rewritten) and which variables are used before initializing in the current code block (branch, loop).
  */
@@ -36,4 +38,5 @@ class VariableAnalyzer {
 		std::set<const Variable*> endLoop();
 		void reportVariableUsage(const Variable &variable);
 		void reportVariableAssignment(const Variable &variable);
+		bool isUsedUninitialized(const Variable &variable) const;
 };

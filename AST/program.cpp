@@ -86,8 +86,9 @@ void Program::addStatements(std::vector<std::unique_ptr<Statement>> statements) 
  * Build the whole program using a given InstructionBuilder object.
  * The builder should be unused (no tapes, no labels, no instructions).
  * \param builder The builder to use.
+ * \param warningIt An output iterator, destination for warnings.
  */
-void Program::build(InstructionBuilder &builder) {
+void Program::build(InstructionBuilder &builder, std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> warningIt) {
 	size_t exitDestination;
 
 	exitDestination = builder.createLabel();
@@ -104,6 +105,12 @@ void Program::build(InstructionBuilder &builder) {
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::COME_FROM));
 	builder.addInstruction(std::make_unique<CompressInstruction>(*this->variables.at(L"output")->tape));
 	builder.getVariableAnalyzer().reportVariableUsage(*this->variables.at(L"output"));
+	std::ranges::for_each(this->variables,
+		[&builder, &warningIt](const std::pair<const std::wstring, std::unique_ptr<Variable>> &variable) -> void {
+			if(builder.getVariableAnalyzer().isUsedUninitialized(*variable.second))
+				warningIt = std::make_unique<GeneralWarning>(L"This variable might have been used potentially uninitialized: "+Format::blue(variable.first));
+		}
+	);
 };
 
 /*!
@@ -131,7 +138,7 @@ void Program::checkForWarnings(std::back_insert_iterator<std::vector<std::unique
 	if(!this->usedVariableNames.contains(L"output"))
 		warningIt = std::make_unique<GeneralWarning>(L"The "+Format::blue(L"output")+L" variable is not used.");
 
-	std::ranges::for_each(unusedMachines,
+	std::ranges::for_each(this->unusedMachines,
 		[&warningIt](const std::wstring &name) -> void {
 			warningIt = std::make_unique<GeneralWarning>(L"This machine was defined but not used: "+Format::blue(name));
 		}

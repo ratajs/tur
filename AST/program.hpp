@@ -30,6 +30,6 @@ class Program {
 		const Machine &addMachine(const std::wstring &name, Machine machine, Location location);
 		const Machine &findMachine(const std::wstring &name, Location location); // Mark as used
 		void addStatements(std::vector<std::unique_ptr<Statement>> statements);
-		void build(InstructionBuilder &builder);
+		void build(InstructionBuilder &builder, std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> warningIt);
 		void checkForWarnings(std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> warningIt) const;
 };

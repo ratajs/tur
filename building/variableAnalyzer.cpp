@@ -150,3 +150,12 @@ void VariableAnalyzer::reportVariableAssignment(const Variable &variable) {
 	if(!std::get<VariableAnalyzer::Scope>(this->stack.top()).uninitializedVariables.contains(&variable))
 		std::get<VariableAnalyzer::Scope>(this->stack.top()).initializedVariables.insert(&variable);
 };
+
+/*!
+ * This method checks whether the given variable is used without initializing in the current scope (potentially initializing it before).
+ * \param variable The variable.
+ * \return Whether it is in the current list of variables used without initializing.
+ */
+bool VariableAnalyzer::isUsedUninitialized(const Variable &variable) const {
+	return std::get<VariableAnalyzer::Scope>(this->stack.top()).uninitializedVariables.contains(&variable);
+};
