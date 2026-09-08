@@ -88,8 +88,13 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 	if(!this->isReversed && this->destinationIndex)
 		builder.addInstruction(std::make_unique<ClearInstruction>(*this->destination.tape, *this->destinationIndex, std::nullopt, this->isDestinationIndexFromEnd));
 
-	if(this->source.isEmpty())
+	if(this->source.isEmpty()) {
+		if(this->destinationIndex!=0)
+			builder.tapeInitializationAnalyzer.reportTapeUsage(*this->destination.tape);
+		builder.tapeInitializationAnalyzer.reportTapeInitialization(*this->destination.tape);
+
 		return;
+	};
 
 	this->source.forEachExpression(
 		[this, &builder, backupTape](const std::unique_ptr<Expression> &expression) -> void {
@@ -167,4 +172,8 @@ void ImplodeStatement::build(InstructionBuilder &builder) const {
 			};
 		}, this->isReversed
 	);
+
+	if(this->destinationIndex!=0)
+		builder.tapeInitializationAnalyzer.reportTapeUsage(*this->destination.tape);
+	builder.tapeInitializationAnalyzer.reportTapeInitialization(*this->destination.tape);
 };

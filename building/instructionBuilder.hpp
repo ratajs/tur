@@ -9,6 +9,7 @@
 #include "./tapeReference.hpp"
 #include "../instructions/instruction.hpp"
 #include "./instructionCollection.hpp"
+#include "./tapeInitializationAnalyzer.hpp"
 
 /*!
  * This class holds a sequence of instructions together with extra data, like number of tapes and labels.
@@ -21,13 +22,15 @@ class InstructionBuilder {
 	private:
 		bool isInstructionMergingEnabled = false;
 		size_t labelsCount = 0;
-		std::optional<size_t> exitDestination;
+		std::optional<size_t> exitDestination, outputTape;
 		std::vector<TapeReference> tapes;
 		std::stack<size_t> breakStack, continueStack;
 		std::list<std::unique_ptr<Instruction>> instructions;
 		std::vector<std::set<size_t>> tapesByLastReference;
 
 	public:
+		TapeInitializationAnalyzer tapeInitializationAnalyzer;
+
 		size_t createTape();
 		size_t createLabel();
 		bool isExitDestinationSet() const;
@@ -42,8 +45,11 @@ class InstructionBuilder {
 		void popBreakDestination();
 		void popContinueDestination();
 		void unsetExitDestination();
+		void setOutputTape(size_t tape);
+		size_t getOutputTape() const;
 		void allowInstructionMerging();
 		size_t addInstruction(std::unique_ptr<Instruction> instruction);
-		void postponeLastReference(size_t firstInstruction, size_t lastInstruction);
+		void postponeLastReference(size_t tape, size_t lastInstruction);
 		InstructionCollection extractInstructions();
+		TapeInitializationAnalyzer &getTapeInitializationAnalyzer();
 };

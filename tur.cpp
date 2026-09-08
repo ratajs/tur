@@ -47,7 +47,7 @@ static Machine compile(Input &input) {
 			if(input.getFlags().isFlagPresent(Flags::Flag::OPTIMIZE))
 				instructionBuilder.allowInstructionMerging();
 
-			program.build(instructionBuilder);
+			program.build(instructionBuilder, std::back_inserter(warnings));
 			instructions = instructionBuilder.extractInstructions();
 
 			break;

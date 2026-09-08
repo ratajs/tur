@@ -134,6 +134,30 @@ void InstructionBuilder::popContinueDestination() {
 };
 
 /*!
+ * Set the output tape.
+ * \param The number of the tape (indexed from 0).
+ * \throw UnexpectedError If the tape doesn’t exit.
+ */
+void InstructionBuilder::setOutputTape(size_t tape) {
+	if(tape >= this->tapes.size())
+		throw UnexpectedError(L"Invalid tape.");
+
+	this->outputTape = tape;
+};
+
+/*!
+ * Get the output tape.
+ * \return The number of the tape (indexed from 0).
+ * \throw UnexpectedError If the output tape wasn’t set with setOutputTape().
+ */
+size_t InstructionBuilder::getOutputTape() const {
+	if(!this->outputTape)
+		throw UnexpectedError(L"The output tape is not set.");
+
+	return (*this->outputTape);
+};
+
+/*!
  * Allow instructions to merge with the previous instruction directly after adding.
  */
 void InstructionBuilder::allowInstructionMerging() {
@@ -186,26 +210,15 @@ size_t InstructionBuilder::addInstruction(std::unique_ptr<Instruction> instructi
 };
 
 /*!
- * Rewrite the last references of tapes used by instructions in a particular range.
+ * Rewrite the last references of a specific tape.
  * The new last reference will be the end of the range.
  * The last reference is the index of the last instruction which is expected to change it.
  * Used if jumping up takes place, which causes that a tape can be accessed after the last instruction which uses it is executed.
- * \param firstReference The beginning of the range (inclusive).
+ * \param tape The tape the last reference of which should be postponed.
  * \param lastReference The end of the range and the new last reference.
  */
-void InstructionBuilder::postponeLastReference(size_t firstInstruction, size_t lastInstruction) {
-	if(lastInstruction <= firstInstruction || lastInstruction >= this->instructions.size())
-		throw UnexpectedError(L"Invalid instruction indices.");
-
-	std::ranges::for_each(this->tapesByLastReference.begin() + firstInstruction, this->tapesByLastReference.begin() + lastInstruction,
-		[this, lastInstruction](const std::set<size_t> &tapes) -> void {
-			std::ranges::for_each(tapes,
-				[this, lastInstruction](size_t tape) -> void {
-					this->tapes[tape].lastReference = lastInstruction;
-				}
-			);
-		}
-	);
+void InstructionBuilder::postponeLastReference(size_t tape, size_t lastInstruction) {
+	this->tapes[tape].lastReference = lastInstruction;
 };
 
 /*!

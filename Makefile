@@ -60,6 +60,7 @@ OBJS = \
 	building/instructionBuilder.o \
 	building/instructionCollection.o \
 	building/tapeReference.o \
+	building/variableAnalyzer.o \
 	building/machineBuilder.o \
 	instructions/instruction.o \
 	instructions/decompressInstruction.o \
@@ -221,6 +222,7 @@ AST/expressions/arrayAccessExpression.o: \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp \
 	AST/expressions/../../IO/typeError.hpp \
 	AST/expressions/../../IO/./errorWithLocation.hpp \
@@ -245,6 +247,7 @@ AST/expressions/binaryExpression.o: AST/expressions/binaryExpression.cpp \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp \
 	AST/expressions/./../../machine/machine.hpp \
 	AST/expressions/../../instructions/clearInstruction.hpp \
@@ -287,6 +290,7 @@ AST/expressions/callExpression.o: AST/expressions/callExpression.cpp \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp \
 	AST/expressions/./../../machine/machine.hpp \
 	AST/expressions/../../instructions/writeNumberInstruction.hpp \
@@ -326,6 +330,7 @@ AST/expressions/countExpression.o: AST/expressions/countExpression.cpp \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp \
 	AST/expressions/../../instructions/copyInstruction.hpp \
 	AST/expressions/../../instructions/./instruction.hpp \
@@ -355,6 +360,7 @@ AST/expressions/expression.o: AST/expressions/expression.cpp \
 	AST/expressions/./../../building/./instructionCollection.hpp \
 	AST/expressions/./../../building/././tapeReference.hpp \
 	AST/expressions/./../../building/./../instructions/instruction.hpp \
+	AST/expressions/./../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/../../IO/unexpectedError.hpp \
 	AST/expressions/../../IO/./error.hpp
 AST/expressions/numberExpression.o: AST/expressions/numberExpression.cpp \
@@ -375,6 +381,7 @@ AST/expressions/numberExpression.o: AST/expressions/numberExpression.cpp \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp
 AST/expressions/unaryExpression.o: AST/expressions/unaryExpression.cpp \
 	AST/expressions/./unaryExpression.hpp \
@@ -394,6 +401,7 @@ AST/expressions/unaryExpression.o: AST/expressions/unaryExpression.cpp \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp \
 	AST/expressions/../../IO/typeError.hpp \
 	AST/expressions/../../IO/./errorWithLocation.hpp \
@@ -419,6 +427,7 @@ AST/expressions/variableExpression.o: \
 	AST/expressions/././../../building/./instructionCollection.hpp \
 	AST/expressions/././../../building/././tapeReference.hpp \
 	AST/expressions/././../../building/./../instructions/instruction.hpp \
+	AST/expressions/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/expressions/./../../parsing/location.hpp \
 	AST/expressions/./../variable.hpp
 AST/program.o: AST/program.cpp AST/./program.hpp \
@@ -437,6 +446,7 @@ AST/program.o: AST/program.cpp AST/./program.hpp \
 	AST/././statements/../../building/./instructionCollection.hpp \
 	AST/././statements/../../building/././tapeReference.hpp \
 	AST/././statements/../../building/./../instructions/instruction.hpp \
+	AST/././statements/../../building/./tapeInitializationAnalyzer.hpp \
 	AST/./../building/instructionBuilder.hpp AST/./../IO/warning.hpp \
 	AST/../instructions/decompressInstruction.hpp \
 	AST/../instructions/./instruction.hpp \
@@ -469,6 +479,7 @@ AST/sourceBundle.o: AST/sourceBundle.cpp AST/./sourceBundle.hpp \
 	AST/././expressions/../../building/./instructionCollection.hpp \
 	AST/././expressions/../../building/././tapeReference.hpp \
 	AST/././expressions/../../building/./../instructions/instruction.hpp \
+	AST/././expressions/../../building/./tapeInitializationAnalyzer.hpp \
 	AST/../IO/typeError.hpp AST/../IO/./errorWithLocation.hpp \
 	AST/../IO/././error.hpp AST/../IO/./../parsing/location.hpp \
 	AST/../IO/../parsing/location.hpp
@@ -487,6 +498,7 @@ AST/statements/assignStatement.o: AST/statements/assignStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../variable.hpp \
 	AST/statements/./../expressions/expression.hpp \
 	AST/statements/./../expressions/../../parsing/location.hpp \
@@ -525,6 +537,7 @@ AST/statements/breakStatement.o: AST/statements/breakStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/../../instructions/jumpInstruction.hpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
@@ -549,6 +562,7 @@ AST/statements/callStatement.o: AST/statements/callStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../variable.hpp \
 	AST/statements/./../../machine/machine.hpp \
 	AST/statements/../../instructions/callInstruction.hpp \
@@ -575,6 +589,7 @@ AST/statements/continueStatement.o: AST/statements/continueStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/../../instructions/jumpInstruction.hpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
@@ -599,6 +614,7 @@ AST/statements/exitStatement.o: AST/statements/exitStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/../../instructions/jumpInstruction.hpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
@@ -623,6 +639,7 @@ AST/statements/explodeStatement.o: AST/statements/explodeStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../expressions/expression.hpp \
 	AST/statements/./../expressions/../../parsing/location.hpp \
 	AST/statements/./../expressions/../variable.hpp \
@@ -660,6 +677,7 @@ AST/statements/forStatement.o: AST/statements/forStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../expressions/expression.hpp \
 	AST/statements/./../expressions/../../parsing/location.hpp \
 	AST/statements/./../expressions/../variable.hpp \
@@ -691,6 +709,7 @@ AST/statements/ifStatement.o: AST/statements/ifStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../expressions/expression.hpp \
 	AST/statements/./../expressions/../../parsing/location.hpp \
 	AST/statements/./../expressions/../variable.hpp \
@@ -722,6 +741,7 @@ AST/statements/implodeStatement.o: AST/statements/implodeStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../variable.hpp AST/statements/./../sourceBundle.hpp \
 	AST/statements/./.././expressions/expression.hpp \
 	AST/statements/./.././expressions/../../parsing/location.hpp \
@@ -756,6 +776,7 @@ AST/statements/loopStatement.o: AST/statements/loopStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/../../instructions/jumpInstruction.hpp \
 	AST/statements/../../instructions/./instruction.hpp \
 	AST/statements/../../instructions/../machine/singleTapeMachineFactory.hpp \
@@ -777,7 +798,8 @@ AST/statements/statement.o: AST/statements/statement.cpp \
 	AST/statements/./../../building/../instructions/../machine/multiTapeMachineFactory.hpp \
 	AST/statements/./../../building/./instructionCollection.hpp \
 	AST/statements/./../../building/././tapeReference.hpp \
-	AST/statements/./../../building/./../instructions/instruction.hpp
+	AST/statements/./../../building/./../instructions/instruction.hpp \
+	AST/statements/./../../building/./tapeInitializationAnalyzer.hpp
 AST/statements/whileStatement.o: AST/statements/whileStatement.cpp \
 	AST/statements/./whileStatement.hpp AST/statements/././statement.hpp \
 	AST/statements/././../../building/instructionBuilder.hpp \
@@ -793,6 +815,7 @@ AST/statements/whileStatement.o: AST/statements/whileStatement.cpp \
 	AST/statements/././../../building/./instructionCollection.hpp \
 	AST/statements/././../../building/././tapeReference.hpp \
 	AST/statements/././../../building/./../instructions/instruction.hpp \
+	AST/statements/././../../building/./tapeInitializationAnalyzer.hpp \
 	AST/statements/./../expressions/expression.hpp \
 	AST/statements/./../expressions/../../parsing/location.hpp \
 	AST/statements/./../expressions/../variable.hpp \
@@ -823,6 +846,7 @@ building/instructionBuilder.o: building/instructionBuilder.cpp \
 	building/././instructionCollection.hpp \
 	building/./././tapeReference.hpp \
 	building/././../instructions/instruction.hpp \
+	building/././tapeInitializationAnalyzer.hpp \
 	building/../IO/unexpectedError.hpp building/../IO/./error.hpp
 building/instructionCollection.o: building/instructionCollection.cpp \
 	building/./instructionCollection.hpp building/././tapeReference.hpp \
@@ -849,6 +873,10 @@ building/machineBuilder.o: building/machineBuilder.cpp \
 	building/./../machine/machineFactory.hpp \
 	building/./../machine/machine.hpp \
 	building/../machine/machineFactory.hpp \
+	building/../IO/unexpectedError.hpp building/../IO/./error.hpp
+building/tapeInitializationAnalyter.o: \
+	building/tapeInitializationAnalyter.cpp \
+	building/./tapeInitializationAnalyzer.hpp \
 	building/../IO/unexpectedError.hpp building/../IO/./error.hpp
 building/tapeReference.o: building/tapeReference.cpp \
 	building/./tapeReference.hpp
@@ -1173,6 +1201,7 @@ parsing/parser.o: parsing/parser.cpp parsing/./parser.hpp \
 	parsing/./../AST/./statements/../../building/./instructionCollection.hpp \
 	parsing/./../AST/./statements/../../building/././tapeReference.hpp \
 	parsing/./../AST/./statements/../../building/./../instructions/instruction.hpp \
+	parsing/./../AST/./statements/../../building/./tapeInitializationAnalyzer.hpp \
 	parsing/./../AST/../building/instructionBuilder.hpp \
 	parsing/./../AST/../IO/warning.hpp \
 	parsing/./../AST/statements/statement.hpp \
@@ -1248,6 +1277,7 @@ tur: tur.cpp IO/input.hpp IO/./flags.hpp IO/./inputLanguage.hpp \
 	parsing/../AST/./statements/../../building/./instructionCollection.hpp \
 	parsing/../AST/./statements/../../building/././tapeReference.hpp \
 	parsing/../AST/./statements/../../building/./../instructions/instruction.hpp \
+	parsing/../AST/./statements/../../building/./tapeInitializationAnalyzer.hpp \
 	parsing/../AST/../building/instructionBuilder.hpp \
 	parsing/../AST/../IO/warning.hpp \
 	parsing/../AST/statements/statement.hpp \
