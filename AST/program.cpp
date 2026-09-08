@@ -89,22 +89,31 @@ void Program::addStatements(std::vector<std::unique_ptr<Statement>> statements) 
  * \param warningIt An output iterator, destination for warnings.
  */
 void Program::build(InstructionBuilder &builder, std::back_insert_iterator<std::vector<std::unique_ptr<Warning>>> warningIt) {
-	size_t exitDestination;
+	size_t exitDestination, inputTape, outputTape;
 
-	exitDestination = builder.createLabel();
-	builder.setExitDestination(exitDestination);
 	std::ranges::for_each(this->variables | std::views::values,
 		[&builder](std::unique_ptr<Variable> &variable) -> void {
 			variable->tape = builder.createTape();
 		}
 	);
-	builder.addInstruction(std::make_unique<DecompressInstruction>(*this->variables.at(L"input")->tape));
-	builder.tapeInitializationAnalyzer.reportTapeInitialization(*this->variables.at(L"input")->tape);
+
+	inputTape = (*this->variables.at(L"input")->tape);
+	outputTape = (*this->variables.at(L"output")->tape);
+
+	builder.setOutputTape(outputTape);
+	builder.setExitDestination(exitDestination = builder.createLabel());
+
+	builder.addInstruction(std::make_unique<DecompressInstruction>(inputTape));
+	builder.tapeInitializationAnalyzer.reportTapeInitialization(inputTape);
+
 	std::ranges::for_each(this->statements, [&builder](std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
+
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(exitDestination, JumpInstruction::Type::COME_FROM));
-	builder.addInstruction(std::make_unique<CompressInstruction>(*this->variables.at(L"output")->tape));
-	builder.tapeInitializationAnalyzer.reportTapeUsage(*this->variables.at(L"output")->tape);
+
+	builder.addInstruction(std::make_unique<CompressInstruction>(outputTape));
+	builder.tapeInitializationAnalyzer.reportTapeUsage(outputTape);
+
 	std::ranges::for_each(this->variables,
 		[&builder, &warningIt](const std::pair<const std::wstring, std::unique_ptr<Variable>> &variable) -> void {
 			if(builder.tapeInitializationAnalyzer.getUnitialized().contains(*variable.second->tape))

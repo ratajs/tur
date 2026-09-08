@@ -22,7 +22,7 @@ class InstructionBuilder {
 	private:
 		bool isInstructionMergingEnabled = false;
 		size_t labelsCount = 0;
-		std::optional<size_t> exitDestination;
+		std::optional<size_t> exitDestination, outputTape;
 		std::vector<TapeReference> tapes;
 		std::stack<size_t> breakStack, continueStack;
 		std::list<std::unique_ptr<Instruction>> instructions;
@@ -45,6 +45,8 @@ class InstructionBuilder {
 		void popBreakDestination();
 		void popContinueDestination();
 		void unsetExitDestination();
+		void setOutputTape(size_t tape);
+		size_t getOutputTape() const;
 		void allowInstructionMerging();
 		size_t addInstruction(std::unique_ptr<Instruction> instruction);
 		void postponeLastReference(size_t tape, size_t lastInstruction);

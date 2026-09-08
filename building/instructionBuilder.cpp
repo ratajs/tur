@@ -134,6 +134,30 @@ void InstructionBuilder::popContinueDestination() {
 };
 
 /*!
+ * Set the output tape.
+ * \param The number of the tape (indexed from 0).
+ * \throw UnexpectedError If the tape doesn’t exit.
+ */
+void InstructionBuilder::setOutputTape(size_t tape) {
+	if(tape >= this->tapes.size())
+		throw UnexpectedError(L"Invalid tape.");
+
+	this->outputTape = tape;
+};
+
+/*!
+ * Get the output tape.
+ * \return The number of the tape (indexed from 0).
+ * \throw UnexpectedError If the output tape wasn’t set with setOutputTape().
+ */
+size_t InstructionBuilder::getOutputTape() const {
+	if(!this->outputTape)
+		throw UnexpectedError(L"The output tape is not set.");
+
+	return (*this->outputTape);
+};
+
+/*!
  * Allow instructions to merge with the previous instruction directly after adding.
  */
 void InstructionBuilder::allowInstructionMerging() {
