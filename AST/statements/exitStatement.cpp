@@ -10,6 +10,5 @@ void ExitStatement::build(InstructionBuilder &builder) const {
 
 	builder.addInstruction(std::make_unique<JumpInstruction>(builder.getExitDestination(), JumpInstruction::Type::GO_TO));
 	builder.tapeInitializationAnalyzer.reportTapeUsage(builder.getOutputTape());
-//builder.getVariableAnalyzer().reportVariableAssignment(); //TODO output variable
 	builder.addInstruction(std::make_unique<JumpInstruction>(builder.createLabel(), JumpInstruction::Type::COME_FROM)); // Unreachable label
 };
