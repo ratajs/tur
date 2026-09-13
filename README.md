@@ -366,11 +366,13 @@ This instruction jumps to or from a label, which is a number. There are two type
 followed by the label (without comma) is provided. A `COMEFROM` jump must follow if and only if the previous instruction jumps somewhere (`GOTO` jump, compare, compareTapeLength).
 
 #### `compare`
-This instruction compares two arguments and jumps to one of two specified labels, depending on the result of the comparison. The comparison arguments can either be constants or tapes with indices. These operators can be used: =, ≠, <, >, ≤, ≥
+This instruction compares two arguments and jumps to one of two specified labels, depending on the result of the comparison. The comparison arguments can either be constants or tapes with indices. Negative indices are supported with the second argument. These operators can be used: =, ≠, <, >, ≤, ≥
 ```
 compare(1[3] > 2[0], 1, 2) # If the fourth number on tape 1 is greater than the first number on tape 2, jump to 1, else jump to 2
 compare(1[3] < 20, 3, 4) # If the fourth number on tape 1 is less than 20, jump to 3, else jump to 4
 compare(1 = 1, 5, 6) # This always jumps to 5
+compare(1[0] = 1[−1], 1, 2) # Compare the first and last number on tape 1 (overlap is allowed)
+compare(1[0] = 1[−2], 1, 2) # Compare the first number and the second number from end
 ```
 
 #### `compareTapeLength`
