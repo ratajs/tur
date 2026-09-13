@@ -874,8 +874,8 @@ building/machineBuilder.o: building/machineBuilder.cpp \
 	building/./../machine/machine.hpp \
 	building/../machine/machineFactory.hpp \
 	building/../IO/unexpectedError.hpp building/../IO/./error.hpp
-building/tapeInitializationAnalyter.o: \
-	building/tapeInitializationAnalyter.cpp \
+building/tapeInitializationAnalyzer.o: \
+	building/tapeInitializationAnalyzer.cpp \
 	building/./tapeInitializationAnalyzer.hpp \
 	building/../IO/unexpectedError.hpp building/../IO/./error.hpp
 building/tapeReference.o: building/tapeReference.cpp \
