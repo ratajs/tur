@@ -11,14 +11,14 @@
 LoopStatement::LoopStatement(std::vector<std::unique_ptr<Statement>> body): body(std::move(body)) {};
 
 void LoopStatement::build(InstructionBuilder &builder) const {
-	size_t beginLabel, endLabel, lastInstruction;
+	size_t beginLabel, endLabel, firstInstruction, lastInstruction;
 
 	beginLabel = builder.createLabel();
 	endLabel = builder.createLabel();
 
 	builder.tapeInitializationAnalyzer.startLoop();
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
-	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
+	firstInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	builder.pushContinueDestination(beginLabel);
 	builder.pushBreakDestination(endLabel);
 	std::ranges::for_each(this->body, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
@@ -26,9 +26,10 @@ void LoopStatement::build(InstructionBuilder &builder) const {
 	builder.popBreakDestination();
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(endLabel, JumpInstruction::Type::COME_FROM));
+	builder.changeLifetimeLazily(firstInstruction, lastInstruction);
 	std::ranges::for_each(builder.tapeInitializationAnalyzer.getUnitialized(),
-		[&builder, lastInstruction](size_t tape) -> void {
-			builder.postponeLastReference(tape, lastInstruction);
+		[&builder, firstInstruction, lastInstruction](size_t tape) -> void {
+			builder.changeLifetime(tape, firstInstruction, lastInstruction);
 		}
 	);
 	builder.tapeInitializationAnalyzer.endLoop();

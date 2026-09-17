@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <map>
 #include <stack>
 #include "./tapeReference.hpp"
 #include "../instructions/instruction.hpp"
@@ -26,6 +27,7 @@ class InstructionBuilder {
 		std::vector<TapeReference> tapes;
 		std::stack<size_t> breakStack, continueStack;
 		std::list<std::unique_ptr<Instruction>> instructions;
+		std::map<size_t, size_t> referenceHooks; // When the tape is mentioned, rewrite first reference
 		std::vector<std::set<size_t>> tapesByLastReference;
 
 	public:
@@ -49,7 +51,8 @@ class InstructionBuilder {
 		size_t getOutputTape() const;
 		void allowInstructionMerging();
 		size_t addInstruction(std::unique_ptr<Instruction> instruction);
-		void postponeLastReference(size_t tape, size_t lastInstruction);
+		void changeLifetime(size_t tape, size_t firstInstruction, size_t lastInstruction);
+		void changeLifetimeLazily(size_t firstInstruction, size_t lastInstruction);
 		InstructionCollection extractInstructions();
 		TapeInitializationAnalyzer &getTapeInitializationAnalyzer();
 };

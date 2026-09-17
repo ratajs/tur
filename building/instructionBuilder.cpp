@@ -191,7 +191,12 @@ size_t InstructionBuilder::addInstruction(std::unique_ptr<Instruction> instructi
 
 			instructionIndex = (this->instructions.size() - 1);
 
-			if(!this->tapes[tape].firstReference)
+			if(this->referenceHooks.contains(tape)) {
+				if(this->referenceHooks.at(tape) < this->tapes[tape].firstReference)
+					this->tapes[tape].firstReference = this->referenceHooks.at(tape);
+				this->referenceHooks.erase(tape);
+			}
+			else if(!this->tapes[tape].firstReference)
 				this->tapes[tape].firstReference = instructionIndex;
 
 			if(!this->tapes[tape].lastReference) {
@@ -210,15 +215,47 @@ size_t InstructionBuilder::addInstruction(std::unique_ptr<Instruction> instructi
 };
 
 /*!
- * Rewrite the last references of a specific tape.
- * The new last reference will be the end of the range.
+ * Rewrite the first and last reference of a specific tape.
  * The last reference is the index of the last instruction which is expected to change it.
  * Used if jumping up takes place, which causes that a tape can be accessed after the last instruction which uses it is executed.
+ * The new lifetime start, resp. end will only be rewritten if it is earlier, resp. later.
  * \param tape The tape the last reference of which should be postponed.
  * \param lastReference The end of the range and the new last reference.
+ * \throw UnexpectedError If lastInstruction is smaller than firstInstruction.
  */
-void InstructionBuilder::postponeLastReference(size_t tape, size_t lastInstruction) {
-	this->tapes[tape].lastReference = lastInstruction;
+void InstructionBuilder::changeLifetime(size_t tape, size_t firstInstruction, size_t lastInstruction) {
+	if(lastInstruction < firstInstruction)
+		throw UnexpectedError(L"The last reference of a tape must not be before the last reference.");
+
+	if(firstInstruction < this->tapes[tape].firstReference)
+		this->tapes[tape].firstReference = firstInstruction;
+
+	if(lastInstruction > this->tapes[tape].lastReference)
+		this->tapes[tape].lastReference = lastInstruction;
+};
+
+/*!
+ * Remember that whenever a tape used in a range of instruction is ever used again by any instruction, the start of the lifetime range should be moved back.
+ * This never shrinks the lifetime, only prolongs.
+ * \param firstInstruction The start of the range and the new potential start of the lifetime.
+ * \param lastInstruction The end of the range.
+ */
+void InstructionBuilder::changeLifetimeLazily(size_t firstInstruction, size_t lastInstruction) {
+	if(lastInstruction <= firstInstruction || lastInstruction >= this->instructions.size())
+		throw UnexpectedError(L"Invalid instruction indices.");
+
+	std::ranges::for_each(this->tapesByLastReference.begin() + firstInstruction, this->tapesByLastReference.begin() + lastInstruction,
+		[this, firstInstruction](const std::set<size_t> &tapes) -> void {
+			std::ranges::for_each(tapes,
+				[this, firstInstruction](size_t tape) -> void {
+					if(this->referenceHooks.contains(tape))
+						this->referenceHooks.at(tape) = std::min(this->referenceHooks.at(tape), firstInstruction);
+					else
+						this->referenceHooks.emplace(tape, firstInstruction);
+				}
+			);
+		}
+	);
 };
 
 /*!

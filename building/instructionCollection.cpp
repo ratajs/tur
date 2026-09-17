@@ -1,15 +1,11 @@
 #include "./instructionCollection.hpp"
-#include <cstdlib>
 #include <utility>
-#include <memory>
 #include <optional>
-#include <vector>
-#include <list>
+#include <tuple>
 #include <queue>
 #include <algorithm>
 #include <iterator>
 #include <string>
-#include <iostream>
 #include <functional>
 #include "../IO/unexpectedError.hpp"
 
@@ -42,7 +38,7 @@ void InstructionCollection::optimize() {
 	std::vector<std::optional<size_t>> tapes;
 	std::optional<std::list<std::unique_ptr<Instruction>>> replacementInstructions;
 	std::list<std::unique_ptr<Instruction>>::const_iterator it;
-	std::queue<size_t> freeTapes;
+	std::queue<std::pair<size_t, size_t>> freeTapes; // tape number, free since when
 
 	if(this->isOptimized)
 		throw UnexpectedError(L"Instructions are already optimized.");
@@ -69,8 +65,8 @@ void InstructionCollection::optimize() {
 			std::ranges::for_each((*it)->listUsedTapes(),
 				[this, &tapes, &tapesCount, &freeTapes, &newFreeTapes, instructionIndex](size_t tape) -> void {
 					if(!tapes[tape]) {
-						if(!freeTapes.empty()) {
-							tapes[tape] = freeTapes.front();
+						if(!freeTapes.empty() && (*this->tapes[tape].firstReference) > freeTapes.front().second) {
+							std::tie(tapes[tape], std::ignore) = freeTapes.front();
 							freeTapes.pop();
 						}
 						else
@@ -83,8 +79,8 @@ void InstructionCollection::optimize() {
 		};
 
 		std::ranges::for_each(newFreeTapes,
-			[&freeTapes](size_t tape) -> void {
-				freeTapes.push(tape);
+			[&freeTapes, instructionIndex](size_t tape) -> void {
+				freeTapes.emplace(tape, instructionIndex);
 			}
 		);
 

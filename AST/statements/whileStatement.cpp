@@ -18,13 +18,13 @@ WhileStatement::WhileStatement(std::unique_ptr<Expression> condition, std::vecto
 };
 
 void WhileStatement::build(InstructionBuilder &builder) const {
-	size_t trueLabel, falseLabel, beginLabel, lastInstruction;
+	size_t trueLabel, falseLabel, beginLabel, firstInstruction, lastInstruction;
 
 	beginLabel = builder.createLabel();
 
 	builder.tapeInitializationAnalyzer.startLoop();
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
-	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
+	firstInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	std::tie(trueLabel, falseLabel) = this->condition->buildCondition(builder);
 	builder.addInstruction(std::make_unique<JumpInstruction>(trueLabel, JumpInstruction::Type::COME_FROM));
 	builder.pushContinueDestination(beginLabel);
@@ -34,9 +34,10 @@ void WhileStatement::build(InstructionBuilder &builder) const {
 	builder.popBreakDestination();
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
+	builder.changeLifetimeLazily(firstInstruction, lastInstruction);
 	std::ranges::for_each(builder.tapeInitializationAnalyzer.getUnitialized(),
-		[&builder, lastInstruction](size_t tape) -> void {
-			builder.postponeLastReference(tape, lastInstruction);
+		[&builder, firstInstruction, lastInstruction](size_t tape) -> void {
+			builder.changeLifetime(tape, firstInstruction, lastInstruction);
 		}
 	);
 	builder.tapeInitializationAnalyzer.endLoop();

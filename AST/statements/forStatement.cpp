@@ -20,7 +20,7 @@ ForStatement::ForStatement(std::unique_ptr<Statement> initStatement, std::unique
 };
 
 void ForStatement::build(InstructionBuilder &builder) const {
-	size_t trueLabel, falseLabel, beginLabel, stepLabel, lastInstruction;
+	size_t trueLabel, falseLabel, beginLabel, stepLabel, firstInstruction, lastInstruction;
 
 	beginLabel = builder.createLabel();
 	stepLabel = builder.createLabel();
@@ -29,7 +29,7 @@ void ForStatement::build(InstructionBuilder &builder) const {
 		this->initStatement->build(builder);
 	builder.tapeInitializationAnalyzer.startLoop();
 	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
-	builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
+	firstInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::COME_FROM));
 	std::tie(trueLabel, falseLabel) = this->condition->buildCondition(builder);
 	builder.addInstruction(std::make_unique<JumpInstruction>(trueLabel, JumpInstruction::Type::COME_FROM));
 	builder.pushContinueDestination(stepLabel);
@@ -42,9 +42,10 @@ void ForStatement::build(InstructionBuilder &builder) const {
 	std::ranges::for_each(this->stepStatements, [&builder](const std::unique_ptr<Statement> &statement) -> void { statement->build(builder); });
 	lastInstruction = builder.addInstruction(std::make_unique<JumpInstruction>(beginLabel, JumpInstruction::Type::GO_TO));
 	builder.addInstruction(std::make_unique<JumpInstruction>(falseLabel, JumpInstruction::Type::COME_FROM));
+	builder.changeLifetimeLazily(firstInstruction, lastInstruction);
 	std::ranges::for_each(builder.tapeInitializationAnalyzer.getUnitialized(),
-		[&builder, lastInstruction](size_t tape) -> void {
-			builder.postponeLastReference(tape, lastInstruction);
+		[&builder, firstInstruction, lastInstruction](size_t tape) -> void {
+			builder.changeLifetime(tape, firstInstruction, lastInstruction);
 		}
 	);
 	builder.tapeInitializationAnalyzer.endLoop();
